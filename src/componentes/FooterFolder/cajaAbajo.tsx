@@ -1,5 +1,5 @@
 import "./footer.css";
-export default function CajaAbajo() {
+export default function Footer() {
   return (
     <>
       <footer></footer>

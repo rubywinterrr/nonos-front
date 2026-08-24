@@ -1,14 +1,20 @@
-import "./App.css";
-import { MiPantalla } from "./Panel-Adulto/main";
-import CajaArriba from "./componentes/HeaderFolder/cajaArriba";
-import CajaAbajo from "./componentes/FooterFolder/cajaAbajo";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./Pages/Home";
+import PanelAdulto from "./Pages/panel-adulto";
+import PanelCuidador from "./Pages/panel-cuidador";
+import PanelFamilia from "./Pages/panel-familia";
 
 function App() {
   return (
     <>
-      <CajaArriba></CajaArriba>
-      <MiPantalla />
-      <CajaAbajo></CajaAbajo>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Adulto" element={<PanelAdulto />} />
+          <Route path="/Familia" element={<PanelFamilia />} />
+          <Route path="/Cuidador" element={<PanelCuidador />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
