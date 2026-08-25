@@ -1,12 +1,24 @@
-@import "tailwindcss";
-*{
-    box-sizing: border-box;
+* {
+  box-sizing: border-box;
 }
-body{
-    min-height: 100vh;
+body {
+  min-height: 100vh;
+  overflow-y: scroll; /* Asegura que el contenido sea desplazable */
 }
-#root{
-   min-height: 100vh;
+html {
+  scrollbar-width: none; /* Para navegadores basados en Firefox */
+  font-family: "Public Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Para navegadores basados en WebKit (Chrome, Edge, Safari) */
+}
+
+#root {
+  min-height: 100vh;
 }
 /* @media (orientation: landscape) {
   body::before {
@@ -24,3 +36,6 @@ body{
     z-index: 99999;
   }
 }
+  */
+
+@import "tailwindcss";
