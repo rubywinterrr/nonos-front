@@ -5,6 +5,7 @@ import PanelCuidador from "./Pages/panel-cuidador";
 import PanelFamilia from "./Pages/panel-familia";
 
 function App() {
+  console.log("/adulto, /cuidador, /familia")
   return (
     <>
       <BrowserRouter>
