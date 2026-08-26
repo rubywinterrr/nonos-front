@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="flex justify-center items-center flex-col h-[77vh] bg-green-100 w-screen">
+      <main className="flex justify-center items-center flex-col h-main bg-green-100 w-screen">
         <h1 className="text-2xl font-extrabold p-5">Home</h1>
         <Boton1 />
       </main>

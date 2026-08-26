@@ -39,3 +39,7 @@ html::-webkit-scrollbar {
   */
 
 @import "tailwindcss";
+
+@theme {
+  --height-main: 77vh; /* clase: h-main */
+}

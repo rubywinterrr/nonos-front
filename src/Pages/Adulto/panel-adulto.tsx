@@ -1,5 +1,5 @@
-import Header from "../componentes/cajaArriba";
-import Footer from "../componentes/cajaAbajo";
+import Header from "../../componentes/cajaArriba";
+import Footer from "../../componentes/cajaAbajo";
 export default function PanelAdulto() {
   return (
     <>
