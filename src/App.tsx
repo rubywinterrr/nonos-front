@@ -5,7 +5,7 @@ import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
 import PanelFamilia from "./Pages/Familia/panel-familia";
 import LogIn from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
-import SOS from "./PantallaSOS";
+import SOS from "./Pages/PantallaSOS";
 function App() {
   console.log("/adulto, /cuidador, /familia");
   return (
