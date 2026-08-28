@@ -1,4 +1,4 @@
-import Header from "../componentes/cajaArriba";
+import Header2 from "../componentes/cajaArriba2";
 import { useNavigate } from "react-router-dom";
 
 export default function LogIn() {
@@ -8,7 +8,7 @@ export default function LogIn() {
   }
   return (
     <>
-      <Header></Header>
+      <Header2 />
       <main className="w-screen h-[90vh] bg-purple-200 flex flex-col justify-evenly items-center">
         <h1 className="text-4xl font-extrabold">Cuenta</h1>
         <div className="border h-70/100 w-75/100 rounded-2xl bg-white flex flex-col justify-center items-center gap-5">

@@ -35,10 +35,10 @@ export default function Footer() {
           <p className="font-bold">Contactos</p>
         </div>
         <div
-          className="h-93/100 border rounded-lg aspect-square flex justify-center items-center flex-col bg-[#FFDAD6]"
+          className="cursor-pointer h-93/100 border rounded-lg aspect-square flex justify-center items-center flex-col bg-[#FFDAD6]"
           onClick={IrSOS}
         >
-          <div className="aspect-square h-50/100 border border-[#D0021B]"></div>
+          <div className="aspect-square h-50/100 border border-[#D0021B] "></div>
           <p className="font-bold text-[#D0021B]">SOS</p>
         </div>
       </footer>
