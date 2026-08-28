@@ -5,6 +5,7 @@ import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
 import PanelFamilia from "./Pages/Familia/panel-familia";
 import LogIn from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
+import SOS from "./PantallaSOS";
 
 function App() {
   console.log("/adulto, /cuidador, /familia");
@@ -18,6 +19,8 @@ function App() {
           <Route path="/Cuidador" element={<PanelCuidador />} />
           <Route path="/" element={<LogIn />} />
           <Route path="/cuenta" element={<PagCuenta />} />
+          <Route path="/SOS" element={<SOS />} />
+
         </Routes>
       </BrowserRouter>
     </>

@@ -1,11 +1,18 @@
 export default function Boton1() {
-  function Cambio() {
-    console.log("cambio de pantalla");
+  function Alerta() {
+    console.log("Alerta");
   }
 
   return (
     <>
-      <button className="text-2xl text-red-600 border-red-400 border-2 rounded-full aspect-square p-2 hover:bg-red-100 active:scale-110 transition-scale duration-500 active:bg-red-300 active:border-8 " onClick={Cambio}>Cambiar</button>
+      <button
+        className="text-2xl h-40 text-white bg-red-600 ring-5 ring-red-700 border-white border-3 rounded-full aspect-square p-2 active:scale-110 transition-scale duration-500 active:ring-8 shadow-[0_4px_16px_0_rgba(208,2,27,0.30)] 
+  md:shadow-[0_8px_32px_0_rgba(208,2,27,0.40)] "
+        onClick={Alerta}
+      >
+        <p className="font-extrabold text-7xl m-0 h-13">*</p>
+        <p className="font-extrabold text-2xl m-0">SOS</p>
+      </button>
     </>
   );
 }
