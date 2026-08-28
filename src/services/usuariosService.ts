@@ -1,14 +1,14 @@
 import { apiFetch } from './api';
 
 export const usuarioService = {
-  // GET /usuarios/perfil (Obtener datos del usuario)
+  // GET /auth/me (perfil del usuario autenticado)
   getPerfil: async () => {
-    return await apiFetch('/usuarios/perfil');
+    return await apiFetch('/auth/me');
   },
 
-  // PUT o PATCH /usuarios/perfil (Actualizar datos del perfil)
-  actualizarPerfil: async (data: Record<string, unknown>) => {
-    return await apiFetch('/usuarios/perfil', {
+  // PUT /usuarios/:id (requiere el id del usuario logueado)
+  actualizarPerfil: async (id: string, data: Record<string, unknown>) => {
+    return await apiFetch(`/usuarios/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
