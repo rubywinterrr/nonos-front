@@ -1,3 +1,5 @@
+// Configuración principal de rutas de la aplicación.
+// Se define aquí el flujo principal entre login, home, perfiles y pantallas de salud/contactos.
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home";
 import PanelAdulto from "./Pages/Adulto/panel-adulto";

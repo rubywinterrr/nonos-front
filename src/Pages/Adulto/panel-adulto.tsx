@@ -1,5 +1,8 @@
 import Header from "../../componentes/cajaArriba";
 import Footer from "../../componentes/cajaAbajo";
+
+// Panel principal para el perfil de adulto mayor.
+// Sirve como pantalla de inicio con una sección destacada y contenido complementario.
 export default function PanelAdulto() {
   return (
     <>

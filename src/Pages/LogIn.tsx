@@ -1,42 +1,53 @@
-import Header2 from "../componentes/cajaArriba2";
+//import Header2 from "../componentes/cajaArriba2";
 import { useNavigate } from "react-router-dom";
 
+// Pantalla de autenticación inicial.
+// Aquí el usuario inicia sesión con DNI y contraseña para ingresar a la app.
 export default function LogIn() {
   const navigate = useNavigate();
+
+  // Redirige al usuario a la pantalla principal después de validar el acceso.
   function Continuar() {
     navigate("/Home");
   }
+
   return (
     <>
-      <Header2 />
-      <main className="w-screen h-[90vh] bg-purple-200 flex flex-col justify-evenly items-center">
-        <h1 className="text-4xl font-extrabold">Cuenta</h1>
-        <div className="border h-70/100 w-75/100 rounded-2xl bg-white flex flex-col justify-center items-center gap-5">
-          <h2 className="text-3xl font-bold pb-4">Log In</h2>
-          <div className="h-15/100 w-80/100 flex flex-col gap-1">
-            <span className="text-xs">Usuario o Correo Electronico</span>
+      <main className="w-screen h-screen bg-main2 flex flex-col justify-evenly gap-15 items-center">
+        <div className="flex flex-col gap-3 items-center text[#002B2F] mt-0">
+          <img src="" alt="corazon" className="aspect-square h-25 border shadow-md" />
+          <h1 className="text-4xl font-semibold">Bienvenido a NONOS</h1>
+          <h2 className="text-2xl">Su compañero diario de salud.</h2>
+        </div>
+        <div className="border border-gray-400 shadow-md h-40/100 w-80/100 md:w-60/100 lg:w-40/100 rounded-xl bg-white flex flex-col justify-center items-center gap-5">
+          <div className="h-25/100 w-80/100 flex flex-col gap-1">
+            <span className="text-lg">Número de documento (DNI) </span>
             <input
               type="text"
-              className="w-80/100 h-60/100 bg-gray-200 border placeholder:text-[.75rem] focus:bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
-              placeholder="Ejemplo: Juan Cruz"
+              className="w-full h-60/100 bg-main2 border-2 border-gray-400 placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+              placeholder="Ej: 12345678"
             />
           </div>
-          <div className="h-15/100 w-80/100 flex flex-col gap-1 ">
-            <span className="text-xs">Contraseña</span>
+          <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
+            <span className="text-lg">Contraseña</span>
             <input
               type="password"
               name=""
               id=""
-              className="w-70/100 h-60/100 bg-gray-200 border placeholder:text-xs focus:bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+              className="w-full h-60/100 bg-main2 border-2 border-gray-400 placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
               placeholder="******"
             />
           </div>
           <button
-            className="h-7/100 w-auto border rounded-xl p-2 flex justify-center items-center cursor-pointer"
+            className="h-15/100 w-80/100 shadow-md bg-[#012B2F] text-white text-xl rounded-xl p-2 flex justify-center items-center cursor-pointer"
             onClick={Continuar}
           >
-            <p>Continuar</p>
+            <p>Entrar</p>
           </button>
+        </div>
+        <div className="w-80/100 h-auto flex flex-col gap-10 items-center justify-center text-2xl text-[#0D5C63]">
+          <h2 className="active:underline cursor-pointer">¿Olvidó su contraseña?</h2>
+          <h2 className="active:underline cursor-pointer">Contactar a Soporte</h2>
         </div>
       </main>
     </>

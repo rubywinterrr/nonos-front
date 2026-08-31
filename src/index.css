@@ -1,10 +1,13 @@
 * {
   box-sizing: border-box;
+  transition: all ease 0.5s;
 }
+
 body {
   min-height: 100vh;
   overflow-y: scroll; /* Asegura que el contenido sea desplazable */
 }
+
 html {
   scrollbar-width: none; /* Para navegadores basados en Firefox */
   font-family: "Public Sans", sans-serif;
@@ -20,6 +23,7 @@ html::-webkit-scrollbar {
 #root {
   min-height: 100vh;
 }
+
 /* @media (orientation: landscape) {
   body::before {
     content: "Por favor, gira tu dispositivo a posición vertical.";
@@ -41,5 +45,7 @@ html::-webkit-scrollbar {
 @import "tailwindcss";
 
 @theme {
+  --background-color-main: #fbf9f1; /*clase: bg-main2 */
+  --background-color-main2: #fcfaf2; /*clase: bg-main2 */
   --height-main: 77vh; /* clase: h-main */
 }

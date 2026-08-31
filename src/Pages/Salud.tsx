@@ -1,6 +1,7 @@
 import Header from "../componentes/cajaArriba";
 import Footer from "../componentes/cajaAbajo";
 
+// Vista principal para información relacionada con salud y seguimiento del usuario.
 export default function Salud() {
   return (
     <>

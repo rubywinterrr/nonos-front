@@ -1,5 +1,8 @@
 import Header from "../../componentes/cajaArriba";
 import Footer from "../../componentes/cajaAbajo";
+
+// Panel principal para la familia del usuario.
+// Aquí se concentra la vista de seguimiento y apoyo familiar dentro de la app.
 export default function PanelFamilia() {
   return (
     <>

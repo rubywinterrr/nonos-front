@@ -1,12 +1,16 @@
 import { useNavigate, useLocation } from "react-router-dom";
 
+// Barra de navegación inferior reutilizable.
+// Marca la pantalla activa y permite moverse entre Inicio, Salud, Contactos y SOS.
 export default function Footer() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Si la ruta actual es login, se deshabilita la navegación del footer.
   const isLoginScreen = location.pathname === "/";
   const currentPath = location.pathname.toLowerCase();
 
+  // Determina qué opción del footer está activa según la ruta actual.
   const isHome =
     currentPath === "/home" ||
     currentPath === "/adulto" ||
@@ -16,21 +20,25 @@ export default function Footer() {
   const isContactos = currentPath.startsWith("/contactos");
   const isSos = currentPath.startsWith("/sos");
 
+  // Redirige a la vista de inicio del sistema.
   function IrHome() {
     navigate("/Home");
     console.log("Home");
   }
 
+  // Redirige a la sección de salud.
   function IrSalud() {
     navigate("/Salud");
     console.log("Salud");
   }
 
+  // Redirige a la vista de contactos.
   function IrContactos() {
     navigate("/Contactos");
     console.log("Contactos");
   }
 
+  // Redirige a la pantalla de emergencia SOS.
   function IrSOS() {
     navigate("/SOS");
     console.log("Pantalla SOS");
