@@ -16,7 +16,6 @@ export default function SOS() {
           </h2>
         </div>
         <Boton1 />
-
         <h2 className="text-xl text-center text-gray-600 w-80">
           Avisaremos a tus contactos de emergencia inmediatamente.
         </h2>

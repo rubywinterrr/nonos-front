@@ -13,9 +13,9 @@ export default function LogIn() {
 
   return (
     <>
-      <main className="w-screen h-screen bg-main2 flex flex-col justify-evenly gap-15 items-center">
-        <div className="flex flex-col gap-3 items-center text[#002B2F] mt-0">
-          <img src="" alt="corazon" className="aspect-square h-25 border shadow-md" />
+      <main className="w-screen h-screen bg-main2 flex flex-col justify-evenly items-center">
+        <div className="flex flex-col gap-3 items-center text[#002B2F]">
+          <img src="" alt="corazon" className="aspect-square h-25 border shadow-md rounded-full" />
           <h1 className="text-4xl font-semibold">Bienvenido a NONOS</h1>
           <h2 className="text-2xl">Su compañero diario de salud.</h2>
         </div>
@@ -24,7 +24,7 @@ export default function LogIn() {
             <span className="text-lg">Número de documento (DNI) </span>
             <input
               type="text"
-              className="w-full h-60/100 bg-main2 border-2 border-gray-400 placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+              className="w-full h-70/100 bg-main2 border-2 border-gray-400 placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
               placeholder="Ej: 12345678"
             />
           </div>
@@ -34,7 +34,7 @@ export default function LogIn() {
               type="password"
               name=""
               id=""
-              className="w-full h-60/100 bg-main2 border-2 border-gray-400 placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+              className="w-full h-70/100 bg-main2 border-2 border-gray-400 placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
               placeholder="******"
             />
           </div>
