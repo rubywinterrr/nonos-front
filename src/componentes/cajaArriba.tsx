@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // Encabezado global de la aplicación.
 // Muestra el menú, el nombre de la app y acceso a la cuenta en todas las pantallas principales.
 export default function Header() {
   const navigate = useNavigate();
-
-  
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // Navega a la vista de cuenta del usuario.
   function Cuenta() {
@@ -15,6 +15,7 @@ export default function Header() {
 
   // Placeholder para abrir el menú lateral o acciones adicionales del header.
   function MenuDesplegable() {
+    setMenuAbierto(!menuAbierto);
     console.log("menu");
   }
 
@@ -33,7 +34,9 @@ export default function Header() {
           </div>
         </div>
         <div className="h-90/100  w-60/100 flex items-center justify-center">
-          <h1 className="font-bold text-5xl md:text-7xl md:font-extrabold">NONOS</h1>
+          <h1 className="font-bold text-5xl md:text-7xl md:font-extrabold">
+            NONOS
+          </h1>
         </div>
         <div
           id="der"
@@ -46,6 +49,32 @@ export default function Header() {
             cuenta
           </div>
         </div>
+
+        {/* Menú desplegable. */}
+        {menuAbierto && (
+          <nav className="absolute top-0 left-0 w-full lg:w-[40vw] h-screen bg-white shadow-xl flex flex-row items-baseline justify-center border-t-2 border-gray-200 z-50 lg:rounded-br-2xl rounded-b-2xl lg:rounded-bl-none">
+            <ul className="flex flex-col h-screen w-90/100 border-r border-gray-300">
+              <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
+                Mi Perfil
+              </li>
+              <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
+                Calendario
+              </li>
+              <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
+                Configuración
+              </li>
+              <li className="p-6 w-90/100 border-t-2 border-gray-300 absolute bottom-0 text-xl font-bold text-red-600 cursor-pointer md:hover:bg-red-50 transition-colors">
+                Cerrar Sesión
+              </li>
+            </ul>
+            <button
+              className="aspect-square h-10 cursor-pointer"
+              onClick={MenuDesplegable}
+            >
+              X
+            </button>
+          </nav>
+        )}
       </header>
     </>
   );
