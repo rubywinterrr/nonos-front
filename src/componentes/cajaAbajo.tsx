@@ -1,3 +1,7 @@
+import IconHome from "../assets/icon-home.png";
+import IconContactos from "../assets/icon-contactos.png";
+import IconSalud from "../assets/icon-salud.png";
+import IconSOS from "../assets/icon-sos.png";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
@@ -55,11 +59,13 @@ export default function Footer() {
           }`}
           onClick={isLoginScreen ? undefined : IrHome}
         >
-          <div
-            className={`aspect-square h-50/100 border ${
+          <img
+            className={`aspect-square h-35/100 ${
               isHome ? "border-[#002B2F] bg-white" : "border-gray-400"
             }`}
-          ></div>
+            src={IconHome}
+            alt="Inicio"
+          />
           <p
             className={`font-bold ${isHome ? "text-[#002B2F]" : "text-gray-800"}`}
           >
@@ -75,11 +81,13 @@ export default function Footer() {
           }`}
           onClick={isLoginScreen ? undefined : IrSalud}
         >
-          <div
-            className={`aspect-square h-50/100 border ${
+          <img
+            className={`aspect-square h-35/100 ${
               isSalud ? "border-[#002B2F] bg-white" : "border-gray-400"
             }`}
-          ></div>
+            src={IconSalud}
+            alt="Salud"
+          />
           <p
             className={`font-bold ${isSalud ? "text-[#002B2F]" : "text-gray-800"}`}
           >
@@ -95,11 +103,13 @@ export default function Footer() {
           }`}
           onClick={isLoginScreen ? undefined : IrContactos}
         >
-          <div
-            className={`aspect-square h-50/100 border ${
+          <img
+            className={`aspect-square h-30/100 ${
               isContactos ? "border-[#002B2F] bg-white" : "border-gray-400"
             }`}
-          ></div>
+            src={IconContactos}
+            alt="Contactos"
+          />
           <p
             className={`font-bold ${isContactos ? "text-[#002B2F]" : "text-gray-800"}`}
           >
@@ -115,11 +125,13 @@ export default function Footer() {
           }`}
           onClick={isLoginScreen ? undefined : IrSOS}
         >
-          <div
-            className={`aspect-square h-50/100 border border-[#D0021B] ${
+          <img
+            className={`aspect-square h-35/100 ${
               isSos ? "bg-white" : ""
             }`}
-          ></div>
+            src={IconSOS}
+            alt="SOS"
+          />
           <p className="font-bold text-[#D0021B]">SOS</p>
         </div>
       </footer>

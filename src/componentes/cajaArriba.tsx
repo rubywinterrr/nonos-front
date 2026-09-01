@@ -26,7 +26,6 @@ export default function Header() {
     console.log("Cuenta");
   }
 
-  // Alterna la apertura/cierre del menú lateral.
   function MenuDesplegable() {
     setMenuAbierto(!menuAbierto);
     console.log("menu");
@@ -76,7 +75,7 @@ export default function Header() {
             {/* Menú lateral */}
             <nav className="fixed top-0 left-0 w-full lg:w-[40vw] h-screen bg-white shadow-xl flex flex-row items-baseline justify-center border-t-2 border-gray-200 z-50 lg:rounded-br-2xl rounded-0 lg:rounded-bl-none">
               <ul className="flex flex-col h-screen w-90/100 border-r border-gray-300">
-                <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
+                <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors" onClick={Cuenta}>
                   Mi Perfil
                 </li>
                 <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
