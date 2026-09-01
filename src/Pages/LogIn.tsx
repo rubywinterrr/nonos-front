@@ -19,7 +19,7 @@ export default function LogIn() {
           <h2 className="text-2xl">Su compañero diario de salud.</h2>
         </div>
         <div className="border border-gray-400 shadow-md h-40/100 w-80/100 md:w-60/100 lg:w-40/100 rounded-xl bg-white flex flex-col justify-center items-center gap-3">
-          <div className="h-30/100 w-80/100 flex flex-col gap-1">
+          <div className="h-25/100 w-80/100 flex flex-col gap-1">
             <span className="text-lg">Número de documento (DNI) </span>
             <input
               type="text"
@@ -27,7 +27,7 @@ export default function LogIn() {
               placeholder="Ej: 12345678"
             />
           </div>
-          <div className="h-30/100 w-80/100 flex flex-col gap-1 ">
+          <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
             <span className="text-lg">Contraseña</span>
             <input
               type="password"
