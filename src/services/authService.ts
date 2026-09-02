@@ -1,5 +1,18 @@
 import { apiFetch } from './api';
 
+export interface Usuario {
+  id: string;
+  email: string;
+  nombreCompleto: string;
+  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'MEDICO';
+  fechaNacimiento: string | null;
+  telefono: string | null;
+  fotoUrl: string | null;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -46,7 +59,7 @@ export const authService = {
 
   // Obtener perfil del usuario activo
   getProfile: async () => {
-    return await apiFetch('/auth/me');
+    return await apiFetch<{ user: Usuario }>('/auth/me');
   },
 
   // Cerrar sesión
