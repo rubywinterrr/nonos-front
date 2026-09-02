@@ -1,3 +1,11 @@
+import IconHome from "../assets/icon-home.png";
+import IconHomeW from "../assets/icon-home-white.png";
+import IconContactos from "../assets/icon-contactos.png";
+import IconContactosW from "../assets/icon-contactos-white.png";
+import IconSalud from "../assets/icon-salud.png";
+import IconSaludW from "../assets/icon-salud-white.png";
+import IconSOS from "../assets/icon-sos.png";
+import IconSOSW from "../assets/icon-sos-white.png";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
@@ -49,78 +57,68 @@ export default function Footer() {
       <footer className="bg-white border-t-2 border-[#002B2F] h-[13vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
         <div
           className={`h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isHome
-              ? "border-2 border-[#002B2F] bg-[#E8F1F2]"
-              : "border border-gray-300 bg-white hover:bg-gray-50"
+            isHome ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
           }`}
           onClick={isLoginScreen ? undefined : IrHome}
         >
           <div
-            className={`aspect-square h-50/100 border ${
-              isHome ? "border-[#002B2F] bg-white" : "border-gray-400"
-            }`}
-          ></div>
-          <p
-            className={`font-bold ${isHome ? "text-[#002B2F]" : "text-gray-800"}`}
-          >
-            Inicio
-          </p>
+            className="aspect-square h-35/100 bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${isHome ? IconHomeW : IconHome})`,
+              backgroundSize: "70%",
+            }}
+          />
+          <p className="font-bold">Inicio</p>
         </div>
 
         <div
           className={`h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isSalud
-              ? "border-2 border-[#002B2F] bg-[#E8F1F2]"
-              : "border border-gray-300 bg-white hover:bg-gray-50"
+            isSalud ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
           }`}
           onClick={isLoginScreen ? undefined : IrSalud}
         >
           <div
-            className={`aspect-square h-50/100 border ${
-              isSalud ? "border-[#002B2F] bg-white" : "border-gray-400"
-            }`}
-          ></div>
-          <p
-            className={`font-bold ${isSalud ? "text-[#002B2F]" : "text-gray-800"}`}
-          >
-            Salud
-          </p>
+            className="aspect-square h-35/100 bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${isSalud ? IconSaludW : IconSalud})`,
+              backgroundSize: "70%",
+            }}
+          />
+          <p className="font-bold">Salud</p>
         </div>
 
         <div
           className={`h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isContactos
-              ? "border-2 border-[#002B2F] bg-[#E8F1F2]"
-              : "border border-gray-300 bg-white hover:bg-gray-50"
+            isContactos ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
           }`}
           onClick={isLoginScreen ? undefined : IrContactos}
         >
           <div
-            className={`aspect-square h-50/100 border ${
-              isContactos ? "border-[#002B2F] bg-white" : "border-gray-400"
-            }`}
-          ></div>
-          <p
-            className={`font-bold ${isContactos ? "text-[#002B2F]" : "text-gray-800"}`}
-          >
-            Contactos
-          </p>
+            className="aspect-square h-35/100 bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${
+                isContactos ? IconContactosW : IconContactos
+              })`,
+              backgroundSize: "70%",
+            }}
+          />
+          <p className="font-bold">Contactos</p>
         </div>
 
         <div
-          className={`h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 bg-[#FFDAD6] ${
-            isSos
-              ? "border-2 border-[#D0021B] ring-2 ring-[#D0021B]/30"
-              : "border border-[#D0021B]/40 hover:bg-[#ffcdd2]"
+          className={`h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
+            isSos ? "bg-[#002B2F] text-white " : "bg-white hover:bg-[#002B2F]/25"
           }`}
           onClick={isLoginScreen ? undefined : IrSOS}
         >
           <div
-            className={`aspect-square h-50/100 border border-[#D0021B] ${
-              isSos ? "bg-white" : ""
-            }`}
-          ></div>
-          <p className="font-bold text-[#D0021B]">SOS</p>
+            className="aspect-square h-35/100 bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${isSos ? IconSOSW : IconSOS})`,
+              backgroundSize: "70%",
+            }}
+          />
+          <p className="font-bold">SOS</p>
         </div>
       </footer>
     </>
