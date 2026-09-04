@@ -1,3 +1,4 @@
+import heartIMG from "../assets/heart.png";
 import { useNavigate } from "react-router-dom";
 import {useState} from "react";
 import {useAuth} from "../context/AuthContext";
@@ -34,7 +35,7 @@ export default function LogIn() {
     <>
       <main className="w-screen h-screen bg-main2 flex flex-col justify-evenly items-center">
         <div className="flex flex-col gap-3 items-center text[#002B2F]">
-          <img src="" alt="corazon" className="aspect-square h-25 border shadow-md rounded-full" />
+          <img src={heartIMG} alt="corazon" className="h-25 rounded-full" />
           <h1 className="text-4xl font-semibold">Bienvenido a NONOS</h1>
           <h2 className="text-2xl">Su compañero diario de salud.</h2>
         </div>

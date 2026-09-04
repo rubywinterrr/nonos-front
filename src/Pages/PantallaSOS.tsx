@@ -1,6 +1,6 @@
-import Header from "../componentes/cajaArriba";
-import Footer from "../componentes/cajaAbajo";
-import Boton1 from "../componentes/boton1";
+import Header from "../components/cajaArriba";
+import Footer from "../components/cajaAbajo";
+import Boton1 from "../components/boton1";
 
 // Pantalla de emergencia.
 // Centraliza la acción de alerta y comunica al usuario el aviso inmediato a contactos.

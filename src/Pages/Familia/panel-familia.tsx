@@ -1,5 +1,5 @@
-import Header from "../../componentes/cajaArriba";
-import Footer from "../../componentes/cajaAbajo";
+import Header from "../../components/cajaArriba";
+import Footer from "../../components/cajaAbajo";
 
 // Panel principal para la familia del usuario.
 // Aquí se concentra la vista de seguimiento y apoyo familiar dentro de la app.
