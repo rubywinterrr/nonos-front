@@ -10,6 +10,7 @@ import PagCuenta from "./Pages/Cuenta";
 import SOS from "./Pages/PantallaSOS";
 import Salud from "./Pages/Salud";
 import Contactos from "./Pages/Contactos";
+import Config from "./Pages/Configuration";
 
 function App() {
   console.log("/adulto, /cuidador, /familia");
@@ -34,6 +35,8 @@ function App() {
           <Route path="/salud" element={<Salud />} />
           <Route path="/Contactos" element={<Contactos />} />
           <Route path="/contactos" element={<Contactos />} />
+          <Route path="/Configuracion" element={<Config />} />
+          <Route path="/configuracion" element={<Config />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,5 +1,5 @@
-import Header from "../../componentes/cajaArriba";
-import Footer from "../../componentes/cajaAbajo";
+import Header from "../../components/cajaArriba";
+import Footer from "../../components/cajaAbajo";
 
 // Panel principal para el perfil de adulto mayor.
 // Sirve como pantalla de inicio con una sección destacada y contenido complementario.

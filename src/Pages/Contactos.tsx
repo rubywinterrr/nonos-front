@@ -1,5 +1,5 @@
-import Header from "../componentes/cajaArriba";
-import Footer from "../componentes/cajaAbajo";
+import Header from "../components/cajaArriba";
+import Footer from "../components/cajaAbajo";
 
 // Vista para gestionar contactos o personas de emergencia vinculadas a la app.
 export default function Contactos() {

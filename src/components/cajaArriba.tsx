@@ -32,6 +32,11 @@ export default function Header() {
     console.log("menu");
   }
 
+  function IrConfig(){
+    navigate("/Configuracion");
+    console.log("Configuracion");
+  }
+
   return (
     <>
       <header className="border-b-2 h-[10vh] md:h-[12vh] w-screen flex items-center justify-between">
@@ -58,7 +63,7 @@ export default function Header() {
           className="h-90/100  w-20/100 flex items-center justify-center"
         >
           <img
-            className="aspect-square h-75/100 md:h-80/100 scale-110 cursor-pointer text-sm p-5"
+            className="aspect-square h-18 scale-110 cursor-pointer text-sm p-5"
             src={FotoCuenta}
             alt="Foto de perfil"
             onClick={Cuenta}
@@ -87,7 +92,7 @@ export default function Header() {
                 <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
                   Calendario
                 </li>
-                <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
+                <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors" onClick={IrConfig}>
                   Configuración
                 </li>
                 <li className="p-6 w-90/100 border-t-2 border-gray-300 absolute bottom-0 text-xl font-bold text-red-600 cursor-pointer md:hover:bg-red-50 transition-colors">

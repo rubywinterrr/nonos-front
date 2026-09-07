@@ -1,5 +1,5 @@
-import Header from "../componentes/cajaArriba";
-import Footer from "../componentes/cajaAbajo";
+import Header from "../components/cajaArriba";
+import Footer from "../components/cajaAbajo";
 
 // Página principal de inicio del usuario.
 // Presenta una estructura de bloques con secciones de contenido y el layout base del sistema.
