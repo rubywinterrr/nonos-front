@@ -23,7 +23,7 @@ export default function LogIn() {
       navigate("/Home");
     }
     catch (err) {
-      (err instanceof Error ? err.message : "Error al iniciar sesión");
+      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     }
     finally{
       setCargando(false);
@@ -42,7 +42,7 @@ export default function LogIn() {
           <div className="h-25/100 w-80/100 flex flex-col gap-1">
             <span className="text-lg">Email </span>
             <input
-              type="text"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full h-70/100 bg-main2 border-2 border-gray-400 placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
