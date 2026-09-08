@@ -27,7 +27,13 @@ export default function LogInForm() {
 
   return (
     <>
-      <div className="border border-gray-400 shadow-md h-40/100 w-80/100 md:w-60/100 lg:w-40/100 rounded-xl bg-white flex flex-col justify-center items-center gap-3">
+      <form
+        className="border border-gray-400 shadow-md h-40/100 w-80/100 md:w-60/100 lg:w-40/100 rounded-xl bg-white flex flex-col justify-center items-center gap-3"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
+        }}
+      >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <span className="text-lg">Email </span>
           <input
@@ -52,13 +58,13 @@ export default function LogInForm() {
         </div>
         <button
           className="h-15/100 w-80/100 shadow-md bg-[#012B2F] text-white text-xl rounded-xl p-2 flex justify-center items-center cursor-pointer"
-          onClick={handleLogin}
+          type="submit"
           disabled={cargando}
         >
           <p>{cargando ? "Entrando..." : "Iniciar sesión"}</p>
         </button>
         {error && <p className="text-red-600 text-sm">{error}</p>}
-      </div>
+      </form>
     </>
   );
 }
