@@ -28,40 +28,43 @@ export default function LogInForm() {
   return (
     <>
       <form
-        className="border border-gray-400 shadow-md h-40/100 w-80/100 md:w-60/100 lg:w-40/100 rounded-xl bg-white flex flex-col justify-center items-center gap-3"
+        className="w-90/100 md:w-60/100 lg:w-40/100 flex flex-col justify-center items-center gap-5"
         onSubmit={(e) => {
           e.preventDefault();
           handleLogin();
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <span className="text-lg">Email </span>
+          <label className="text-lg">Correo electrónico </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-70/100 bg-main2 border-2 border-gray-400 placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+            className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: nonos@gmail.com"
           />
+          <span className="text-sm text-gray-500">
+            Solo el correo. Sin espacios ni guiones.
+          </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
-          <span className="text-lg">Contraseña</span>
+          <label className="text-lg">Contraseña</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             name=""
             id=""
-            className="w-full h-70/100 bg-main2 border-2 border-gray-400 placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
-            placeholder="******"
+            className="w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+            placeholder="Ej: Nonos1234!"
           />
         </div>
         <button
-          className="h-15/100 w-80/100 shadow-md bg-[#012B2F] text-white text-xl rounded-xl p-2 flex justify-center items-center cursor-pointer"
+          className="h-15/100 w-70/100 shadow-md bg-black text-white text-xl rounded-xl p-2 flex justify-center items-center cursor-pointer"
           type="submit"
           disabled={cargando}
         >
-          <p>{cargando ? "Entrando..." : "Iniciar sesión"}</p>
+          <p>{cargando ? "Entrando..." : "Ingresar"}</p>
         </button>
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </form>

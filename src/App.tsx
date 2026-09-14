@@ -5,7 +5,7 @@ import Home from "./Pages/Home";
 import PanelAdulto from "./Pages/Adulto/panel-adulto";
 import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
 import PanelFamilia from "./Pages/Familia/panel-familia";
-import LogIn from "./Pages/LogIn";
+import Ingreso from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
 import SOS from "./Pages/PantallaSOS";
 import Salud from "./Pages/Salud";
@@ -26,7 +26,7 @@ function App() {
           <Route path="/familia" element={<PanelFamilia />} />
           <Route path="/Cuidador" element={<PanelCuidador />} />
           <Route path="/cuidador" element={<PanelCuidador />} />
-          <Route path="/" element={<LogIn />} />
+          <Route path="/" element={<Ingreso />} />
           <Route path="/cuenta" element={<PagCuenta />} />
           <Route path="/Cuenta" element={<PagCuenta />} />
           <Route path="/SOS" element={<SOS />} />
