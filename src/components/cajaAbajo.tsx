@@ -54,7 +54,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="bg-white border-t-2 border-[#002B2F] h-[13vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
+      <footer className="bg-white border-t-2 border-[#002B2F] h-[11vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
         <div
           className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isHome ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"

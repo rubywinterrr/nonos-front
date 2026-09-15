@@ -10,7 +10,7 @@ body {
 
 html {
   scrollbar-width: none; /* Para navegadores basados en Firefox */
-  font-family: "Public Sans", sans-serif;
+   font-family: "Atkinson Hyperlegible Next", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -46,5 +46,5 @@ html::-webkit-scrollbar {
 
 @theme {
   --background-color-main: #F7F9FF; /*clase: bg-main2 */
-  --height-main: 77vh; /* clase: h-main */
+  --height-main: 89vh; /* clase: h-main */
 }

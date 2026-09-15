@@ -43,7 +43,7 @@ export default function LogInForm() {
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: nonos@gmail.com"
           />
-          <span className="text-sm text-gray-500">
+          <span className="text-xs text-gray-500">
             Solo el correo. Sin espacios ni guiones.
           </span>
         </div>
@@ -66,7 +66,7 @@ export default function LogInForm() {
         >
           <p>{cargando ? "Entrando..." : "Ingresar"}</p>
         </button>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-red-600 text-xs">{error}</p>}
       </form>
     </>
   );

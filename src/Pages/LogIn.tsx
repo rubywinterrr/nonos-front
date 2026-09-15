@@ -21,9 +21,9 @@ export default function Ingreso() {
               Acompañamiento Mayor
             </span>
           </div>
-          <h2 className="text-2xl font-bold">Registrese a NONOS</h2>
+          <h2 className="text-2xl font-bold">{hasAccount ? "Ingrese a NONOS" : "Registrese a NONOS"}</h2>
         </div>
-        <div className="border w-80/100 md:w-30/100 h-[9vh] md:h-[10vh] bg-white rounded-2xl">
+        <div className="border w-80/100 md:w-30/100 h-15 md:h-18 bg-white rounded-2xl text-center">
           gugel
         </div>
         <div className="flex items-center w-80/100">
