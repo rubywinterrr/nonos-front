@@ -81,9 +81,7 @@ export default function RegisterForm() {
             Al menos un caracter especial (! @ # $ % & * ?)
           </span>
         </div>
-        
-
-        <div className="flex flex-col gap-1 mt-2 w-80/100 md:w-60/100 lg:w-40/100 ">
+        <div className="flex flex-col gap-1 mt-2 w-80/100 ">
           <label className="text-lg font-bold">Selecciona tu rol</label>
           <span className="text-sm text-gray-500">
             Elegí en función de tu usuario

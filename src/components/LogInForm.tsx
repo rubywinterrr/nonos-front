@@ -28,7 +28,7 @@ export default function LogInForm() {
   return (
     <>
       <form
-        className="w-90/100 md:w-60/100 lg:w-40/100 flex flex-col justify-center items-center gap-5"
+        className="w-90/100 lg:w-50/100 xl:w-35/100 flex flex-col justify-center items-center gap-5"
         onSubmit={(e) => {
           e.preventDefault();
           handleLogin();
