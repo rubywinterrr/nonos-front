@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import iconCandado from "../assets/Icon-Candado.png";
+import iconEmail from "../assets/Icon-Email.png";
+import iconPersona from "../assets/Icon-Persona.png";
 export default function RegisterForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -34,7 +37,10 @@ export default function RegisterForm() {
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <label className="text-lg">Nombre completo </label>
+          <label className="text-lg flex items-center gap-2">
+            <img src={iconPersona} alt="" className="h-6 w-6 object-contain p-0.5" />
+            Nombre completo
+          </label>
           <input
             type="email"
             value={email}
@@ -47,7 +53,10 @@ export default function RegisterForm() {
           </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <label className="text-lg">Correo electrónico </label>
+          <label className="text-lg flex items-center gap-2">
+            <img src={iconEmail} alt="" className="h-6 w-6 object-contain p-0.5" />
+            Correo electrónico
+          </label>
           <input
             type="email"
             value={email}
@@ -60,7 +69,10 @@ export default function RegisterForm() {
           </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
-          <label className="text-lg">Contraseña</label>
+          <label className="text-lg flex items-center gap-2">
+            <img src={iconCandado} alt="" className="h-6 w-6 object-contain p-0.5" />
+            Contraseña
+          </label>
           <input
             type="password"
             value={password}

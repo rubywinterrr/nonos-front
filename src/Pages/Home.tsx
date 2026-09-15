@@ -23,8 +23,7 @@ export default function Home() {
   return (
     <>
       <main className="flex flex-col">
-        <div className="flex flex-col lg:flex-row">
-          <section className="h-main bg-[#B9D2FF] w-screen lg:w-[50vw] flex flex-col p-7 items-baseline gap-10">
+          <section className="min:h-main bg-[#B9D2FF] w-screen lg:w-[50vw] flex flex-col items-baseline p-7 pb-[13vh] gap-10">
             <header className="flex justify-between items-center w-full">
               <h1 className="text-2xl font-extrabold">Inicio</h1>
               <div className="border h-10 aspect-square"></div>
@@ -35,20 +34,30 @@ export default function Home() {
               </h1>
               <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
             </div>
+            <div className="flex flex-col gap-5 w-90/100">
+              <div className="bg-white rounded-2xl w-full min:h-30 p-4 shadow-md">
+                <ol className="list-inside list-disc">
+                  <li>0</li>
+                  <li>1</li>
+                  <li>2</li>
+                  <li>3</li>
+                  <li>4</li>
+                </ol>
+              </div>
+              <div className="bg-white rounded-2xl w-full h-20 p-4 shadow-md">
+                2
+              </div>
+              <div className="bg-white rounded-2xl w-full h-20 p-4 shadow-md">
+                3
+              </div>
+              <div className="bg-white rounded-2xl w-full h-20 p-4 shadow-md">
+                4
+              </div>
+              <div className="bg-[#FF0000] rounded-2xl w-full h-30 p-4 shadow-md text-white">
+                Emergencia
+              </div>
+            </div>
           </section>
-
-          <section className="w-screen lg:w-[50vw] h-[40vh] lg:h-main bg-amber-100">
-            <h1 className="text-2xl font-extrabold p-5">Sección 2</h1>
-          </section>
-        </div>
-        <div className="flex flex-col lg:flex-row">
-          <section className="w-screen lg:w-[50vw] h-[30vh] lg:h-main bg-blue-100">
-            <h1 className="text-2xl font-extrabold p-5">Sección 3</h1>
-          </section>
-          <section className="w-screen lg:w-[50vw] h-[60vh] lg:h-main bg-red-100">
-            <h1 className="text-2xl font-extrabold p-5">Sección 4</h1>
-          </section>
-        </div>
       </main>
       <Footer />
     </>

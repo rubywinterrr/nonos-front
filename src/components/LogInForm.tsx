@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import iconCandado from "../assets/Icon-Candado.png";
+import iconEmail from "../assets/Icon-Email.png";
+
 
 export default function LogInForm() {
   const navigate = useNavigate();
@@ -35,7 +38,10 @@ export default function LogInForm() {
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <label className="text-lg">Correo electrónico </label>
+          <label className="text-lg flex items-center gap-2">
+            <img src={iconEmail} alt="" className="h-6 w-6 object-contain p-0.5" />
+            Correo electrónico
+          </label>
           <input
             type="email"
             value={email}
@@ -48,7 +54,10 @@ export default function LogInForm() {
           </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
-          <label className="text-lg">Contraseña</label>
+          <label className="text-lg flex items-center gap-2">
+            <img src={iconCandado} alt="" className="h-6 w-6 object-contain p-0.5" />
+            Contraseña
+          </label>
           <input
             type="password"
             value={password}

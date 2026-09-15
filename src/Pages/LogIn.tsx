@@ -16,7 +16,7 @@ function IngresoContent() {
   });
 
   return (
-    <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center">
+    <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">
       <div className="flex flex-col gap-3 items-center text-[#002B2F]">
         <div className="h-20 bg-gray-300 aspect-square rounded-3xl" />
         <div className="flex flex-col items-center gap-0">
@@ -56,28 +56,30 @@ function IngresoContent() {
         Iniciar sesión con Google
       </button>
 
-      <div className="flex items-center w-[80%]">
+      <div className="flex items-center w-[80%] lg:w-[40%]">
         <div className="border-t grow border-gray-300"></div>
         <span className="px-4 text-md text-gray-400">O bien</span>
         <div className="border-t grow border-gray-300"></div>
       </div>
-
+    
       {hasAccount ? <LogInForm /> : <RegisterForm />}
 
-      <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
-        <span className="active:underline cursor-pointer" onClick={toggleForm}>
+      <span className="active:underline cursor-pointer" onClick={toggleForm}>
           {hasAccount
             ? "¿No tiene cuenta? Regístrese"
             : "¿Ya tiene cuenta? Inicie sesión"}
         </span>
+
+      {/* <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
+        
         <hr className="border w-screen border-gray-200 m-0" />
         <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63]">
           ¿Olvidó su contraseña?
         </h2>
-        <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63] mb-10">
+        <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63">
           Contactar a Soporte
         </h2>
-      </footer>
+      </footer>*/}
     </main>
   );
 }
