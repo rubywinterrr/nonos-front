@@ -1,4 +1,4 @@
-import Header from "../components/cajaArriba";
+import Header from "../components/Header2";
 import Footer from "../components/cajaAbajo";
 export default function Config() {
   return (

@@ -1,5 +1,5 @@
 import Footer from "../components/cajaAbajo";
-import Header from "../components/cajaArriba";
+import Header from "../components/Header2";
 
 // Pantalla de perfil y configuración de la cuenta del usuario.
 export default function PagCuenta() {

@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import iconCandado from "../assets/Icon-Candado.png";
 import iconEmail from "../assets/Icon-Email.png";
 import iconPersona from "../assets/Icon-Persona.png";
+import iconIngreso from "../assets/Icon-Ingreso.png";
 export default function RegisterForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -38,15 +39,16 @@ export default function RegisterForm() {
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img src={iconPersona} alt="" className="h-6 w-6 object-contain p-0.5" />
+            <img
+              src={iconPersona}
+              alt=""
+              className="h-5 aspect-square object-contain p-0.5"
+            />
             Nombre completo
           </label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
-            placeholder="Ej: nonos@gmail.com"
+            placeholder="Ej: Juan Carlos Cruz"
           />
           <span className="text-xs text-gray-500">
             Ingrese su nombre completo.
@@ -54,7 +56,11 @@ export default function RegisterForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img src={iconEmail} alt="" className="h-6 w-6 object-contain p-0.5" />
+            <img
+              src={iconEmail}
+              alt=""
+              className="h-5 aspect-square object-contain p-0.5"
+            />
             Correo electrónico
           </label>
           <input
@@ -70,7 +76,11 @@ export default function RegisterForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
           <label className="text-lg flex items-center gap-2">
-            <img src={iconCandado} alt="" className="h-6 w-6 object-contain p-0.5" />
+            <img
+              src={iconCandado}
+              alt=""
+              className="h-6 w-6 object-contain p-0.5"
+            />
             Contraseña
           </label>
           <input
@@ -117,11 +127,19 @@ export default function RegisterForm() {
           </div>
         </div>
         <button
-          className="h-15/100 w-70/100 shadow-md bg-black text-white text-xl rounded-xl p-2 flex justify-center items-center cursor-pointer"
+          className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer"
           type="submit"
           disabled={cargando}
         >
-          <p>{cargando ? "Entrando..." : "Ingresar"}</p>
+          <p className="flex gap-3 items-center text-md">
+            {" "}
+            <img
+              src={iconIngreso}
+              alt=""
+              className="h-5 aspect-square object-contain p-0.5"
+            />
+            {cargando ? "Entrando..." : "Ingresar"}
+          </p>
         </button>
         {error && <p className="text-red-600 text-sm">{error}</p>}{" "}
       </form>

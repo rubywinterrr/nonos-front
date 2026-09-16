@@ -1,11 +1,13 @@
-//import Header from "../components/cajaArriba";
+import Header from "../components/Header";
 import Footer from "../components/cajaAbajo";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // Página principal de inicio del usuario.
 // Presenta una estructura de bloques con secciones de contenido y el layout base del sistema.
 export default function Home() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const obtenerFechaActual = () => {
     const fecha = new Date();
     // Configuramos qué datos queremos (día de la semana, día del mes y mes)
@@ -23,19 +25,16 @@ export default function Home() {
   return (
     <>
       <main className="flex flex-col">
-          <section className="min:h-main bg-[#B9D2FF] w-screen lg:w-[50vw] flex flex-col items-baseline p-7 pb-[13vh] gap-10">
-            <header className="flex justify-between items-center w-full">
-              <h1 className="text-2xl font-extrabold">Inicio</h1>
-              <div className="border h-10 aspect-square"></div>
-            </header>
+          <section className="min-h-main bg-main-blue w-screen lg:w-[50vw] flex flex-col items-baseline p-7 pb-[13vh] gap-10">
+            <Header />
             <div>
               <h1 className="font-bold text-2xl mb-5">
                 ¡Hola {user?.nombre || "Usuario"}!
               </h1>
               <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
             </div>
-            <div className="flex flex-col gap-5 w-90/100">
-              <div className="bg-white rounded-2xl w-full min:h-30 p-4 shadow-md">
+            <div className="flex flex-col justify-center gap-5 w-full">
+              <div className="bg-white rounded-2xl w-full min-h-30 p-4 shadow-md">
                 <ol className="list-inside list-disc">
                   <li>0</li>
                   <li>1</li>
@@ -53,7 +52,7 @@ export default function Home() {
               <div className="bg-white rounded-2xl w-full h-20 p-4 shadow-md">
                 4
               </div>
-              <div className="bg-[#FF0000] rounded-2xl w-full h-30 p-4 shadow-md text-white">
+              <div className="bg-[#FF0000] rounded-2xl w-full h-30 p-4 shadow-md text-white cursor-pointer" onClick={() => navigate("/SOS")}>
                 Emergencia
               </div>
             </div>

@@ -45,6 +45,7 @@ html::-webkit-scrollbar {
 @import "tailwindcss";
 
 @theme {
-  --background-color-main: #F7F9FF; /*clase: bg-main2 */
+  --background-color-main: #F7F9FF; /*clase: bg-main */
+  --background-color-main-blue: #B9D2FF; /*clase: bg-main-blue */
   --height-main: 89vh; /* clase: h-main */
 }

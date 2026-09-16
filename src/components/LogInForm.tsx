@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import iconCandado from "../assets/Icon-Candado.png";
 import iconEmail from "../assets/Icon-Email.png";
-
+import iconIngreso from "../assets/Icon-Ingreso.png";
 
 export default function LogInForm() {
   const navigate = useNavigate();
@@ -39,7 +39,11 @@ export default function LogInForm() {
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img src={iconEmail} alt="" className="h-6 w-6 object-contain p-0.5" />
+            <img
+              src={iconEmail}
+              alt=""
+              className="h-5 aspect-square object-contain p-0.5"
+            />
             Correo electrónico
           </label>
           <input
@@ -55,7 +59,11 @@ export default function LogInForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
           <label className="text-lg flex items-center gap-2">
-            <img src={iconCandado} alt="" className="h-6 w-6 object-contain p-0.5" />
+            <img
+              src={iconCandado}
+              alt=""
+              className="h-5 aspect-square object-contain p-0.5"
+            />
             Contraseña
           </label>
           <input
@@ -69,11 +77,19 @@ export default function LogInForm() {
           />
         </div>
         <button
-          className="h-15/100 w-70/100 shadow-md bg-black text-white text-xl rounded-xl p-2 flex justify-center items-center cursor-pointer"
+          className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer"
           type="submit"
           disabled={cargando}
         >
-          <p>{cargando ? "Entrando..." : "Ingresar"}</p>
+          <p className="flex gap-3 items-center text-md">
+            {" "}
+            <img
+              src={iconIngreso}
+              alt=""
+              className="h-5 aspect-square object-contain p-0.5"
+            />
+            {cargando ? "Entrando..." : "Ingresar"}
+          </p>
         </button>
         {error && <p className="text-red-600 text-xs">{error}</p>}
       </form>

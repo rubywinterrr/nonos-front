@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 // Encabezado global de la aplicación.
 // Muestra el menú, el nombre de la app y acceso a la cuenta en todas las pantallas principales.
-export default function Header() {
+export default function Header2() {
   const navigate = useNavigate();
   const [menuAbierto, setMenuAbierto] = useState(false);
 
@@ -32,7 +32,7 @@ export default function Header() {
     console.log("menu");
   }
 
-  function IrConfig(){
+  function IrConfig() {
     navigate("/Configuracion");
     console.log("Configuracion");
   }
@@ -92,7 +92,10 @@ export default function Header() {
                 <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors">
                   Calendario
                 </li>
-                <li className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors" onClick={IrConfig}>
+                <li
+                  className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors"
+                  onClick={IrConfig}
+                >
                   Configuración
                 </li>
                 <li className="p-6 w-90/100 border-t-2 border-gray-300 absolute bottom-0 text-xl font-bold text-red-600 cursor-pointer md:hover:bg-red-50 transition-colors">

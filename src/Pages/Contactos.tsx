@@ -1,4 +1,4 @@
-import Header from "../components/cajaArriba";
+import Header from "../components/Header2";
 import Footer from "../components/cajaAbajo";
 
 // Vista para gestionar contactos o personas de emergencia vinculadas a la app.
