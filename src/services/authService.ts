@@ -23,6 +23,13 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
+export interface RegisterData {
+  email: string;
+  password: string;
+  nombreCompleto: string;
+  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'MEDICO';
+  }
+
 export const authService = {
   login: async (credentials: LoginCredentials) => {
     const data = await apiFetch<AuthResponse>('/auth/login', {
@@ -62,6 +69,13 @@ export const authService = {
     return await apiFetch<{ user: Usuario }>('/auth/me');
   },
 
+  register: async (data: RegisterData) => {
+    return await apiFetch<{ message: string }>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  
   // Cerrar sesión
   logout: async () => {
     const refreshToken = localStorage.getItem('nonos_refresh_token');
