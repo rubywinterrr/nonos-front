@@ -64,7 +64,7 @@ export default function SOS() {
               cualquier momento.
             </h1>
             <div className="flex flex-col gap-3 w-full">
-              <button className="bg-red-500 rounded-2xl w-full  h-18 flex items-center justify-center text-lg p-5 gap-3 text-white font-semibold cursor-pointer">
+              <button className="bg-red-600 rounded-2xl w-full  h-18 flex items-center justify-center text-lg p-5 gap-3 text-white font-semibold cursor-pointer">
                 {" "}
                 <img src={iconTelefono} alt="Teléfono" className="h-6" /> Llamar
                 al 107 (Emergencias Médicas)
