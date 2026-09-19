@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import Footer from "../components/cajaAbajo";
+import Footer from "../components/NavBar";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import iconAlerta from "../assets/Icon-Alerta.png";
@@ -50,7 +50,7 @@ export default function Home() {
             </div>
             <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
               <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center">
-                <img src={iconTarjeta} alt="tarjeta" className="p-4" />
+                <img src={iconTarjeta} alt="tarjeta" className="p-3" />
               </div>
               <div className="flex items-center w-80/100 justify-between bder">
                 <div className="flex flex-col gap-1 justify-center">
@@ -86,7 +86,7 @@ export default function Home() {
             </div>
             <div className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
               <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center">
-                <img src={iconQR} alt="QR" className="p-4.5" />
+                <img src={iconQR} alt="QR" className="p-3" />
               </div>
               <div className="flex items-center w-80/100 justify-between">
                 <div className="flex flex-col gap-1 justify-center">
@@ -113,7 +113,7 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-1 justify-center items-center">
                 <h1 className="font-bold text-2xl">PEDIR AYUDA URGENTE</h1>
-                <p className="font-bold text-md text-white/60">
+                <p className="font-bold text-md text-white/70 text-center">
                   Presioná para notificar a tu familia y cuidadores
                 </p>
               </div>

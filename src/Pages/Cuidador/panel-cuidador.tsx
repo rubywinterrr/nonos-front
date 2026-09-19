@@ -1,5 +1,5 @@
 import Header from "../../components/Header2";
-import Footer from "../../components/cajaAbajo";
+import Footer from "../../components/NavBar";
 
 // Panel principal para el perfil del cuidador.
 // Se utiliza para mostrar información relevante y acceso rápido a herramientas del cuidado.

@@ -1,4 +1,4 @@
-import Footer from "../components/cajaAbajo";
+import Footer from "../components/NavBar";
 import Header from "../components/Header2";
 
 // Pantalla de perfil y configuración de la cuenta del usuario.

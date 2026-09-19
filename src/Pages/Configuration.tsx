@@ -1,5 +1,5 @@
 import Header from "../components/Header2";
-import Footer from "../components/cajaAbajo";
+import Footer from "../components/NavBar";
 export default function Config() {
   return (
     <>
