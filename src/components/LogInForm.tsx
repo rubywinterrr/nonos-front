@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import iconCandado from "../assets/Icon-Candado.png";
 import iconEmail from "../assets/Icon-Email.png";
 import iconIngreso from "../assets/Icon-Ingreso.png";
+import iconIngresoBlack from "../assets/Icon-Ingreso-Black.png";
 
 export default function LogInForm() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function LogInForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+
+  const [botonEnHover, setBotonEnHover] = useState(false);
 
   // Redirige al usuario a la pantalla principal después de validar el acceso.
   const handleLogin = async () => {
@@ -77,14 +80,16 @@ export default function LogInForm() {
           />
         </div>
         <button
-          className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer"
+          className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer ring ring-black hover:bg-[#F5F5F5] hover:text-black transition-none!"
           type="submit"
           disabled={cargando}
+          onMouseEnter={() => setBotonEnHover(true)}
+          onMouseLeave={() => setBotonEnHover(false)}
         >
-          <p className="flex gap-3 items-center text-md">
+          <p className="flex gap-3 items-center text-md transition-none!">
             {" "}
             <img
-              src={iconIngreso}
+              src={botonEnHover ? iconIngresoBlack : iconIngreso}
               alt=""
               className="h-5 aspect-square object-contain p-0.5"
             />
