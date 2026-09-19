@@ -33,7 +33,7 @@ function IngresoContent() {
       <button
         type="button"
         onClick={() => login()}
-        className="w-80 cursor-pointer py-2.5 mt-10 px-4 bg-white border border-gray-300 rounded-2xl shadow-sm hover:bg-gray-50 flex items-center justify-center gap-3 font-medium text-gray-700 transition-all"
+        className="w-80 cursor-pointer py-2.5 mt-10 px-4 bg-white border rounded-lg hover:bg-gray-200 flex items-center justify-center gap-3 font-medium text-gray-700 transition-all"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -53,13 +53,13 @@ function IngresoContent() {
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
           />
         </svg>
-        Iniciar sesión con Google
+        Continuar con Google
       </button>
 
       <div className="flex items-center w-[80%] lg:w-[40%]">
-        <div className="border-t grow border-gray-300"></div>
-        <span className="px-4 text-md text-gray-400">O bien</span>
-        <div className="border-t grow border-gray-300"></div>
+        <div className="border-t grow border-gray-400"></div>
+        <span className="px-4 text-md text-gray-500 font-semibold">O BIEN</span>
+        <div className="border-t grow border-gray-400"></div>
       </div>
     
       {hasAccount ? <LogInForm /> : <RegisterForm />}
@@ -69,6 +69,8 @@ function IngresoContent() {
             ? "¿No tiene cuenta? Regístrese"
             : "¿Ya tiene cuenta? Inicie sesión"}
         </span>
+
+        <a href="/home" className="underline">home</a>
 
       {/* <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
         
