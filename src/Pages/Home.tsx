@@ -29,15 +29,22 @@ export default function Home() {
   };
   return (
     <>
-      <main className="flex flex-col w-screen">
+      <main className="flex flex-col w-screen min-h-screen">
         <section className="min-h-main bg-main-blue w-screen flex flex-col items-baseline p-7 pb-[13vh] gap-10">
           <Header />
           <div>
             <h1 className="font-bold text-2xl mb-5">
-              ¡Hola {user?.nombre || "Usuario"}!
+              ¡Hola, {user?.nombre || "Usuario"}!
             </h1>
             <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
           </div>
+          <div className="flex flex-col items-center justify-center gap-1 w-full">
+            <h1 className="font-semibold text-2xl">
+              Esta es tu condición de hoy
+            </h1>
+            <h2 className="text-1xl">Podés consultar tu estado abajo</h2>
+          </div>
+
           <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-5 w-full">
             <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-30 p-4 shadow-md ">
               <ol className="list-inside list-disc">

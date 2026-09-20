@@ -6,6 +6,7 @@
 body {
   min-height: 100vh;
   overflow-y: scroll; /* Asegura que el contenido sea desplazable */
+  background-color: #B9D2FF;
 }
 
 html {

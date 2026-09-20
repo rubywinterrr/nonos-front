@@ -1,6 +1,6 @@
 import LogInForm from "../components/LogInForm";
 import RegisterForm from "../components/RegisterForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 
 function IngresoContent() {
@@ -14,6 +14,13 @@ function IngresoContent() {
     onSuccess: (tokenResponse) => console.log("Token:", tokenResponse),
     onError: (error) => console.error("Error:", error),
   });
+
+  useEffect(() => {
+    document.body.style.setProperty("background-color", "#F7F9FF", "important");
+    return () => {
+      document.body.style.removeProperty("background-color");
+    };
+  }, []);
 
   return (
     <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">
@@ -61,16 +68,18 @@ function IngresoContent() {
         <span className="px-4 text-md text-gray-500 font-semibold">O BIEN</span>
         <div className="border-t grow border-gray-400"></div>
       </div>
-    
+
       {hasAccount ? <LogInForm /> : <RegisterForm />}
 
       <span className="active:underline cursor-pointer" onClick={toggleForm}>
-          {hasAccount
-            ? "¿No tiene cuenta? Regístrese"
-            : "¿Ya tiene cuenta? Inicie sesión"}
-        </span>
+        {hasAccount
+          ? "¿No tiene cuenta? Regístrese"
+          : "¿Ya tiene cuenta? Inicie sesión"}
+      </span>
 
-        <a href="/home" className="underline">home</a>
+      <a href="/home" className="underline">
+        home
+      </a>
 
       {/* <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
         
