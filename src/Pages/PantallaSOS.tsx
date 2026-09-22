@@ -15,6 +15,14 @@ export default function SOS() {
   function Volver() {
     window.history.back();
   }
+
+  const contactos = ["Miriam", "Pablo", "Ariel", "Raquel"];
+
+  const nombresFormateados = new Intl.ListFormat("es", {
+    style: "long",
+    type: "conjunction",
+  }).format(contactos);
+
   return (
     <>
       <main className="bg-main-blue min-h-main w-screen p-7 pb-[13vh] flex flex-col items-baseline gap-10 lg:pb-0">
@@ -53,8 +61,8 @@ export default function SOS() {
                   />
                 </div>
                 <h1 className="text-2xl font-semibold">Ya pediste ayuda</h1>
-                <p className="font-semibold text-xl text-gray-500">
-                  Avisamos a [nombre1] y a [nombre2]
+                <p className="font-semibold text-xl text-gray-500 text-center">
+                  Avisamos a {nombresFormateados}
                 </p>
               </div>
             </div>
@@ -64,14 +72,19 @@ export default function SOS() {
                   <img src={iconContacto} alt="Contacto" className="h-5 mr-2" />
                   Contactos notificados
                 </h1>
-                <p className="text-gray-500">2 de 2</p>
+                <p className="text-gray-500">
+                  {contactos.length} de {contactos.length}
+                </p>
               </div>
               <div className="w-full">
                 <div className="border border-gray-300 w-full rounded-full"></div>
               </div>
               <ol className="w-full flex flex-col gap-3 p-3">
-                <li className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3">1</li>
-                <li className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3">2</li>
+                {contactos.map((contacto) => (
+                  <li className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3">
+                    {contacto}
+                  </li>
+                ))}
               </ol>
             </div>
           </section>

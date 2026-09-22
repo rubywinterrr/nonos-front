@@ -47,10 +47,11 @@ export default function LogInForm() {
               alt=""
               className="h-5 aspect-square object-contain p-0.5"
             />
-            Correo electrónico
+            Correo electrónico <span className="font-bold text-red-500">*</span>
           </label>
           <input
             type="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
@@ -67,11 +68,12 @@ export default function LogInForm() {
               alt=""
               className="h-5 aspect-square object-contain p-0.5"
             />
-            Contraseña
+            Contraseña <span className="font-bold text-red-500">*</span>
           </label>
           <input
             type="password"
             value={password}
+            required
             onChange={(e) => setPassword(e.target.value)}
             name=""
             id=""

@@ -30,6 +30,14 @@ export default function RegisterForm() {
     } finally {
       setCargando(false);
     }
+    if (!rol) {
+      setError("Por favor, selecciona un rol para continuar.");
+      return;
+    }
+    if (rol === "Cuidador" && !tipoCuidador) {
+      setError("Por favor, especifica el tipo de cuidador.");
+      return;
+    }
   };
 
   return (
@@ -49,10 +57,12 @@ export default function RegisterForm() {
               className="h-5 aspect-square object-contain p-0.5"
             />
             Nombre completo
+            <span className="font-bold text-red-500">*</span>
           </label>
           <input
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: Juan Carlos Cruz"
+            required
           />
           <span className="text-xs text-gray-500">
             Ingrese su nombre completo.
@@ -66,10 +76,12 @@ export default function RegisterForm() {
               className="h-5 aspect-square object-contain p-0.5"
             />
             Correo electrónico
+            <span className="font-bold text-red-500">*</span>
           </label>
           <input
             type="email"
             value={email}
+            required
             onChange={(e) => setEmail(e.target.value)}
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: nonos@gmail.com"
@@ -86,10 +98,12 @@ export default function RegisterForm() {
               className="h-6 w-6 object-contain p-0.5"
             />
             Contraseña
+            <span className="font-bold text-red-500">*</span>
           </label>
           <input
             type="password"
             value={password}
+            required
             onChange={(e) => setPassword(e.target.value)}
             name=""
             id=""
@@ -110,7 +124,10 @@ export default function RegisterForm() {
         <div className="flex flex-col gap-5 mt-2 w-80/100 ">
           <div className="flex flex-col gap-1">
             <div className="flex flex-col gap-1">
-              <label className="text-lg font-bold">Selecciona tu rol</label>
+              <label className="text-lg font-bold">
+                Selecciona tu rol{" "}
+                <span className="font-bold text-red-500">*</span>
+              </label>
               <span className="text-sm text-gray-500">
                 Elegí en función de tu usuario
               </span>
