@@ -1,21 +1,18 @@
 import Header from "../components/Header";
 import Footer from "../components/NavBar";
-import flechaIzq from "../assets/FlechaIzq.png";
 import iconContacto from "../assets/Icon-contactos.png";
 import iconEscudo from "../assets/Icon-escudo.png";
 import equis from "../assets/Equis.png";
 import iconTelefono from "../assets/Icon-telefono.png";
 import check from "../assets/Check.png";
 import campana from "../assets/Campana.png";
+import VueltaAtras from "../components/vueltaAtras";
+
 //import Boton1 from "../components/boton1";
 
 // Pantalla de emergencia.
 // Centraliza la acción de alerta y comunica al usuario el aviso inmediato a contactos.
 export default function SOS() {
-  function Volver() {
-    window.history.back();
-  }
-
   const contactos = ["Miriam", "Pablo", "Ariel", "Raquel"];
 
   const nombresFormateados = new Intl.ListFormat("es", {
@@ -25,26 +22,11 @@ export default function SOS() {
 
   return (
     <>
-      <main className="bg-main-blue min-h-main w-screen p-7 pb-[13vh] flex flex-col items-baseline gap-10 lg:pb-0">
+      <main className="bg-main-blue min-h-main w-screen p-7 pb-[13vh] flex flex-col items-baseline gap-7 lg:pb-0">
         <Header />
         <section className="w-full flex flex-col lg:flex-row items-baseline gap-3 lg:items-center lg:gap-25">
           <section className="w-full flex flex-col lg:w-50/100 gap-8">
-            <div className="flex items-center gap-5 pb-4">
-              <img
-                src={flechaIzq}
-                alt="Flecha Izquierda"
-                className="rounded-2xl bg-gray-200 h-18 aspect-square p-5 cursor-pointer hover:bg-gray-300"
-                onClick={Volver}
-              ></img>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-500">
-                  FICHA DE CONSULTA
-                </h2>
-                <h1 className="font-semibold text-2xl">
-                  Mi informacion médica
-                </h1>
-              </div>
-            </div>
+            <VueltaAtras />
             <div className="w-full flex justify-center items-center">
               <h1 className="bg-[#D6E0F1] rounded-full w-65/100 xl:w-45/100 h-10 flex justify-center items-center text-1xl font-semibold shadow-lg gap-3">
                 <img src={check} className="aspect-square h-50/100" />

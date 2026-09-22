@@ -29,8 +29,7 @@ export default function Home() {
   };
   return (
     <>
-      <main className="flex flex-col w-screen min-h-screen">
-        <section className="min-h-main bg-main-blue w-screen flex flex-col items-baseline p-7 pb-[13vh] gap-10">
+        <main className="min-h-main bg-main-blue w-screen flex flex-col items-baseline p-7 pb-[13vh] gap-10">
           <Header />
           <div>
             <h1 className="font-bold text-2xl mb-5">
@@ -126,8 +125,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </main>
       <Footer />
     </>
   );
