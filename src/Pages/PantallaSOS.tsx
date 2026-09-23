@@ -13,7 +13,7 @@ import VueltaAtras from "../components/vueltaAtras";
 // Pantalla de emergencia.
 // Centraliza la acción de alerta y comunica al usuario el aviso inmediato a contactos.
 export default function SOS() {
-  const contactos = ["Miriam", "Pablo", "Ariel", "Raquel"];
+  const contactos = ["Juli", "Ruby", "Joaco", "Nico"];
 
   const nombresFormateados = new Intl.ListFormat("es", {
     style: "long",

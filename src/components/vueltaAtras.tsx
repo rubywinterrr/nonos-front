@@ -18,14 +18,14 @@ export default function VueltaAtras() {
         <img
           src={flechaIzq}
           alt="Flecha Izquierda"
-          className="rounded-2xl bg-gray-200 h-15 aspect-square p-5 cursor-pointer hover:bg-gray-300"
+          className="rounded-2xl bg-gray-200 h-15 lg:h-18 aspect-square p-5 cursor-pointer hover:bg-gray-300"
           onClick={() => window.history.back()}
         ></img>
         <div>
-          <h2 className="text-xl font-semibold text-gray-500">
+          <h2 className="text-xl lg:text-2xl font-semibold text-gray-500">
             FICHA DE CONSULTA
           </h2>
-          <h1 className="font-semibold text-2xl">{NomPag()}</h1>
+          <h1 className="font-semibold text-2xl lg:text-3xl">{NomPag()}</h1>
         </div>
       </div>
     </>
