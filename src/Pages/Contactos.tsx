@@ -1,5 +1,4 @@
 import Header from "../components/Header";
-import Footer from "../components/NavBar";
 import VueltaAtras from "../components/vueltaAtras";
 import corazon from "../assets/Corazon.png";
 import Icon from "../assets/Icon.png";
@@ -38,7 +37,6 @@ export default function Contactos() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

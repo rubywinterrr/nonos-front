@@ -6,16 +6,12 @@ import IconSalud from "../assets/icon-salud.png";
 import IconSaludW from "../assets/icon-salud-white.png";
 import IconSOS from "../assets/icon-sos.png";
 import IconSOSW from "../assets/icon-sos-white.png";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
 // Marca la pantalla activa y permite moverse entre Inicio, Salud, Contactos y SOS.
 export default function Footer() {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Si la ruta actual es login, se deshabilita la navegación del footer.
-  const isLoginScreen = location.pathname === "/";
   const currentPath = location.pathname.toLowerCase();
 
   // Determina qué opción del footer está activa según la ruta actual.
@@ -28,38 +24,16 @@ export default function Footer() {
   const isContactos = currentPath.startsWith("/contactos");
   const isSos = currentPath.startsWith("/sos");
 
-  // Redirige a la vista de inicio del sistema.
-  function IrHome() {
-    navigate("/Home");
-    console.log("Home");
-  }
 
-  // Redirige a la sección de salud.
-  function IrSalud() {
-    navigate("/Salud");
-    console.log("Salud");
-  }
-
-  // Redirige a la vista de contactos.
-  function IrContactos() {
-    navigate("/Contactos");
-    console.log("Contactos");
-  }
-
-  // Redirige a la pantalla de emergencia SOS.
-  function IrSOS() {
-    navigate("/SOS");
-    console.log("Pantalla SOS");
-  }
 
   return (
     <>
-      <footer className="bg-white border-t-2 border-[#002B2F] h-[11vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
-        <div
+      <nav className="bg-white border-t-2 border-[#002B2F] h-[11vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
+        <NavLink
           className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isHome ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrHome}
+          to={"/Home"}
         >
           <div
             className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
@@ -69,13 +43,13 @@ export default function Footer() {
             }}
           />
           <p className="font-bold">Inicio</p>
-        </div>
+        </NavLink>
 
-        <div
+        <NavLink
           className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isSalud ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrSalud}
+          to={"/Salud"}
         >
           <div
             className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
@@ -85,13 +59,13 @@ export default function Footer() {
             }}
           />
           <p className="font-bold">Salud</p>
-        </div>
+        </NavLink>
 
-        <div
+        <NavLink
           className={` p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isContactos ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrContactos}
+          to={"/Contactos"}
         >
           <div
             className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
@@ -103,13 +77,13 @@ export default function Footer() {
             }}
           />
           <p className="font-bold">Contactos</p>
-        </div>
+        </NavLink>
 
-        <div
+        <NavLink
           className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isSos ? "bg-[#002B2F] text-white " : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrSOS}
+          to={"/SOS"}
         >
           <div
             className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
@@ -119,8 +93,8 @@ export default function Footer() {
             }}
           />
           <p className="font-bold">SOS</p>
-        </div>
-      </footer>
+        </NavLink>
+      </nav>
     </>
   );
 }

@@ -1,6 +1,4 @@
-// Configuración principal de rutas de la aplicación.
-// Se define aquí el flujo principal entre login, home, perfiles y pantallas de salud/contactos.
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Home from "./Pages/Home";
 import PanelAdulto from "./Pages/Adulto/panel-adulto";
 import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
@@ -11,13 +9,28 @@ import SOS from "./Pages/PantallaSOS";
 import Salud from "./Pages/Salud";
 import Contactos from "./Pages/Contactos";
 import Config from "./Pages/Configuration";
+import { ScrollToTop } from "./components/ScrollToTop";
+import Footer from "./components/NavBar";
+
+// Layout que incluye el Footer 
+function LayoutConFooter() {
+  return (
+    <>
+      <Outlet />
+      <Footer />
+    </>
+  );
+}
 
 function App() {
   console.log("/adulto, /cuidador, /familia");
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Ingreso />} />
+
+        <Route element={<LayoutConFooter />}>
           <Route path="/Home" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/Adulto" element={<PanelAdulto />} />
@@ -26,7 +39,6 @@ function App() {
           <Route path="/familia" element={<PanelFamilia />} />
           <Route path="/Cuidador" element={<PanelCuidador />} />
           <Route path="/cuidador" element={<PanelCuidador />} />
-          <Route path="/" element={<Ingreso />} />
           <Route path="/cuenta" element={<PagCuenta />} />
           <Route path="/Cuenta" element={<PagCuenta />} />
           <Route path="/SOS" element={<SOS />} />
@@ -37,9 +49,9 @@ function App() {
           <Route path="/contactos" element={<Contactos />} />
           <Route path="/Configuracion" element={<Config />} />
           <Route path="/configuracion" element={<Config />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

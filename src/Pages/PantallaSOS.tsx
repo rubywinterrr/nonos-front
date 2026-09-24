@@ -1,5 +1,4 @@
 import Header from "../components/Header";
-import Footer from "../components/NavBar";
 import iconContacto from "../assets/Icon-contactos.png";
 import iconEscudo from "../assets/Icon-escudo.png";
 import equis from "../assets/Equis.png";
@@ -91,7 +90,6 @@ export default function SOS() {
           </section>
         </section>
       </main>
-      <Footer />
     </>
   );
 }
