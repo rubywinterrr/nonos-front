@@ -12,12 +12,20 @@ import VueltaAtras from "../components/vueltaAtras";
 // Pantalla de emergencia.
 // Centraliza la acción de alerta y comunica al usuario el aviso inmediato a contactos.
 export default function SOS() {
-  const contactos = ["Juli", "Ruby", "Joaco", "Nico"];
+  const contactos = [
+    { nombreCompleto: "Julian Garbate", nombre: "Julian" },
+    { nombreCompleto: "Ruby Winter", nombre: "Ruby" },
+    { nombreCompleto: "Joaco Schopflo", nombre: "Joaco" },
+    { nombreCompleto: "Nico Nuñez", nombre: "Nico" },
+    { nombreCompleto: "Javier Milei", nombre: "Javier" },
+    { nombreCompleto: "Leandro Kon", nombre: "Leandro" },
+    { nombreCompleto: "Martin Iud Matz", nombre: "Martin" },
+  ];
 
   const nombresFormateados = new Intl.ListFormat("es", {
     style: "long",
     type: "conjunction",
-  }).format(contactos);
+  }).format(contactos.map((contacto) => contacto.nombre));
 
   return (
     <>
@@ -63,7 +71,7 @@ export default function SOS() {
               <ol className="w-full flex flex-col gap-3 p-3">
                 {contactos.map((contacto) => (
                   <li className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3">
-                    {contacto}
+                    {contacto.nombreCompleto}
                   </li>
                 ))}
               </ol>
