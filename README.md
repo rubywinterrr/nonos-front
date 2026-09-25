@@ -2,6 +2,7 @@
 npm install
 npm i react-router-dom
 npm i @react-oauth/google
+npm i react-icons
 
 # React + TypeScript + Vite
 
