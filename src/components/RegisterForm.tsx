@@ -1,38 +1,45 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { authService } from "../services/authService";
 import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
 import { FaUser } from "react-icons/fa6";
+
 export default function RegisterForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const [nombreCompleto, setNombreCompleto] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  const [rol, setRol] = useState("");
+  const [opcionRol, setOpcionRol] = useState("");
   const [tipoCuidador, setTipoCuidador] = useState("");
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     setError("");
+    if (!opcionRol) {
+      setError("Por favor, selecciona un rol para continuar.");
+      return;
+    }
+    if (opcionRol === "Cuidador" && !tipoCuidador) {
+      setError("Por favor, especifica el tipo de cuidador.");
+      return;
+    }
+
+    const rol = opcionRol === "Adulto mayor" ? "ADULTO_MAYOR" : "FAMILIAR";
+
     setCargando(true);
     try {
+      await authService.register({ nombreCompleto, email, password, rol });
       await login({ email, password });
       navigate("/Home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
       setCargando(false);
-    }
-    if (!rol) {
-      setError("Por favor, selecciona un rol para continuar.");
-      return;
-    }
-    if (rol === "Cuidador" && !tipoCuidador) {
-      setError("Por favor, especifica el tipo de cuidador.");
-      return;
     }
   };
 
@@ -42,7 +49,7 @@ export default function RegisterForm() {
         className="w-90/100 md:w-60/100 lg:w-40/100 flex flex-col justify-center items-center gap-5"
         onSubmit={(e) => {
           e.preventDefault();
-          handleLogin();
+          handleRegister();
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
@@ -54,6 +61,8 @@ export default function RegisterForm() {
           <input
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: Juan Carlos Cruz"
+            value={nombreCompleto}
+            onChange={(e) => setNombreCompleto(e.target.value)}
             required
           />
           <span className="text-xs text-gray-500">
@@ -122,19 +131,18 @@ export default function RegisterForm() {
                 <button
                   type="button"
                   key={opcion}
-                  onClick={() => setRol(opcion)}
-                  className={`flex-1 p-3 border rounded-lg cursor-pointer text-center font-bold text-sm transition-all ${
-                    rol === opcion
-                      ? "border-black bg-gray-300 text-black shadow-inner"
-                      : "border-black bg-white text-black hover:bg-gray-100"
-                  }`}
+                  onClick={() => setOpcionRol(opcion)}
+                  className={`flex-1 p-3 border rounded-lg cursor-pointer text-center font-bold text-sm transition-all ${opcionRol === opcion
+                    ? "border-black bg-gray-300 text-black shadow-inner"
+                    : "border-black bg-white text-black hover:bg-gray-100"
+                    }`}
                 >
                   {opcion}
                 </button>
               ))}
             </div>
           </div>
-          {rol === "Cuidador" && (
+          {opcionRol === "Cuidador" && (
             <div className="flex flex-col gap-5 w-full">
               <div>
                 <p className="font-bold text-lg text-gray-800">
@@ -147,11 +155,10 @@ export default function RegisterForm() {
               <div className="flex justify-around">
                 {["Cuidador Físico", "Cuidador Digital"].map((tipo) => (
                   <button
-                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${
-                      tipoCuidador === tipo
-                        ? "bg-gray-300"
-                        : "hover:bg-gray-100"
-                    }`}
+                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${tipoCuidador === tipo
+                      ? "bg-gray-300"
+                      : "hover:bg-gray-100"
+                      }`}
                     onClick={() => setTipoCuidador(tipo)}
                     type="button"
                     key={tipo}
