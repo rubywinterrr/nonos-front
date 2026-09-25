@@ -11,6 +11,7 @@ import Contactos from "./Pages/Contactos";
 import Config from "./Pages/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Footer from "./components/NavBar";
+import Codigo from "./Pages/CodigoDeEmergencia";
 
 // Layout que incluye el Footer 
 function LayoutConFooter() {
@@ -31,24 +32,16 @@ function App() {
         <Route path="/" element={<Ingreso />} />
 
         <Route element={<LayoutConFooter />}>
-          <Route path="/Home" element={<Home />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/Adulto" element={<PanelAdulto />} />
           <Route path="/adulto" element={<PanelAdulto />} />
-          <Route path="/Familia" element={<PanelFamilia />} />
           <Route path="/familia" element={<PanelFamilia />} />
-          <Route path="/Cuidador" element={<PanelCuidador />} />
           <Route path="/cuidador" element={<PanelCuidador />} />
           <Route path="/cuenta" element={<PagCuenta />} />
-          <Route path="/Cuenta" element={<PagCuenta />} />
           <Route path="/SOS" element={<SOS />} />
-          <Route path="/sos" element={<SOS />} />
-          <Route path="/Salud" element={<Salud />} />
           <Route path="/salud" element={<Salud />} />
-          <Route path="/Contactos" element={<Contactos />} />
           <Route path="/contactos" element={<Contactos />} />
-          <Route path="/Configuracion" element={<Config />} />
           <Route path="/configuracion" element={<Config />} />
+          <Route path="/codigo" element={<Codigo />} />
         </Route>
       </Routes>
     </BrowserRouter>
