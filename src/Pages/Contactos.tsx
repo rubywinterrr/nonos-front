@@ -79,10 +79,10 @@ export default function Contactos() {
                     <h1 className="font-bold text-2xl">
                       {contacto.nombreCompleto}
                     </h1>
-                    <p className="text-gray-500 text-md">Ubicacion</p>
+                    <p className="text-gray-500 text-md">Ubicación</p>
                   </div>
                 </div>
-                <h2 className="font-semibold text-xl w-90/100 h-30/100 rounded-xl bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white cursor-pointer gap-5">
+                <h2 className="font-semibold text-xl w-90/100 h-30/100 rounded-xl bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white active:scale-97 hover:scale-102 active:bg-gray-400 cursor-pointer gap-5">
                   {" "}
                   <MdOutlinePhone className="text-2xl" />
                   Llamar a {contacto.nombre}
@@ -90,26 +90,28 @@ export default function Contactos() {
               </div>
             ))}
           </div>
-          <div className="w-full bg-[#EFF4FC] rounded-xl h-40 flex justify-evenly items-center p-2 lg:w-50/100">
-            <div className="h-full w-13/100 pt-5">
-              <div className="bg-[#D6E0F1] h-45/100 aspect-square p-3.5 rounded-full flex items-center justify-center text-3xl text-gray-500">
-                <VscInfo />
+          <div className="flex flex-col w-full gap-4 lg:items-center justify-center">
+            <div className="w-full bg-[#EFF4FC] rounded-xl h-40 flex justify-center items-center p-3 gap-3 lg:w-40/100">
+              <div className=" h-full w-13/100 lg:flex lg:justify-center lg:items-baseline ">
+                <div className=" bg-[#D6E0F1] aspect-square w-full lg:w-80/100 lg:mt-2 p-2.5 rounded-full flex items-center justify-center text-2xl text-gray-500">
+                  <VscInfo />
+                </div>
+              </div>
+              <div className=" pt-1 flex flex-col w-87/100 gap-2 h-full">
+                <h1 className=" w-full h-24/100 font-semibold text-lg">
+                  ¿Necesitas agregar a alguien?
+                </h1>
+                <p className=" max-w-90/100 h-70/100 text-gray-500 text-md w-full">
+                  Tu familia gestiona los contactos para mayor seguridad. Puedes
+                  avisarles con un solo toque.
+                </p>{" "}
               </div>
             </div>
-            <div className="flex flex-col w-75/100 gap-2">
-              <h1 className="font-semibold text-xl">
-                ¿Necesitas agregar a alguien?
-              </h1>
-              <p className="text-gray-500 text-md w-90/100">
-                Tu familia gestiona los contactos para mayor seguridad. Puedes
-                avisarles con un solo toque.
-              </p>{" "}
-            </div>
+            <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 lg:w-32/100">
+              <BsChatLeftText />
+              Avisar a {contactos[0].nombre} para agregar contactos.
+            </h1>
           </div>
-          <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-xl flex items-center justify-evenly cursor-pointer h-15 lg:w-32/100">
-            <BsChatLeftText />
-            Avisar a {contactos[0].nombre} para agregar contactos.
-          </h1>
         </section>
       </main>
     </>

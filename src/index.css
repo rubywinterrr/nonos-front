@@ -1,24 +1,27 @@
 * {
   box-sizing: border-box;
-  transition: all ease 0.5s;
+  transition: all 0.5s ease, color 0s, background 0.2s, border-color 0s, fill 0s, stroke 0s;
 }
 
 body {
   min-height: 100vh;
-  overflow-y: scroll; /* Asegura que el contenido sea desplazable */
+  overflow-y: scroll;
+  /* Asegura que el contenido sea desplazable */
   background-color: #B9D2FF;
 }
 
 html {
-  scrollbar-width: none; /* Para navegadores basados en Firefox */
-   font-family: "Atkinson Hyperlegible Next", sans-serif;
+  scrollbar-width: none;
+  /* Para navegadores basados en Firefox */
+  font-family: "Atkinson Hyperlegible Next", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
 }
 
 html::-webkit-scrollbar {
-  display: none; /* Para navegadores basados en WebKit (Chrome, Edge, Safari) */
+  display: none;
+  /* Para navegadores basados en WebKit (Chrome, Edge, Safari) */
 }
 
 #root {
@@ -46,7 +49,10 @@ html::-webkit-scrollbar {
 @import "tailwindcss";
 
 @theme {
-  --background-color-main: #F7F9FF; /*clase: bg-main */
-  --background-color-main-blue: #B9D2FF; /*clase: bg-main-blue */
-  --height-main: 89vh; /* clase: h-main */
+  --background-color-main: #F7F9FF;
+  /*clase: bg-main */
+  --background-color-main-blue: #B9D2FF;
+  /*clase: bg-main-blue */
+  --height-main: 89vh;
+  /* clase: h-main */
 }
