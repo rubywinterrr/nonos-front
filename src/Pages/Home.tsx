@@ -1,8 +1,8 @@
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
 import { NavLink } from "react-router-dom";
-import iconAlerta from "../assets/Icon-Alerta.png";
-import flecha from "../assets/Flecha.png";
+import { RiAlertFill } from "react-icons/ri";
+import { IoIosArrowForward } from "react-icons/io";
 import iconQR from "../assets/Icon-QR.png";
 import iconTarjeta from "../assets/Icon-tarjeta.png";
 import iconMed from "../assets/Icon-Medicina.png";
@@ -65,8 +65,8 @@ export default function Home() {
                   Ver medicamentos y datos
                 </p>
               </div>
-              <div className="aspect-square w-5/100 flex justify-end">
-                <img src={flecha} alt="flecha" className="w-60/100" />
+              <div className="aspect-square w-10/100 flex justify-center items-center   ">
+                <IoIosArrowForward className="text-3xl" />
               </div>
             </div>
           </div>
@@ -83,8 +83,8 @@ export default function Home() {
                   Escribí tus preferencias
                 </p>
               </div>
-              <div className="aspect-square w-5/100 flex justify-end">
-                <img src={flecha} alt="flecha" className="w-60/100" />
+              <div className="aspect-square w-10/100 flex justify-center items-center   ">
+                <IoIosArrowForward className="text-3xl" />
               </div>
             </div>
           </div>
@@ -97,8 +97,8 @@ export default function Home() {
                 <h2 className="font-semibold text-xl">Mi código de pulsera</h2>
                 <p className="text-gray-500 text-md">Ver código de 30 min</p>
               </div>
-              <div className="aspect-square w-5/100 flex justify-end">
-                <img src={flecha} alt="flecha" className="w-60/100" />
+              <div className="aspect-square w-10/100 flex justify-center items-center   ">
+                <IoIosArrowForward className="text-3xl" />
               </div>
             </div>
           </div>
@@ -107,11 +107,7 @@ export default function Home() {
             to={"/SOS"}
           >
             <div className="bg-[#FF2626] rounded-full h-18 aspect-square flex justify-center items-center">
-              <img
-                src={iconAlerta}
-                alt="Alerta"
-                className="w-10 h-10 object-contain"
-              />
+              <RiAlertFill className="text-4xl" />
             </div>
             <div className="flex flex-col gap-1 justify-center items-center">
               <h1 className="font-bold text-2xl">PEDIR AYUDA URGENTE</h1>
