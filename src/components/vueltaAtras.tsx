@@ -1,12 +1,14 @@
 import { FaArrowLeft } from "react-icons/fa6";
 export default function VueltaAtras() {
   function NomPag() {
-    const rutaActual = window.location.pathname;
+    const rutaActual = window.location.pathname.toLowerCase();
     switch (rutaActual) {
-      case "/Contactos":
+      case "/contactos":
         return "Contactos";
-      case "/SOS":
+      case "/sos":
         return "Mi informacion médica";
+      case "/codigo":
+        return "Código de emergencia"
       default:
         return "NONOS";
     }
@@ -16,7 +18,7 @@ export default function VueltaAtras() {
     <>
       <div className="flex items-center gap-3 pb-4">
         <FaArrowLeft
-          className="rounded-2xl bg-gray-200 w-15 h-15 lg:w-18 lg:h-18 p-4 cursor-pointer hover:bg-gray-300"
+          className="rounded-xl bg-gray-100 w-15 h-15 lg:w-18 lg:h-18 p-4 cursor-pointer hover:bg-gray-300"
           onClick={() => window.history.back()}
         />
         <div>

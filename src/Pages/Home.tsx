@@ -52,8 +52,8 @@ export default function Home() {
             </ol>
           </div>
           <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
-            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-3xl">
-              <MdOutlineContactPhone />
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
+              <MdOutlineMedication />
             </div>
             <div className="flex items-center w-80/100 justify-between bder">
               <div className="flex flex-col gap-1 justify-center">
@@ -70,8 +70,8 @@ export default function Home() {
             </div>
           </div>
           <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
-            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
-              <MdOutlineMedication />
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-3xl">
+              <MdOutlineContactPhone />
             </div>
             <div className="flex items-center w-80/100 justify-between">
               <div className="flex flex-col gap-1 justify-center">
