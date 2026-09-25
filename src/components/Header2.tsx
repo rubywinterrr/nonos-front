@@ -1,4 +1,4 @@
-import FotoCuenta from "../assets/FotoCuenta.png";
+import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -62,12 +62,7 @@ export default function Header2() {
           id="der"
           className="h-90/100  w-20/100 flex items-center justify-center"
         >
-          <img
-            className="aspect-square h-18 scale-110 cursor-pointer text-sm p-5"
-            src={FotoCuenta}
-            alt="Foto de perfil"
-            onClick={Cuenta}
-          ></img>
+          <FaRegUserCircle onClick={Cuenta} className="text-4xl" />
         </div>
 
         {/* Menú desplegable y fondo bloqueante (Backdrop) */}

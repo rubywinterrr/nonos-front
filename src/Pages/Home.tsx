@@ -3,14 +3,13 @@ import { useAuth } from "../context/AuthContext";
 import { NavLink } from "react-router-dom";
 import { RiAlertFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
-import iconQR from "../assets/Icon-QR.png";
-import iconTarjeta from "../assets/Icon-tarjeta.png";
-import iconMed from "../assets/Icon-Medicina.png";
+import { MdOutlineMedication, MdOutlineContactPhone } from "react-icons/md";
+import { LiaQrcodeSolid } from "react-icons/lia";
 
 // Página principal de inicio del usuario.
 // Presenta una estructura de bloques con secciones de contenido y el layout base del sistema.
 export default function Home() {
-  const { user } = useAuth();
+  const { usuario } = useAuth();
   const obtenerFechaActual = () => {
     const fecha = new Date();
     // Configuramos qué datos queremos (día de la semana, día del mes y mes)
@@ -31,7 +30,7 @@ export default function Home() {
         <Header />
         <div>
           <h1 className="font-bold text-2xl mb-5">
-            ¡Hola, {user?.nombre || "Usuario"}!
+            ¡Hola, {usuario?.nombre || "Usuario"}!
           </h1>
           <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
         </div>
@@ -53,8 +52,8 @@ export default function Home() {
             </ol>
           </div>
           <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
-            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center">
-              <img src={iconTarjeta} alt="tarjeta" className="p-3" />
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-3xl">
+              <MdOutlineContactPhone />
             </div>
             <div className="flex items-center w-80/100 justify-between bder">
               <div className="flex flex-col gap-1 justify-center">
@@ -65,14 +64,14 @@ export default function Home() {
                   Ver medicamentos y datos
                 </p>
               </div>
-              <div className="aspect-square w-10/100 flex justify-center items-center   ">
-                <IoIosArrowForward className="text-3xl" />
+              <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
+                <IoIosArrowForward />
               </div>
             </div>
           </div>
           <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
-            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center">
-              <img src={iconMed} alt="Med" className="p-2 h-80/100" />
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
+              <MdOutlineMedication />
             </div>
             <div className="flex items-center w-80/100 justify-between">
               <div className="flex flex-col gap-1 justify-center">
@@ -83,22 +82,22 @@ export default function Home() {
                   Escribí tus preferencias
                 </p>
               </div>
-              <div className="aspect-square w-10/100 flex justify-center items-center   ">
-                <IoIosArrowForward className="text-3xl" />
+              <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
+                <IoIosArrowForward />
               </div>
             </div>
           </div>
           <div className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
-            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center">
-              <img src={iconQR} alt="QR" className="p-3" />
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
+              <LiaQrcodeSolid />
             </div>
             <div className="flex items-center w-80/100 justify-between">
               <div className="flex flex-col gap-1 justify-center">
                 <h2 className="font-semibold text-xl">Mi código de pulsera</h2>
                 <p className="text-gray-500 text-md">Ver código de 30 min</p>
               </div>
-              <div className="aspect-square w-10/100 flex justify-center items-center   ">
-                <IoIosArrowForward className="text-3xl" />
+              <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
+                <IoIosArrowForward />
               </div>
             </div>
           </div>

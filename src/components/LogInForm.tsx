@@ -1,10 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import iconCandado from "../assets/Icon-Candado.png";
-import iconEmail from "../assets/Icon-Email.png";
-import iconIngreso from "../assets/Icon-Ingreso.png";
-import iconIngresoBlack from "../assets/Icon-Ingreso-Black.png";
+import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
 
 export default function LogInForm() {
   const navigate = useNavigate();
@@ -14,8 +11,6 @@ export default function LogInForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
-
-  const [botonEnHover, setBotonEnHover] = useState(false);
 
   // Redirige al usuario a la pantalla principal después de validar el acceso.
   const handleLogin = async () => {
@@ -42,11 +37,7 @@ export default function LogInForm() {
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconEmail}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdMailOutline />
             Correo electrónico <span className="font-bold text-red-500">*</span>
           </label>
           <input
@@ -63,11 +54,7 @@ export default function LogInForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconCandado}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdLock />
             Contraseña <span className="font-bold text-red-500">*</span>
           </label>
           <input
@@ -85,16 +72,10 @@ export default function LogInForm() {
           className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer ring ring-black hover:bg-[#F5F5F5] hover:text-black transition-none!"
           type="submit"
           disabled={cargando}
-          onMouseEnter={() => setBotonEnHover(true)}
-          onMouseLeave={() => setBotonEnHover(false)}
         >
           <p className="flex gap-3 items-center text-md transition-none!">
             {" "}
-            <img
-              src={botonEnHover ? iconIngresoBlack : iconIngreso}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdLogin />
             {cargando ? "Entrando..." : "Ingresar"}
           </p>
         </button>

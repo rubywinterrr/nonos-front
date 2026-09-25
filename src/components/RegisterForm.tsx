@@ -1,11 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import iconCandado from "../assets/Icon-Candado.png";
-import iconEmail from "../assets/Icon-Email.png";
-import iconPersona from "../assets/Icon-Persona.png";
-import iconIngreso from "../assets/Icon-Ingreso.png";
-import iconIngresoBlack from "../assets/Icon-Ingreso-Black.png";
+import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
+import { FaUser } from "react-icons/fa6";
 export default function RegisterForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -17,7 +14,6 @@ export default function RegisterForm() {
 
   const [rol, setRol] = useState("");
   const [tipoCuidador, setTipoCuidador] = useState("");
-  const [botonEnHover, setBotonEnHover] = useState(false);
 
   const handleLogin = async () => {
     setError("");
@@ -51,11 +47,7 @@ export default function RegisterForm() {
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconPersona}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <FaUser />
             Nombre completo
             <span className="font-bold text-red-500">*</span>
           </label>
@@ -70,11 +62,7 @@ export default function RegisterForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconEmail}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdMailOutline />
             Correo electrónico
             <span className="font-bold text-red-500">*</span>
           </label>
@@ -92,11 +80,7 @@ export default function RegisterForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconCandado}
-              alt=""
-              className="h-6 w-6 object-contain p-0.5"
-            />
+            <MdLock />
             Contraseña
             <span className="font-bold text-red-500">*</span>
           </label>
@@ -163,7 +147,11 @@ export default function RegisterForm() {
               <div className="flex justify-around">
                 {["Cuidador Físico", "Cuidador Digital"].map((tipo) => (
                   <button
-                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${tipoCuidador === tipo ? "bg-gray-300" : "hover:bg-gray-100"}`}
+                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${
+                      tipoCuidador === tipo
+                        ? "bg-gray-300"
+                        : "hover:bg-gray-100"
+                    }`}
                     onClick={() => setTipoCuidador(tipo)}
                     type="button"
                     key={tipo}
@@ -179,16 +167,10 @@ export default function RegisterForm() {
           className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer ring ring-black hover:bg-[#F5F5F5] hover:text-black transition-none!"
           type="submit"
           disabled={cargando}
-          onMouseEnter={() => setBotonEnHover(true)}
-          onMouseLeave={() => setBotonEnHover(false)}
         >
           <p className="flex gap-3 items-center text-md transition-none!">
             {" "}
-            <img
-              src={botonEnHover ? iconIngresoBlack : iconIngreso}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdLogin />
             {cargando ? "Entrando..." : "Ingresar"}
           </p>
         </button>

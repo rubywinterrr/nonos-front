@@ -1,11 +1,11 @@
-import Header from "../components/Header2";
+import Header from "../components/Header";
 
 // Pantalla de perfil y configuración de la cuenta del usuario.
 export default function PagCuenta() {
   return (
     <>
       <Header></Header>
-      <main className="w-screen h-main bg-gray-200 flex flex-col justify-center items-center">
+      <main className="w-screen min-h-main bg-main-blue flex flex-col justify-center items-center">
         <h1 className="text-4xl font-extrabold">Cuenta</h1>
       </main>
     </>
