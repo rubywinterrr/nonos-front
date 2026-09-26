@@ -30,7 +30,7 @@ export default function Home() {
         <Header />
         <div>
           <h1 className="font-bold text-2xl mb-5">
-            ¡Hola, {usuario?.nombre || "Usuario"}!
+            ¡Hola, {usuario?.nombreCompleto || "Usuario"}!
           </h1>
           <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
         </div>
