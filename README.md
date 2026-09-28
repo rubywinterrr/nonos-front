@@ -1,8 +1,8 @@
 # Hay que instalar los siguientes comandos:
 npm install
-npm i react-router-dom
+npm i react-router-dom@latest
 npm i @react-oauth/google
-npm i react-icons
+npm i react-icons@latest
 
 # React + TypeScript + Vite
 
