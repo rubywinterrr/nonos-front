@@ -2,8 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/authService";
-import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
+import {
+  MdMailOutline,
+  MdLock,
+  MdLogin,
+  MdCheckCircle,
+  MdCancel,
+} from "react-icons/md";
 import { FaUser } from "react-icons/fa6";
+import PasswordInput from "./PasswordInput";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -18,8 +25,21 @@ export default function RegisterForm() {
   const [opcionRol, setOpcionRol] = useState("");
   const [tipoCuidador, setTipoCuidador] = useState("");
 
+  const passwordRequirements = [
+    { label: "Mínimo 8 caracteres", met: password.length >= 8 },
+    { label: "Al menos un dígito (0-9)", met: /\d/.test(password) },
+    {
+      label: "Al menos un carácter especial (! @ # $ % & * ?)",
+      met: /[^A-Za-z0-9\s]/.test(password),
+    },
+  ];
+
   const handleRegister = async () => {
     setError("");
+    if (!passwordRequirements.every((requirement) => requirement.met)) {
+      setError("La contraseña no cumple todos los requisitos.");
+      return;
+    }
     if (!opcionRol) {
       setError("Por favor, selecciona un rol para continuar.");
       return;
@@ -93,26 +113,41 @@ export default function RegisterForm() {
             Contraseña
             <span className="font-bold text-red-500">*</span>
           </label>
-          <input
-            type="password"
+          <PasswordInput
             value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            name=""
-            id=""
-            className="w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+            onChange={setPassword}
             placeholder="Ej: Nonos1234!"
           />
           <span className="text-xs text-gray-500">
             La contraseña debe contener:
           </span>
-          <span className="text-xs text-gray-500">Mínimo 8 caracteres</span>
-          <span className="text-xs text-gray-500">
-            Al menos un digito (0-9)
-          </span>
-          <span className="text-xs text-gray-500">
-            Al menos un caracter especial (! @ # $ % & * ?)
-          </span>
+          {password.length === 0 ? (
+            <>
+              <span className="text-xs text-gray-500">Mínimo 8 caracteres</span>
+              <span className="text-xs text-gray-500">
+                Al menos un digito (0-9)
+              </span>
+              <span className="text-xs text-gray-500">
+                Al menos un caracter especial (! @ # $ % & * ?)
+              </span>
+            </>
+          ) : (
+            <ul className="flex flex-col gap-1" aria-live="polite">
+              {passwordRequirements.map((requirement) => (
+                <li
+                  key={requirement.label}
+                  className={`flex items-center gap-1 text-xs ${requirement.met ? "text-green-700" : "text-red-600"}`}
+                >
+                  {requirement.met ? (
+                    <MdCheckCircle aria-hidden="true" />
+                  ) : (
+                    <MdCancel aria-hidden="true" />
+                  )}
+                  {requirement.label}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="flex flex-col gap-5 mt-2 w-80/100 ">
           <div className="flex flex-col gap-1">

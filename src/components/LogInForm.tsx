@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
+import PasswordInput from "./PasswordInput";
 
 export default function LogInForm() {
   const navigate = useNavigate();
@@ -57,14 +58,9 @@ export default function LogInForm() {
             <MdLock />
             Contraseña <span className="font-bold text-red-500">*</span>
           </label>
-          <input
-            type="password"
+          <PasswordInput
             value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            name=""
-            id=""
-            className="w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+            onChange={setPassword}
             placeholder="Ej: Nonos1234!"
           />
         </div>
