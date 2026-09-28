@@ -87,7 +87,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
+          <NavLink
+            to={"/codigo"}
+            className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
+          >
             <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
               <LiaQrcodeSolid />
             </div>
@@ -100,7 +103,7 @@ export default function Home() {
                 <IoIosArrowForward />
               </div>
             </div>
-          </div>
+          </NavLink>
           <NavLink
             className="bg-[#FF0000] rounded-2xl w-full md:w-30/100 min-h-30 p-5 md:p-8 shadow-md text-white cursor-pointer flex flex-col gap-3 justify-center items-center hover:bg-[#DE0000]"
             to={"/SOS"}
