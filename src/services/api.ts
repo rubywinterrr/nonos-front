@@ -41,6 +41,9 @@ export const apiFetch = async <T>(endpoint: string, options: RequestInit = {}): 
             headers,
           });
 
+          if (retryResponse.status === 204) {
+            return undefined as T; //misma idea que el err as Error, le decís a TypeScript "confiá, esto encaja con el tipo que prometí".
+          }
           return retryResponse.json();
         }
       } catch {
@@ -57,8 +60,11 @@ export const apiFetch = async <T>(endpoint: string, options: RequestInit = {}): 
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
+    throw new Error(errorData.message || errorData.error || `Error ${response.status}: ${response.statusText}`);
   }
 
+  if (response.status === 204) {
+    return undefined as T; 
+  }
   return response.json();
 };
