@@ -1,9 +1,23 @@
 import { apiFetch } from './api';
 
+export interface Medicamento {
+  id: string;
+  usuarioId: string;
+  nombre: string;
+  dosis: string;
+  horariosDelDia: string[];
+  diasSemana: number[];
+  stockActual: number | null;
+  stockMinimo: number | null;
+  activo: boolean;
+  createdAt: string;
+  lowStock: boolean;
+}
+
 export const medicamentosService = {
   // GET /medicamentos (Obtener lista de remedios)
-  getMedicamentos: async () => {
-    return await apiFetch('/medicamentos');
+  getMedicamentos: async (usuarioId: string) => {
+    return await apiFetch<Medicamento[]>(`/medicamentos?usuarioId=${encodeURIComponent(usuarioId)}`);
   },
 
   // POST /medicamentos (Agregar un nuevo remedio)
