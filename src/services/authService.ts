@@ -4,7 +4,7 @@ export interface Usuario {
   id: string;
   email: string;
   nombreCompleto: string;
-  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'MEDICO';
+  rol: 'ADULTO_MAYOR' | 'FAMILIAR'
   fechaNacimiento: string | null;
   telefono: string | null;
   fotoUrl: string | null;
