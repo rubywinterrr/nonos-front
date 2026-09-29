@@ -1,6 +1,11 @@
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
-import { MdQrCodeScanner, MdFullscreen, MdVibration } from "react-icons/md";
+import {
+  MdQrCodeScanner,
+  MdFullscreen,
+  MdVibration,
+  MdOutlineTimer,
+} from "react-icons/md";
 import { IoAlertCircle } from "react-icons/io5";
 import { GoQuestion } from "react-icons/go";
 
@@ -30,7 +35,19 @@ export default function Codigo() {
               <div className="bg-white rounded-xl text-6xl text-black p-10 w-full text-center">
                 000-00
               </div>
-              <div className="border-gray-700 border bg-[#101A21] w-full h-40 rounded-2xl"></div>
+              <div className="border-gray-700 border bg-[#101A21] w-full gap-5 min-h-40 rounded-2xl flex flex-col p-6">
+                <div className="flex w-full justify-between">
+                  <h1 className="flex items-center text-white gap-2">
+                    <MdOutlineTimer className="text-[#E8491D] text-3xl" />
+                    Vence en:
+                  </h1>
+                  <p className="text-[#E8491D]">30 min 00 s</p>
+                </div>
+                <div className="w-full bg-green-500 rounded-full h-2"></div>
+                <h2 className="text-white">
+                  Este código temporal se renueva cada 30 minutos por seguridad.
+                </h2>
+              </div>
             </div>
           </div>
           <div className="w-full flex flex-col items-center justify-center gap-5">
