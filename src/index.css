@@ -28,6 +28,14 @@ html::-webkit-scrollbar {
   min-height: 100vh;
 }
 
+.emergency-code-card:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  overflow-y: auto;
+  border-radius: 0;
+}
+
 /* @media (orientation: landscape) {
   body::before {
     content: "Por favor, gira tu dispositivo a posición vertical.";

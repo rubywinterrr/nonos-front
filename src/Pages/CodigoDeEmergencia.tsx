@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import {
@@ -9,7 +10,28 @@ import {
 import { IoAlertCircle } from "react-icons/io5";
 import { GoQuestion } from "react-icons/go";
 
+const TIMER_DURATION_SECONDS = 30 * 60;
+
 export default function Codigo() {
+  const emergencyCardRef = useRef<HTMLDivElement>(null);
+  const [secondsRemaining, setSecondsRemaining] = useState(
+    TIMER_DURATION_SECONDS,
+  );
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setSecondsRemaining((remaining) =>
+        remaining <= 1 ? TIMER_DURATION_SECONDS : remaining - 1,
+      );
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const minutes = Math.floor(secondsRemaining / 60);
+  const seconds = secondsRemaining % 60;
+  const progress = (secondsRemaining / TIMER_DURATION_SECONDS) * 100;
+
   return (
     <>
       <main className="min-h-main w-screen bg-main-blue p-7 pb-[13vh] gap-7 flex flex-col items-baseline">
@@ -22,7 +44,10 @@ export default function Codigo() {
           </h1>
         </div>
         <section className="w-full flex flex-col lg:flex-row justify-center gap-5 items-center lg:gap-0">
-          <div className="bg-black rounded-2xl lg:w-60/100 flex flex-col items-center gap-10 w-full p-7">
+          <div
+            ref={emergencyCardRef}
+            className="emergency-code-card bg-black rounded-2xl lg:w-60/100 flex flex-col items-center gap-10 w-full p-7"
+          >
             <div className="flex flex-col gap-5 items-center">
               <div className="bg-[#1A1A1A] p-4 rounded-full h-16 w-16 text-4xl flex items-center justify-center text-white">
                 <MdQrCodeScanner />
@@ -41,9 +66,23 @@ export default function Codigo() {
                     <MdOutlineTimer className="text-[#E8491D] text-3xl" />
                     Vence en:
                   </h1>
-                  <p className="text-[#E8491D]">30 min 00 s</p>
+                  <p className="text-[#E8491D] tabular-nums">
+                    {minutes} min {String(seconds).padStart(2, "0")} s
+                  </p>
                 </div>
-                <div className="w-full bg-green-500 rounded-full h-2"></div>
+                <div
+                  className="relative w-full bg-linear-to-r from-red-500 to-green-500 rounded-full h-2 overflow-hidden"
+                  role="progressbar"
+                  aria-label="Tiempo restante del código"
+                  aria-valuemin={0}
+                  aria-valuemax={TIMER_DURATION_SECONDS}
+                  aria-valuenow={secondsRemaining}
+                >
+                  <div
+                    className="absolute inset-y-0 right-0 bg-gray-700 transition-[width] duration-1000"
+                    style={{ width: `${100 - progress}%` }}
+                  />
+                </div>
                 <h2 className="text-white">
                   Este código temporal se renueva cada 30 minutos por seguridad.
                 </h2>
@@ -51,11 +90,14 @@ export default function Codigo() {
             </div>
           </div>
           <div className="w-full flex flex-col items-center justify-center gap-5">
-            <h1 className="w-full min-h-12 lg:w-80/100 bg-[#DEE3EB] rounded-xl text-xl flex items-center justify-center gap-2 p-1">
-              {" "}
+            <button
+              type="button"
+              onClick={() => void emergencyCardRef.current?.requestFullscreen()}
+              className="w-full min-h-12 lg:w-80/100 bg-[#DEE3EB] rounded-xl text-xl flex items-center justify-center gap-2 p-1 cursor-pointer"
+            >
               <MdFullscreen className="text-3xl font-bold" />
-              Mostrar código en pantalla completa{" "}
-            </h1>
+              Mostrar código en pantalla completa
+            </button>
             <div className="w-full min-h-12 lg:w-80/100 bg-white rounded-xl text-xl flex items-center justify-between gap-2 p-3 pl-5 pr-5">
               <div className="flex gap-2 items-center">
                 <MdVibration className="text-2xl" />
