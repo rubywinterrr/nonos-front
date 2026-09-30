@@ -5,6 +5,13 @@ export type TipoCuidador = 'FISICO' | 'DIGITAL'
 export type DireccionInvitacion = 'EMISOR_ES_ADULTO_MAYOR' | 'EMISOR_ES_FAMILIAR';
 export type EstadoInvitacion = 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA' | 'EXPIRADA';
 
+export interface UsuarioPublico {
+  id: string;
+  nombreCompleto: string;
+  email: string;
+  telefono: string | null;
+}
+
 export interface Invitacion {
   id: string;
   emisorId: string;
@@ -15,6 +22,7 @@ export interface Invitacion {
   estado: EstadoInvitacion;
   expiraEn: string;
   createdAt: string;
+  emisor?: UsuarioPublico;
 }
 
 export interface NuevaInvitacion {
