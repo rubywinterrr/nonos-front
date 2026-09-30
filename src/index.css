@@ -36,6 +36,19 @@ html::-webkit-scrollbar {
   border-radius: 0;
 }
 
+.emergency-code-card.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-y: auto;
+  border-radius: 0;
+}
+
 /* @media (orientation: landscape) {
   body::before {
     content: "Por favor, gira tu dispositivo a posición vertical.";
