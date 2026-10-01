@@ -26,7 +26,7 @@ export default function SOS() {
 
   return (
     <>
-      <main className="bg-main-blue min-h-main w-screen p-7 pb-[13vh] flex flex-col items-baseline gap-7">
+      <main className="mainBody gap-7">
         <Header />
         <section className="w-full flex flex-col lg:flex-row items-baseline gap-3 lg:items-center lg:gap-25">
           <section className="w-full flex flex-col lg:w-50/100 gap-8">

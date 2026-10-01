@@ -84,7 +84,7 @@ export default function Codigo() {
 
   return (
     <>
-      <main className="min-h-main w-screen bg-main-blue p-7 pb-[13vh] gap-7 flex flex-col items-baseline">
+      <main className="mainBody gap-7">
         <Header />
         <div className="flex flex-col gap-3">
           <VueltaAtras />

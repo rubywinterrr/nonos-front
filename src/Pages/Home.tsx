@@ -26,7 +26,7 @@ export default function Home() {
   };
   return (
     <>
-      <main className="min-h-main bg-main-blue w-screen flex flex-col items-baseline p-7 pb-[13vh] gap-10">
+      <main className="mainBody">
         <Header />
         <div>
           <h1 className="font-bold text-2xl mb-5">

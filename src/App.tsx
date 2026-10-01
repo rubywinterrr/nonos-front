@@ -12,8 +12,8 @@ import Config from "./Pages/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Footer from "./components/NavBar";
 import Codigo from "./Pages/CodigoDeEmergencia";
-
-// Layout que incluye el Footer 
+import Ayuda from "./Pages/Ayuda";
+// Layout que incluye el Footer
 function LayoutConFooter() {
   return (
     <>
@@ -42,6 +42,7 @@ function App() {
           <Route path="/contactos" element={<Contactos />} />
           <Route path="/configuracion" element={<Config />} />
           <Route path="/codigo" element={<Codigo />} />
+          <Route path="/ayuda" element={<Ayuda />} />
         </Route>
       </Routes>
     </BrowserRouter>

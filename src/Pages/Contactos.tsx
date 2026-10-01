@@ -5,6 +5,7 @@ import { BsChatLeftText } from "react-icons/bs";
 import { VscInfo } from "react-icons/vsc";
 import { MdOutlinePhone } from "react-icons/md";
 import { BiHealth } from "react-icons/bi";
+import TarjetaContactos from "../components/TarjetaContacto";
 // Vista para gestionar contactos o personas de emergencia vinculadas a la app.
 export default function Contactos() {
   const contactos = [
@@ -39,7 +40,7 @@ export default function Contactos() {
 
   return (
     <>
-      <main className="min-h-main w-screen flex flex-col items-baseline p-7 pb-[13vh] gap-7">
+      <main className="mainBody gap-7">
         <Header />
         <div className="flex flex-col gap-3">
           <VueltaAtras />
@@ -67,26 +68,11 @@ export default function Contactos() {
         </div>
         <div className="flex flex-col lg:flex-row gap-5 w-full flex-wrap">
           {contactos.map((contacto) => (
-            <div className="bg-white rounded-2xl flex flex-col gap-3 w-full h-40 items-center justify-center lg:w-32/100">
-              <div className="w-full h-45/100 flex items-center p-1 gap-3 pl-6">
-                <img
-                  className="border rounded-full aspect-square h-95/100 text-xs object-cover"
-                  src={contacto.fotoContacto}
-                  alt="Foto de contacto"
-                />
-                <div className="flex flex-col justify-baseline">
-                  <h1 className="font-bold text-2xl">
-                    {contacto.nombreCompleto}
-                  </h1>
-                  <p className="text-gray-500 text-md">Ubicación</p>
-                </div>
-              </div>
-              <h2 className="font-semibold text-xl w-90/100 h-30/100 rounded-xl bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white active:scale-97 hover:scale-102 active:bg-gray-400 cursor-pointer gap-5">
-                {" "}
-                <MdOutlinePhone className="text-2xl" />
-                Llamar a {contacto.nombre}
-              </h2>
-            </div>
+            <TarjetaContactos
+              nombreCompleto={contacto.nombreCompleto}
+              nombre={contacto.nombre}
+              fotoContacto={contacto.fotoContacto}
+            />
           ))}
         </div>
         <div className="w-full border-gray-400 border-t" />

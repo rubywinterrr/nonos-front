@@ -9,6 +9,8 @@ export default function VueltaAtras() {
         return "Mi informacion médica";
       case "/codigo":
         return "Código de emergencia"
+      case "/ayuda":
+        return "Ayuda y soporte"
       default:
         return "NONOS";
     }
@@ -22,7 +24,7 @@ export default function VueltaAtras() {
           onClick={() => window.history.back()}
         />
         <div>
-          <h2 className="text-xl lg:text-2xl font-semibold text-gray-500">
+          <h2 className="text-lg lg:text-xl font-semibold text-gray-500">
             FICHA DE CONSULTA
           </h2>
           <h1 className="font-semibold text-2xl lg:text-3xl">{NomPag()}</h1>
