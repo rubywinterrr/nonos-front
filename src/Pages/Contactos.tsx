@@ -12,29 +12,29 @@ export default function Contactos() {
     {
       nombreCompleto: "Julian Garbate",
       nombre: "Julian",
-      fotoContacto: "../../public/fotoPerfil_1.jpeg",
+      fotoContacto: "../../fotoPerfil_1.jpeg",
     },
     { nombreCompleto: "Ruby Winter", nombre: "Ruby" },
     {
       nombreCompleto: "Joaco Schopflo",
       nombre: "Joaco",
-      fotoContacto: "../../public/joaco.jpeg",
+      fotoContacto: "../../joaco.jpeg",
     },
     { nombreCompleto: "Nico Nuñez", nombre: "Nico" },
     {
       nombreCompleto: "Javier Milei",
       nombre: "Javier",
-      fotoContacto: "../../public/pedro.jpeg",
+      fotoContacto: "../..pedro.jpeg",
     },
     {
       nombreCompleto: "Martin Berenstein",
       nombre: "Martin",
-      fotoContacto: "../../public/tincho.jpeg",
+      fotoContacto: "../../tincho.jpeg",
     },
     {
       nombreCompleto: "Martin Iud Matz",
       nombre: "Martin",
-      fotoContacto: "../../public/iud.jpeg",
+      fotoContacto: "../../iud.jpeg",
     },
   ];
 

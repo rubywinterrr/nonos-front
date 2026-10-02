@@ -1,9 +1,14 @@
 import { MdOutlinePhone } from "react-icons/md";
+interface TarjetaContactosProps {
+  nombre: string;
+  nombreCompleto: string;
+  fotoContacto?: string;
+}
 export default function TarjetaContactos({
   nombre,
   nombreCompleto,
   fotoContacto,
-}) {
+}: TarjetaContactosProps) {
   return (
     <>
       <div className="bg-white rounded-2xl flex flex-col gap-3 w-full h-40 items-center justify-center lg:w-32/100">
