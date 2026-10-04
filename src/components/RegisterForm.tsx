@@ -49,7 +49,9 @@ export default function RegisterForm() {
       return;
     }
 
-    const rol = opcionRol === "Adulto mayor" ? "ADULTO_MAYOR" : "FAMILIAR";
+    const rol =
+      opcionRol === "Adulto mayor" ? "ADULTO_MAYOR" :
+        opcionRol === "Cuidador" ? "CUIDADOR" : "FAMILIAR";
 
     setCargando(true);
     try {
@@ -125,10 +127,13 @@ export default function RegisterForm() {
             <>
               <span className="text-xs text-gray-500">Mínimo 8 caracteres</span>
               <span className="text-xs text-gray-500">
-                Al menos un digito (0-9)
+                Mínimo 8 caracteres
               </span>
               <span className="text-xs text-gray-500">
-                Al menos un caracter especial (! @ # $ % & * ?)
+                Al menos una mayúscula
+              </span>
+              <span className="text-xs text-gray-500">
+                Al menos un caracter especial (! @ # $ % & * ? etc.)
               </span>
             </>
           ) : (

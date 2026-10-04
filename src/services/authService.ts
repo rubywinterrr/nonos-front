@@ -4,7 +4,7 @@ export interface Usuario {
   id: string;
   email: string;
   nombreCompleto: string;
-  rol: 'ADULTO_MAYOR' | 'FAMILIAR'
+  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'CUIDADOR'
   fechaNacimiento: string | null;
   telefono: string | null;
   fotoUrl: string | null;
@@ -27,8 +27,8 @@ export interface RegisterData {
   email: string;
   password: string;
   nombreCompleto: string;
-  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'MEDICO';
-  }
+  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'CUIDADOR'
+}
 
 export const authService = {
   login: async (credentials: LoginCredentials) => {
@@ -61,7 +61,7 @@ export const authService = {
     }
 
     return data;
-    
+
   },
 
   // Obtener perfil del usuario activo
@@ -75,7 +75,7 @@ export const authService = {
       body: JSON.stringify(data),
     });
   },
-  
+
   // Cerrar sesión
   logout: async () => {
     const refreshToken = localStorage.getItem('nonos_refresh_token');
