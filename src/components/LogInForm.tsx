@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
 import PasswordInput from "./PasswordInput";
 

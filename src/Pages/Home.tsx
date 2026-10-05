@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { NavLink } from "react-router-dom";
 import { RiAlertFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
