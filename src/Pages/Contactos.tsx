@@ -24,7 +24,7 @@ export default function Contactos() {
     {
       nombreCompleto: "Javier Milei",
       nombre: "Javier",
-      fotoContacto: "../..pedro.jpeg",
+      fotoContacto: "../../pedro.jpeg",
     },
     {
       nombreCompleto: "Martin Berenstein",
