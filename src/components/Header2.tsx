@@ -93,6 +93,12 @@ export default function Header2() {
                 >
                   Configuración
                 </li>
+                <li
+                  className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors"
+                  onClick={() => navigate("/Ayuda")}
+                >
+                  Ayuda
+                </li>
                 <li className="p-6 w-90/100 border-t-2 border-gray-300 absolute bottom-0 text-xl font-bold text-red-600 cursor-pointer md:hover:bg-red-50 transition-colors">
                   Cerrar Sesión
                 </li>
