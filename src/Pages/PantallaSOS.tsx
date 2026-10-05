@@ -61,7 +61,7 @@ export default function SOS() {
               <div className="w-full">
                 <div className="border border-gray-300 w-full rounded-full"></div>
               </div>
-              <ol className="w-full flex flex-col gap-3 p-3 lg:flex-row flex-wrap">
+              <ol className="w-full flex flex-col gap-2 p-3 lg:flex-row flex-wrap">
                 {contactos.map((contacto) => (
                   <li className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3 lg:w-49/100">
                     {contacto.nombreCompleto}
