@@ -6,37 +6,38 @@ import { VscInfo } from "react-icons/vsc";
 import { MdOutlinePhone } from "react-icons/md";
 import { BiHealth } from "react-icons/bi";
 import TarjetaContactos from "../components/TarjetaContacto";
+import { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { contactosService, type Contacto } from "../services/contactosService";
+
 // Vista para gestionar contactos o personas de emergencia vinculadas a la app.
 export default function Contactos() {
-  const contactos = [
-    {
-      nombreCompleto: "Julian Garbate",
-      nombre: "Julian",
-      fotoContacto: "../../fotoPerfil_1.jpeg",
-    },
-    { nombreCompleto: "Ruby Winter", nombre: "Ruby" },
-    {
-      nombreCompleto: "Joaco Schopflo",
-      nombre: "Joaco",
-      fotoContacto: "../../joaco.jpeg",
-    },
-    { nombreCompleto: "Nico Nuñez", nombre: "Nico" },
-    {
-      nombreCompleto: "Javier Milei",
-      nombre: "Javier",
-      fotoContacto: "../..pedro.jpeg",
-    },
-    {
-      nombreCompleto: "Martin Berenstein",
-      nombre: "Martin",
-      fotoContacto: "../../tincho.jpeg",
-    },
-    {
-      nombreCompleto: "Martin Iud Matz",
-      nombre: "Martin",
-      fotoContacto: "../../iud.jpeg",
-    },
-  ];
+
+const { usuario } = useAuth();
+const [contactos, setContactos] = useState<Contacto[]>([]);
+const [loading, setLoading] = useState<boolean>(false);
+const [error, setError] = useState<string | null>(null);
+
+useEffect(() => {
+  if (!usuario) return;
+
+  const fetchContactos = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await contactosService.getContactos(usuario.id);
+      setContactos(data);
+    } catch (err) {
+      console.error(err);
+      setError("Hubo un error al cargar los contactos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchContactos();
+}, [usuario]);
 
   return (
     <>
@@ -67,11 +68,14 @@ export default function Contactos() {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-5 w-full flex-wrap">
+          {loading && <p>Cargando contactos...</p>}
+          {error && <p className="text-red-600">{error}</p>}
           {contactos.map((contacto) => (
             <TarjetaContactos
-              nombreCompleto={contacto.nombreCompleto}
+              key={contacto.id}
+              nombreCompleto={contacto.nombre}
               nombre={contacto.nombre}
-              fotoContacto={contacto.fotoContacto}
+              fotoContacto="/fotoPerfil_1.jpeg" // el back por ahora no devuelve foto, se puede agregar más adelante
             />
           ))}
         </div>
@@ -97,7 +101,7 @@ export default function Contactos() {
           </div>
           <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 lg:w-32/100">
             <BsChatLeftText />
-            Avisar a {contactos[0].nombre} para agregar contactos.
+            Avisar a {contactos.length > 0 ? contactos[0].nombre : "tu familia"} para agregar contactos.
           </h1>
         </div>
       </main>
