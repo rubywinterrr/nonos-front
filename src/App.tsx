@@ -10,7 +10,8 @@ import Salud from "./Pages/Salud";
 import Contactos from "./Pages/Contactos";
 import Config from "./Pages/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
-import Footer from "./components/NavBar";
+import Navbar from "./components/NavBar";
+import Navbar2 from "./components/NavBar2";
 import Codigo from "./Pages/CodigoDeEmergencia";
 import Ayuda from "./Pages/Ayuda";
 // Layout que incluye el Footer
@@ -18,7 +19,7 @@ function LayoutConFooter() {
   return (
     <>
       <Outlet />
-      <Footer />
+      <Navbar2 />
     </>
   );
 }

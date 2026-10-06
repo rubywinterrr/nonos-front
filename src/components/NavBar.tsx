@@ -5,7 +5,7 @@ import { useLocation, NavLink } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
 // Marca la pantalla activa y permite moverse entre Inicio, Salud, Contactos y SOS.
-export default function Footer() {
+export default function NavBar() {
   const location = useLocation();
   const currentPath = location.pathname.toLowerCase();
 
