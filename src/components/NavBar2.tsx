@@ -21,7 +21,7 @@ export default function NavBar2() {
 
   return (
     <>
-      <nav className="bg-white/65 backdrop-blur-xs rounded-full border-b border-b-black/20 shadow-lg lg:h-[11vh] h-[10vh] min-w-90/100 fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-row justify-evenly items-center inset-shadow-sm inset-shadow-white">
+      <nav className="bg-white/65 backdrop-blur-xs rounded-full border-b border-b-black/20 shadow-lg lg:h-[11vh] h-[9vh] min-w-90/100 fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-row justify-evenly items-center inset-shadow-sm inset-shadow-white">
         <NavLink
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isHome ? "bg-[#002B2F]/25 aspect-video" : " aspect-square"

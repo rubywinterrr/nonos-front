@@ -10,11 +10,11 @@ import Salud from "./Pages/Salud";
 import Contactos from "./Pages/Contactos";
 import Config from "./Pages/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
-import Navbar from "./components/NavBar";
 import Navbar2 from "./components/NavBar2";
 import Codigo from "./Pages/CodigoDeEmergencia";
 import Ayuda from "./Pages/Ayuda";
-// Layout que incluye el Footer
+import Tutorial1 from "./Pages/Tutorial1";
+
 function LayoutConFooter() {
   return (
     <>
@@ -25,7 +25,6 @@ function LayoutConFooter() {
 }
 
 function App() {
-  console.log("/adulto, /cuidador, /familia");
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -43,7 +42,10 @@ function App() {
           <Route path="/contactos" element={<Contactos />} />
           <Route path="/configuracion" element={<Config />} />
           <Route path="/codigo" element={<Codigo />} />
-          <Route path="/ayuda" element={<Ayuda />} />
+          <Route path="/ayuda">
+            <Route index element={<Ayuda />} />
+            <Route path="tutorial1" element={<Tutorial1 />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

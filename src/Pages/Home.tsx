@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import { useAuth } from "../hooks/useAuth";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { RiAlertFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdOutlineMedication, MdOutlineContactPhone } from "react-icons/md";
@@ -87,7 +87,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <NavLink
+          <Link
             to={"/codigo"}
             className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
           >
@@ -103,8 +103,8 @@ export default function Home() {
                 <IoIosArrowForward />
               </div>
             </div>
-          </NavLink>
-          <NavLink
+          </Link>
+          <Link
             className="bg-[#FF0000] rounded-2xl w-full md:w-30/100 min-h-30 p-5 md:p-8 shadow-md text-white cursor-pointer flex flex-col gap-3 justify-center items-center hover:bg-[#DE0000]"
             to={"/SOS"}
           >
@@ -117,7 +117,7 @@ export default function Home() {
                 Presioná para notificar a tu familia y cuidadores
               </p>
             </div>
-          </NavLink>
+          </Link>
         </div>
       </main>
     </>

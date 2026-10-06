@@ -1,7 +1,8 @@
 import LogInForm from "../components/LogInForm";
 import RegisterForm from "../components/RegisterForm";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { FondoBlanco } from "../components/funcionFondoBlanco";
 
 function IngresoContent() {
   const [hasAccount, setHasAccount] = useState(true);
@@ -15,12 +16,7 @@ function IngresoContent() {
     onError: (error) => console.error("Error:", error),
   });
 
-  useEffect(() => {
-    document.body.style.setProperty("background-color", "#F7F9FF", "important");
-    return () => {
-      document.body.style.removeProperty("background-color");
-    };
-  }, []);
+  FondoBlanco();
 
   return (
     <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">

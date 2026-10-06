@@ -1,21 +1,17 @@
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FaHandHoldingHeart } from "react-icons/fa";
 import { BsPatchCheck } from "react-icons/bs";
 import { PiBookOpenText } from "react-icons/pi";
 import { MdOutlineMailOutline, MdArrowForward } from "react-icons/md";
 import Stock1 from "../assets/fotoStock.png";
+import { FondoBlanco } from "../components/funcionFondoBlanco";
 export default function Ayuda() {
-  useEffect(() => {
-    document.body.style.setProperty("background-color", "#FFFFFF", "important");
-    return () => {
-      document.body.style.removeProperty("background-color");
-    };
-  }, []);
+  FondoBlanco();
   return (
     <>
-      <main className="mainBody bg-gray-50">
+      <main className="mainBody bg-white">
         <Header />
         <VueltaAtras />
         <div className="w-full lg:w-40/100 p-4 bg-linear-65 from-indigo-100 to-sky-100 rounded-xl shadow-md inline-flex flex-col justify-start items-start gap-4 overflow-hidden">
@@ -60,10 +56,13 @@ export default function Ayuda() {
               Conocé en 3 minutos las funciones más importantes para tu
               tranquilidad y la de tus seres queridos.
             </p>
-            <button className="bg-blue-600 items-center justify-center flex gap-3 hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer">
+            <Link
+              className="bg-blue-600 items-center justify-center flex gap-3 hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer"
+              to={"tutorial1"}
+            >
               Ver guía paso a paso
-              <MdArrowForward className="text-3xl"/>
-            </button>
+              <MdArrowForward className="text-3xl" />
+            </Link>
           </div>
         </div>
         <div className="bg-[#DAEAF9] shadow-md rounded-2xl w-full lg:w-50/100 min-h-40 flex flex-col gap-5 p-5">
