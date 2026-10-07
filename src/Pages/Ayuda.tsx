@@ -69,7 +69,7 @@ export default function Ayuda() {
           <div className="flex items-start w-full gap-3 ">
             <MdOutlineMailOutline className="text-white bg-blue-600 rounded-full p-2 text-5xl" />
             <div className="flex flex-col gap-1  max-w-80/100">
-              <h2 className="font-semibold text-2xl">Asistencia humana</h2>
+              <h2 className="text-2xl">Asistencia humana</h2>
               <p className="text-xl text-gray-600">
                 Comunicate con el equipo de asistencia de NONOS.
               </p>

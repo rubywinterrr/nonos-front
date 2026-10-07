@@ -14,6 +14,7 @@ import Navbar2 from "./components/NavBar2";
 import Codigo from "./Pages/CodigoDeEmergencia";
 import Ayuda from "./Pages/Ayuda";
 import Tutorial1 from "./Pages/Tutorial1";
+import Tutorial1_2 from "./Pages/Tutorial1.2";
 
 function LayoutConFooter() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/ayuda">
             <Route index element={<Ayuda />} />
             <Route path="tutorial1" element={<Tutorial1 />} />
+            <Route path="tutorial1.2" element={<Tutorial1_2 />} />
           </Route>
         </Route>
       </Routes>

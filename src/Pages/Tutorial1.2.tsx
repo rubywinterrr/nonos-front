@@ -2,16 +2,18 @@ import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { HiOutlineCheckBadge } from "react-icons/hi2";
 import { FondoBlanco } from "../components/funcionFondoBlanco";
-import stock2 from "../assets/stock2.png";
+import stock3 from "../assets/stock3.png";
 import { BiBulb } from "react-icons/bi";
+import { FaSmile } from "react-icons/fa";
 import BotonSiguiente from "../components/botonSiguiente";
+import { MdSos } from "react-icons/md";
 import {
-  MdOutlineWatch,
   MdChecklist,
   MdCheckCircleOutline,
+  MdNotificationsActive,
 } from "react-icons/md";
 import CuadroAsesor from "../components/CuadroContactarAsesor";
-export default function Tutorial1() {
+export default function Tutorial1_2() {
   FondoBlanco();
   return (
     <>
@@ -22,11 +24,11 @@ export default function Tutorial1() {
           <div className="w-full flex justify-between items-center">
             <p className="rounded-lg bg-[#DBE1FF] p-2">TUTORIAL PARA EMPEZAR</p>
             <p className="bg-[#EBF5FF] rounded-lg flex items-center p-2 text-blue-600 justify-center gap-1">
-              <HiOutlineCheckBadge className="text-2xl" /> 25%
+              <HiOutlineCheckBadge className="text-2xl" /> 50%
             </p>
           </div>
           <h1 className="text-3xl">
-            Paso 1 de 4: Conocer tu pulsera y pantalla
+            Paso 2 de 4: Cómo usar el botón rojo de auxilio
           </h1>
           <div
             className="h-4 w-full overflow-hidden rounded-full bg-blue-100"
@@ -34,13 +36,13 @@ export default function Tutorial1() {
             aria-label="Progreso del tutorial"
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-valuenow={25}
+            aria-valuenow={50}
           >
-            <div className="h-full w-1/4 rounded-full bg-blue-800"></div>
+            <div className="h-full w-2/4 rounded-full bg-blue-800"></div>
           </div>
           <div className="flex w-full text-gray-400 justify-between items-center text-lg font-semibold pl-1 pr-1">
-            <p className="text-blue-800">1. Pulsera</p>
-            <p>2. Botón</p>
+            <p>1. Pulsera</p>
+            <p className="text-blue-800">2. Botón</p>
             <p>3. Familia</p>
             <p>4. Batería</p>
           </div>
@@ -49,40 +51,43 @@ export default function Tutorial1() {
           <div
             className="rounded-2xl w-full h-75 relative"
             style={{
-              backgroundImage: `url(${stock2})`,
+              backgroundImage: `url(${stock3})`,
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "top",
             }}
           >
-            <h2 className="font-semibold rounded-2xl bg-[#F9F9F8] p-3 flex items-center gap-3 absolute w-95/100 bottom-3 left-1/2 -translate-x-1/2 pr-26">
-              <div className="bg-[#84F6E6] rounded-full aspect-square h-8 w-8 flex items-center justify-center">
-                <div className="bg-[#006A61] rounded-full h-40/100 aspect-square "></div>
+            <div className="font-semibold rounded-2xl bg-[#F9F9F8] p-3 flex items-center gap-3 absolute w-95/100 bottom-3 left-1/2 -translate-x-1/2">
+              <MdSos className="bg-red-700 rounded-full aspect-square text-white text-5xl p-2 flex items-center justify-center" />
+              <div className="flex flex-col items-start justify-start gap-1 max-w-70/100">
+                <h2 className="font-semibold text-xl">Botón SOS lateral</h2>
+                <p className="text-gray-500 text-lg">
+                  Mantenelo apretado 3 segundos
+                </p>
               </div>
-              Luz verde titilando: lista para cuidarte.
-            </h2>
+            </div>
           </div>
 
-          <div className="flex-col flex gap-3 items-start justify-center">
-            <h2 className="flex gap-1 items-center justify-start text-blue-600">
-              <MdOutlineWatch className="text-xl" />
-              Paso inicial imprescindible
-            </h2>
-            <h1 className="font-semibold text-2xl">
-              1. Colocate tu pulsera NONOS en la muñeca
-            </h1>
-          </div>
-          <p className="text-gray-600 text-lg ">
-            Ajustá la pulsera para que quede cómoda. Cuando la luz verde titila,
-            significa que está encendida y lista.
+          <h2 className="flex gap-4 items-center justify-start font-semibold text-2xl mt-4">
+            <MdNotificationsActive className="text-5xl rounded-xl bg-red-100 text-orange-800 p-3 " />
+            Acción en caso de <br />
+            emergencia
+          </h2>
+          <h1 className="font-semibold text-2xl text-orange-800">
+            1. Presioná el botón rojo durante 3 segundos continuos
+          </h1>
+          <p className="text-gray-600 text-xl ">
+            Una luz naranja empezará a parpadear. Esto significa que NONOS ya
+            está avisando a tus contactos.
           </p>
           <div className="rounded-2xl bg-[#DAEAF9] w-full gap-3 p-5 flex">
-            <BiBulb className="aspect-square text-5xl p-2 bg-[#DBE1FF] rounded-full text-blue-700" />
-            <div className="flex flex-col justify-start items-start gap-1 max-w-80/100 ">
-              <h3 className="text-blue-800 text-xl font-semibold">Consejo útil diario</h3>
-              <p>
-                No hace falta sacártela para lavarte o bañarte. Es resistente al
-                agua y continúa cuidándote en la ducha.
+            <FaSmile className="aspect-square text-5xl p-3 text-white rounded-full bg-blue-700" />
+            <div className="flex flex-col justify-start items-start gap-2 max-w-80/100 ">
+              <h3 className="font-bold text-xl">Un consejo para vos</h3>
+              <p className="text-lg">
+                No te preocupes por apretarlo sin querer. Tienes 10 segundos
+                para cancelarlo tocando la pulsera antes de que se envíen las
+                alarmas.
               </p>
             </div>
           </div>
@@ -93,16 +98,16 @@ export default function Tutorial1() {
             </h1>
             <p className="text-lg flex items-start justify-start gap-2 pl-2">
               <MdCheckCircleOutline className="text-green-800 text-4xl" />
-              Que pase un dedo entre la correa y tu piel para evitar marcas.
+              Sentir el relieve redondeado del botón con tu dedo índice.
             </p>
             <p className="text-lg flex items-start justify-start gap-2 pl-2">
               <MdCheckCircleOutline className="text-green-800 text-4xl" />
-              Que el botón rojo quede ubicado hacia el lado más accesible.
+              Recordar que funciona adentro y afuera de tu casa, las 24 horas.
             </p>
           </div>
           <BotonSiguiente
-            siguientePaso="../tutorial1.2"
-            texto="Botón de auxilio"
+            siguientePaso="../tutorial1.3"
+            texto="Tu familia avisada"
           />
         </section>
         <CuadroAsesor />
