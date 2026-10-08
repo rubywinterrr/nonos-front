@@ -92,7 +92,7 @@ export const authService = {
     } finally {
       localStorage.removeItem('nonos_token');
       localStorage.removeItem('nonos_refresh_token'); // <- Limpia el refreshToken
-      window.location.href = '/login';
+      window.location.href = '/';
     }
   },
 };

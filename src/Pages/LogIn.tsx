@@ -73,10 +73,6 @@ function IngresoContent() {
           : "¿Ya tiene cuenta? Inicie sesión"}
       </span>
 
-      <a href="/home" className="underline">
-        home
-      </a>
-
       {/* <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
         
         <hr className="border w-screen border-gray-200 m-0" />

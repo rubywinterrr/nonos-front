@@ -57,7 +57,7 @@ export default function RegisterForm() {
     try {
       await authService.register({ nombreCompleto, email, password, rol });
       await login({ email, password });
-      navigate("/Home");
+      navigate("/adulto/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {

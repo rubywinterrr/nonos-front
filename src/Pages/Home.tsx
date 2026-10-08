@@ -79,7 +79,7 @@ export default function Home() {
                   Mis voluntades y cuidados
                 </h2>
                 <p className="text-gray-500 text-md">
-                  Escribí tus preferencias
+                  Escribí tus 
                 </p>
               </div>
               <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
@@ -88,7 +88,7 @@ export default function Home() {
             </div>
           </div>
           <Link
-            to={"/codigo"}
+            to={"/adulto/codigo"}
             className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
           >
             <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
@@ -106,7 +106,7 @@ export default function Home() {
           </Link>
           <Link
             className="bg-[#FF0000] rounded-2xl w-full md:w-30/100 min-h-30 p-5 md:p-8 shadow-md text-white cursor-pointer flex flex-col gap-3 justify-center items-center hover:bg-[#DE0000]"
-            to={"/SOS"}
+            to={"/adulto/SOS"}
           >
             <div className="bg-[#FF2626] rounded-full h-18 aspect-square flex justify-center items-center">
               <RiAlertFill className="text-4xl" />

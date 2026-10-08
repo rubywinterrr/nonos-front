@@ -1,8 +1,12 @@
-# Hay que instalar los siguientes comandos:
+# Estos son los comandos instalados. Solo se debe ejecutar el primero para hacerlo correr:
 npm install
+-------
 npm i react-router-dom@latest
 npm i @react-oauth/google
 npm i react-icons@latest
+
+# URL API
+https://proyectos-tic.ort.edu.ar/nonos/api/
 
 # React + TypeScript + Vite
 

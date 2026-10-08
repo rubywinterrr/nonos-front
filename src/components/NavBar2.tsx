@@ -1,6 +1,6 @@
 import { GoHome } from "react-icons/go";
 import { MdOutlinePeopleAlt, MdOutlineMedicalServices } from "react-icons/md";
-import { PiWarningDiamondBold } from "react-icons/pi";
+import { VscGear } from "react-icons/vsc";
 import { useLocation, NavLink } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
@@ -11,13 +11,13 @@ export default function NavBar2() {
 
   // Determina qué opción del footer está activa según la ruta actual.
   const isHome =
-    currentPath === "/home" ||
+    currentPath === "/adulto/home" ||
     currentPath === "/adulto" ||
     currentPath === "/cuidador" ||
     currentPath === "/familia";
-  const isSalud = currentPath.startsWith("/salud");
-  const isContactos = currentPath.startsWith("/contactos");
-  const isSos = currentPath.startsWith("/sos");
+  const isSalud = currentPath.startsWith("/adulto/salud");
+  const isContactos = currentPath.startsWith("/adulto/contactos");
+  const isConfig = currentPath.startsWith("/adulto/configuracion");
 
   return (
     <>
@@ -26,7 +26,7 @@ export default function NavBar2() {
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isHome ? "bg-[#002B2F]/25 aspect-video" : " aspect-square"
           }`}
-          to={"/Home"}
+          to={"/adulto/Home"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             {" "}
@@ -39,7 +39,7 @@ export default function NavBar2() {
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isSalud ? " bg-[#002B2F]/25 aspect-video" : " aspect-square"
           }`}
-          to={"/Salud"}
+          to={"/adulto/Salud"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             <MdOutlineMedicalServices />
@@ -51,7 +51,7 @@ export default function NavBar2() {
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isContactos ? " bg-[#002B2F]/25 aspect-video" : "aspect-square"
           }`}
-          to={"/Contactos"}
+          to={"/adulto/Contactos"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             <MdOutlinePeopleAlt />{" "}
@@ -61,14 +61,14 @@ export default function NavBar2() {
 
         <NavLink
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isSos ? " bg-[#002B2F]/25 aspect-video" : "  aspect-square"
+            isConfig ? " bg-[#002B2F]/25 aspect-video" : "  aspect-square"
           }`}
-          to={"/SOS"}
+          to={"/adulto/configuracion"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
-            <PiWarningDiamondBold />
+            <VscGear />
           </div>
-          <p className="font-bold">SOS</p>
+          <p className="font-bold">Ajustes</p>
         </NavLink>
       </nav>
     </>

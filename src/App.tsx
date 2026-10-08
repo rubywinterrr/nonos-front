@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Home from "./Pages/Home";
-import PanelAdulto from "./Pages/Adulto/panel-adulto";
+//import PanelAdulto from "./Pages/Adulto/panel-adulto";
 import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
 import PanelFamilia from "./Pages/Familia/panel-familia";
 import Ingreso from "./Pages/LogIn";
@@ -15,7 +15,6 @@ import Codigo from "./Pages/CodigoDeEmergencia";
 import Ayuda from "./Pages/Ayuda";
 import Tutorial1 from "./Pages/Tutorial1";
 import Tutorial1_2 from "./Pages/Tutorial1.2";
-
 function LayoutConFooter() {
   return (
     <>
@@ -33,21 +32,22 @@ function App() {
         <Route path="/" element={<Ingreso />} />
 
         <Route element={<LayoutConFooter />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/adulto" element={<PanelAdulto />} />
+          <Route path="/adulto">
+            <Route path="home" element={<Home />} />
+            <Route path="SOS" element={<SOS />} />
+            <Route path="salud" element={<Salud />} />
+            <Route path="contactos" element={<Contactos />} />
+            <Route path="configuracion" element={<Config />} />
+            <Route path="codigo" element={<Codigo />} />
+            <Route path="ayuda">
+              <Route index element={<Ayuda />} />
+              <Route path="tutorial1" element={<Tutorial1 />} />
+              <Route path="tutorial1.2" element={<Tutorial1_2 />} />
+            </Route>
+          </Route>
           <Route path="/familia" element={<PanelFamilia />} />
           <Route path="/cuidador" element={<PanelCuidador />} />
           <Route path="/cuenta" element={<PagCuenta />} />
-          <Route path="/SOS" element={<SOS />} />
-          <Route path="/salud" element={<Salud />} />
-          <Route path="/contactos" element={<Contactos />} />
-          <Route path="/configuracion" element={<Config />} />
-          <Route path="/codigo" element={<Codigo />} />
-          <Route path="/ayuda">
-            <Route index element={<Ayuda />} />
-            <Route path="tutorial1" element={<Tutorial1 />} />
-            <Route path="tutorial1.2" element={<Tutorial1_2 />} />
-          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

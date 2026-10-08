@@ -14,7 +14,7 @@ export default function Header() {
   function NomPag() {
     const rutaActual = window.location.pathname;
     switch (rutaActual) {
-      case "/Home":
+      case "/adulto/home":
         return "Inicio";
       default:
         return "NONOS";

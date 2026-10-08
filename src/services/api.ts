@@ -54,7 +54,7 @@ export const apiFetch = async <T>(endpoint: string, options: RequestInit = {}): 
     // Si no había refreshToken o si falló la renovación, cerramos sesión
     localStorage.removeItem('nonos_token');
     localStorage.removeItem('nonos_refresh_token');
-    window.location.href = '/login';
+    window.location.href = '/';
     throw new Error('Sesión expirada. Por favor vuelve a iniciar sesión.');
   }
 

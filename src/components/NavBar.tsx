@@ -28,7 +28,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white"
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/Home"}
+          to={"/adulto/home"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             {" "}
@@ -43,7 +43,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white"
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/Salud"}
+          to={"/adulto/Salud"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             <MdOutlineMedicalServices />
@@ -57,7 +57,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white"
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/Contactos"}
+          to={"/adulto/Contactos"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             <MdOutlinePeopleAlt />{" "}
@@ -71,7 +71,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white "
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/SOS"}
+          to={"/adulto/SOS"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             <PiWarningDiamondBold />

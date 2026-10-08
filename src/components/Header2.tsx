@@ -33,7 +33,7 @@ export default function Header2() {
   }
 
   function IrConfig() {
-    navigate("/Configuracion");
+    navigate("/adulto/Configuracion");
     console.log("Configuracion");
   }
 
@@ -95,7 +95,7 @@ export default function Header2() {
                 </li>
                 <li
                   className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors"
-                  onClick={() => navigate("/Ayuda")}
+                  onClick={() => navigate("/adulto/Ayuda")}
                 >
                   Ayuda
                 </li>
