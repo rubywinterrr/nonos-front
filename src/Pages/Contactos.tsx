@@ -56,9 +56,9 @@ useEffect(() => {
               <BiHealth />
             </div>
             <div className="flex flex-col justify-baseline">
-              <h1 className="font-semibold text-white text-xl">
+              <a href="tel:+5491130285858" className="font-semibold text-white text-xl">
                 107 Ambulancia
-              </h1>
+              </a>
               <h2 className="text-md text-gray-400">Emergencias médicas</h2>
             </div>
           </div>
@@ -76,6 +76,7 @@ useEffect(() => {
               nombreCompleto={contacto.nombre}
               nombre={contacto.nombre}
               fotoContacto="/fotoPerfil_1.jpeg" // el back por ahora no devuelve foto, se puede agregar más adelante
+              telefono={contacto.telefono}
             />
           ))}
         </div>
@@ -102,8 +103,8 @@ useEffect(() => {
           <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 lg:w-32/100">
             <BsChatLeftText />
             Avisar a {contactos.length > 0 ? contactos[0].nombre : "tu familia"} para agregar contactos.
-          </h1>
-        </div>
+          </h1> 
+        </div> 
       </main>
     </>
   );
