@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 //import PanelAdulto from "./Pages/Adulto/panel-adulto";
 import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
@@ -15,6 +15,8 @@ import Codigo from "./Pages/CodigoDeEmergencia";
 import Ayuda from "./Pages/Ayuda";
 import Tutorial1 from "./Pages/Tutorial1";
 import Tutorial1_2 from "./Pages/Tutorial1.2";
+import SinRuta from "./Pages/SinRuta"; 
+
 function LayoutConFooter() {
   return (
     <>
@@ -32,7 +34,8 @@ function App() {
         <Route path="/" element={<Ingreso />} />
 
         <Route element={<LayoutConFooter />}>
-          <Route path="/adulto">
+          <Route path="adulto">
+            <Route index element={<Navigate to="home" replace />} />
             <Route path="home" element={<Home />} />
             <Route path="SOS" element={<SOS />} />
             <Route path="salud" element={<Salud />} />
@@ -45,10 +48,12 @@ function App() {
               <Route path="tutorial1.2" element={<Tutorial1_2 />} />
             </Route>
           </Route>
-          <Route path="/familia" element={<PanelFamilia />} />
-          <Route path="/cuidador" element={<PanelCuidador />} />
-          <Route path="/cuenta" element={<PagCuenta />} />
+
+          <Route path="familia" element={<PanelFamilia />} />
+          <Route path="cuidador" element={<PanelCuidador />} />
+          <Route path="cuenta" element={<PagCuenta />} />
         </Route>
+        <Route path="*" element={<SinRuta />} />
       </Routes>
     </BrowserRouter>
   );
