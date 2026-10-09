@@ -13,31 +13,31 @@ import { contactosService, type Contacto } from "../services/contactosService";
 // Vista para gestionar contactos o personas de emergencia vinculadas a la app.
 export default function Contactos() {
 
-const { usuario } = useAuth();
-const [contactos, setContactos] = useState<Contacto[]>([]);
-const [loading, setLoading] = useState<boolean>(false);
-const [error, setError] = useState<string | null>(null);
+  const { usuario } = useAuth();
+  const [contactos, setContactos] = useState<Contacto[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-  if (!usuario) return;
+  useEffect(() => {
+    if (!usuario) return;
 
-  const fetchContactos = async () => {
-    setLoading(true);
-    setError(null);
+    const fetchContactos = async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const data = await contactosService.getContactos(usuario.id);
-      setContactos(data);
-    } catch (err) {
-      console.error(err);
-      setError("Hubo un error al cargar los contactos");
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const data = await contactosService.getContactos(usuario.id);
+        setContactos(data);
+      } catch (err) {
+        console.error(err);
+        setError("Hubo un error al cargar los contactos");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchContactos();
-}, [usuario]);
+    fetchContactos();
+  }, [usuario]);
 
   return (
     <>
@@ -55,12 +55,12 @@ useEffect(() => {
             <div className="h-95/100 aspect-square rounded-full bg-red-600 p-4 flex justify-center items-center text-3xl text-white">
               <BiHealth />
             </div>
-            <div className="flex flex-col justify-baseline">
-              <a href="tel:+5491130285858" className="font-semibold text-white text-xl">
+            <a href="tel:+5491130285858" className="flex flex-col justify-baseline">
+              <h2 className="font-semibold text-white text-xl">
                 107 Ambulancia
-              </a>
+              </h2>
               <h2 className="text-md text-gray-400">Emergencias médicas</h2>
-            </div>
+            </a>
           </div>
           <div className="bg-white rounded-lg aspect-square h-full flex items-center justify-center flex-col gap-1 p-1 cursor-pointer">
             <MdOutlinePhone className="text-3xl" />
@@ -103,8 +103,8 @@ useEffect(() => {
           <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 lg:w-32/100">
             <BsChatLeftText />
             Avisar a {contactos.length > 0 ? contactos[0].nombre : "tu familia"} para agregar contactos.
-          </h1> 
-        </div> 
+          </h1>
+        </div>
       </main>
     </>
   );
