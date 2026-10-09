@@ -12,6 +12,7 @@ import {
 } from "react-icons/md";
 import { IoAlertCircle } from "react-icons/io5";
 import { GoQuestion } from "react-icons/go";
+import { qrService } from "../services/qrService";
 
 const TIMER_DURATION_SECONDS = 30 * 60;
 
@@ -24,7 +25,8 @@ export default function Codigo() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [codigo, setCodigo] = useState<CodigoQR | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); 
+  const [sinQR, setSinQR] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -71,12 +73,16 @@ export default function Codigo() {
       setCodigo(data);
     } catch (err) {
       console.error(err);
-      setError("No se pudo cargar el código");
+      if (err instanceof Error && err.message === "QR not found") {
+        setSinQR(true);
+      } else {
+        setError("No se pudo cargar el código");
+      }
     } finally {
       setLoading(false);
     }
   };
-
+  
   fetchCodigo();
 }, [usuario]);
 
@@ -102,6 +108,23 @@ export default function Codigo() {
       setIsFullscreen(true);
     } catch {
       setIsFullscreen(true);
+    }
+  };
+  
+  const generarCodigo = async () => {
+    if (!usuario) return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await qrService.crearQR(usuario.id);
+      setCodigo(data.qr);
+      setSinQR(false);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo generar el código");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,6 +171,15 @@ export default function Codigo() {
                 {loading && "..."}
                 {error && <span className="text-red-700 text-xl">{error}</span>}
                 {codigo?.codigo || null }
+                {sinQR && (
+                  <button
+                    type="button"
+                    onClick={generarCodigo}
+                    className="text-xl bg-black text-white rounded-xl p-3 cursor-pointer"
+                  >
+                    Generar mi código
+                  </button>
+                )}
               </div>
               <div className="border-gray-700 border bg-[#101A21] w-full gap-5 min-h-40 rounded-2xl flex flex-col p-6">
                 <div className="flex w-full justify-between">
