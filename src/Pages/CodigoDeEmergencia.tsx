@@ -1,3 +1,5 @@
+import { useAuth } from "../hooks/useAuth";
+import { usuarioService, type CodigoQR } from "../services/usuariosService";
 import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
@@ -14,11 +16,15 @@ import { GoQuestion } from "react-icons/go";
 const TIMER_DURATION_SECONDS = 30 * 60;
 
 export default function Codigo() {
+  const { usuario } = useAuth();
   const emergencyCardRef = useRef<HTMLDivElement>(null);
   const [secondsRemaining, setSecondsRemaining] = useState(
     TIMER_DURATION_SECONDS,
   );
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [codigo, setCodigo] = useState<CodigoQR | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -52,6 +58,27 @@ export default function Codigo() {
       document.body.style.overflow = previousOverflow;
     };
   }, [isFullscreen]);
+
+  useEffect(() => { //fetchea codigo qr 
+  if (!usuario) return;
+
+  const fetchCodigo = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await usuarioService.getQR(usuario.id);
+      setCodigo(data);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo cargar el código");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCodigo();
+}, [usuario]);
 
   const toggleFullscreen = async () => {
     const card = emergencyCardRef.current;
@@ -118,7 +145,9 @@ export default function Codigo() {
             </div>
             <div className="w-full flex flex-col gap-7">
               <div className="bg-white rounded-xl text-5xl text-black p-10 w-full text-center">
-                000-00
+                {loading && "..."}
+                {error && <span className="text-red-700 text-xl">{error}</span>}
+                {codigo?.codigo || null }
               </div>
               <div className="border-gray-700 border bg-[#101A21] w-full gap-5 min-h-40 rounded-2xl flex flex-col p-6">
                 <div className="flex w-full justify-between">
