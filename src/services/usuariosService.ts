@@ -42,4 +42,18 @@ export const usuarioService = {
   getQR: async (id: string) => {
     return await apiFetch<CodigoQR>(`/usuarios/${id}/qr`);
   },
+
+  // POST /usuarios/:id/qr/regenerar (nuevo código, 30 min más; 404 si no tiene QR)
+  regenerarQR: async (id: string) => {  
+    return await apiFetch<CodigoQR>(`/usuarios/${id}/qr/regenerar`, {
+      method: 'POST'
+    });
+  },
+
+  // DELETE /usuarios/:id/qr (desactiva el QR)
+  revocarQR: async (id: string) => {
+    return await apiFetch<CodigoQR>(`/usuarios/${id}/qr`, {
+      method: 'DELETE' 
+      });
+  },
 };
