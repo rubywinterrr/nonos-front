@@ -10,6 +10,9 @@ import { LiaQrcodeSolid } from "react-icons/lia";
 // Presenta una estructura de bloques con secciones de contenido y el layout base del sistema.
 export default function Home() {
   const { usuario } = useAuth();
+
+  const fullName = usuario?.nombreCompleto;
+  const nombre = fullName?.split(" ")[0];
   const obtenerFechaActual = () => {
     const fecha = new Date();
     // Configuramos qué datos queremos (día de la semana, día del mes y mes)
@@ -30,7 +33,7 @@ export default function Home() {
         <Header />
         <div>
           <h1 className="font-bold text-2xl mb-5">
-            ¡Hola, {usuario?.nombreCompleto || "Usuario"}!
+            ¡Hola, {nombre || "Usuario"}!
           </h1>
           <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
         </div>
@@ -78,9 +81,7 @@ export default function Home() {
                 <h2 className="font-semibold text-xl">
                   Mis voluntades y cuidados
                 </h2>
-                <p className="text-gray-500 text-md">
-                  Escribí tus 
-                </p>
+                <p className="text-gray-500 text-md">Escribí tus</p>
               </div>
               <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
                 <IoIosArrowForward />
