@@ -3,26 +3,46 @@ import { RxCross2 } from "react-icons/rx";
 import { MdOutlinePhone, MdNotificationsActive, MdOutlineHealthAndSafety, MdOutlinePeopleAlt } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import VueltaAtras from "../components/vueltaAtras";
+import { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { usuarioService, type Vinculo } from "../services/usuariosService";
 
 //import Boton1 from "../components/boton1";
 
 // Pantalla de emergencia.
 // Centraliza la acción de alerta y comunica al usuario el aviso inmediato a contactos.
 export default function SOS() {
-  const contactos = [
-    { nombreCompleto: "Julian Garbate", nombre: "Julian" },
-    { nombreCompleto: "Ruby Winter", nombre: "Ruby" },
-    { nombreCompleto: "Joaco Schopflo", nombre: "Joaco" },
-    { nombreCompleto: "Nico Nuñez", nombre: "Nico" },
-    { nombreCompleto: "Javier Milei", nombre: "Javier" },
-    { nombreCompleto: "Leandro Kon", nombre: "Leandro" },
-    { nombreCompleto: "Martin Iud Matz", nombre: "Martin" },
-  ];
+  const { usuario } = useAuth();
+  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    const fetchVinculos = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await usuarioService.getVinculos(usuario.id);
+        // solo los de emergencia, que son los que reciben el aviso del SOS
+        setVinculos(data.filter((vinculo) => vinculo.esContactoEmergencia));
+      } catch (err) {
+        console.error(err);
+        setError("Hubo un error al cargar los contactos notificados");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVinculos();
+  }, [usuario]);
 
   const nombresFormateados = new Intl.ListFormat("es", {
     style: "long",
     type: "conjunction",
-  }).format(contactos.map((contacto) => contacto.nombre));
+  }).format(vinculos.map((vinculo) => vinculo.familiar.nombreCompleto.split(" ")[0]));
 
   return (
     <>
@@ -55,16 +75,18 @@ export default function SOS() {
                   Contactos notificados
                 </h1>
                 <p className="text-gray-500">
-                  {contactos.length} de {contactos.length}
+                  {vinculos.length} de {vinculos.length}
                 </p>
               </div>
               <div className="w-full">
                 <div className="border border-gray-300 w-full rounded-full"></div>
               </div>
               <ol className="w-full flex flex-col gap-2 p-3 lg:flex-row flex-wrap">
-                {contactos.map((contacto) => (
-                  <li className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3 lg:w-49/100">
-                    {contacto.nombreCompleto}
+                {loading && <p>Cargando contactos...</p>}
+                {error && <p className="text-red-600">{error}</p>}
+                {vinculos.map((vinculo) => (
+                  <li key={vinculo.id} className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3 lg:w-49/100">
+                    {vinculo.familiar.nombreCompleto}
                   </li>
                 ))}
               </ol>
