@@ -8,16 +8,16 @@ export default function AjustesTexto() {
 
   useEffect(() => {
     if (tamaño === "normal") {
-      document.documentElement.style.fontSize = "14px";
+      document.documentElement.style.fontSize = "15px";
     } else if (tamaño === "grande") {
       document.documentElement.style.fontSize = "16px";
     } else if (tamaño === "muy_grande") {
-      document.documentElement.style.fontSize = "18px";
+      document.documentElement.style.fontSize = "17px";
     }
   }, [tamaño]);
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm p-6 max-w-lg border border-gray-100">
+    <div className="bg-white rounded-3xl shadow-sm p-6 w-full border border-gray-100">
       <div className="flex gap-4 items-center mb-6">
         <div className="bg-[#EEF4FF] text-blue-600 rounded-2xl w-16 h-16 flex items-center justify-center text-3xl font-bold border border-blue-100">
           Aa
