@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Header from "../components/Header";
 import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { alertasService } from "../services/alertasService";
 import { RiAlertFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdOutlineMedication, MdOutlineContactPhone } from "react-icons/md";
@@ -10,6 +12,32 @@ import { LiaQrcodeSolid } from "react-icons/lia";
 // Presenta una estructura de bloques con secciones de contenido y el layout base del sistema.
 export default function Home() {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
+  const [enviando, setEnviando] = useState<boolean>(false);
+  const [errorSOS, setErrorSOS] = useState<string | null>(null);
+
+  // llama SOS en back y si sale bien, lleva a la pantalla de emergencia
+  const pedirAyuda = async () => {
+    if (!usuario) return;
+    setEnviando(true);
+    setErrorSOS(null);
+
+    try {
+      await alertasService.dispararEmergencia(usuario.id);
+      navigate("/adulto/SOS");
+    } catch (err) {
+      console.error(err);
+      // avisa si ya hay un SOS de los últimos 10 min
+      if (err instanceof Error && err.message === "Ya existe una alerta pendiente") {
+        navigate("/adulto/SOS");
+      } else {
+        setErrorSOS("No se pudo enviar el pedido de ayuda. Probá de nuevo.");
+      }
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   const obtenerFechaActual = () => {
     const fecha = new Date();
     // Configuramos qué datos queremos (día de la semana, día del mes y mes)
@@ -79,7 +107,7 @@ export default function Home() {
                   Mis voluntades y cuidados
                 </h2>
                 <p className="text-gray-500 text-md">
-                  Escribí tus 
+                  Escribí tus preferencias
                 </p>
               </div>
               <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
@@ -104,9 +132,11 @@ export default function Home() {
               </div>
             </div>
           </Link>
-          <Link
+          <button
+            type="button"
+            onClick={pedirAyuda}
+            disabled={enviando}
             className="bg-[#FF0000] rounded-2xl w-full md:w-30/100 min-h-30 p-5 md:p-8 shadow-md text-white cursor-pointer flex flex-col gap-3 justify-center items-center hover:bg-[#DE0000]"
-            to={"/adulto/SOS"}
           >
             <div className="bg-[#FF2626] rounded-full h-18 aspect-square flex justify-center items-center">
               <RiAlertFill className="text-4xl" />
@@ -117,7 +147,8 @@ export default function Home() {
                 Presioná para notificar a tu familia y cuidadores
               </p>
             </div>
-          </Link>
+          </button>
+          {errorSOS && <p className="text-red-600">{errorSOS}</p>}
         </div>
       </main>
     </>
