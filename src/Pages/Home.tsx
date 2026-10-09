@@ -28,7 +28,10 @@ export default function Home() {
     } catch (err) {
       console.error(err);
       // avisa si ya hay un SOS de los últimos 10 min
-      if (err instanceof Error && err.message === "Ya existe una alerta pendiente") {
+      if (
+        err instanceof Error &&
+        err.message === "Ya existe una alerta pendiente"
+      ) {
         navigate("/adulto/SOS");
       } else {
         setErrorSOS("No se pudo enviar el pedido de ayuda. Probá de nuevo.");
@@ -82,7 +85,10 @@ export default function Home() {
               <li>4</li>
             </ol>
           </div>
-          <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
+          <Link
+            to={"../salud"}
+            className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
+          >
             <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
               <MdOutlineMedication />
             </div>
@@ -99,7 +105,7 @@ export default function Home() {
                 <IoIosArrowForward />
               </div>
             </div>
-          </div>
+          </Link>
           <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
             <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-3xl">
               <MdOutlineContactPhone />
@@ -109,9 +115,7 @@ export default function Home() {
                 <h2 className="font-semibold text-xl">
                   Mis voluntades y cuidados
                 </h2>
-                <p className="text-gray-500 text-md">
-                  Escribí tus
-                </p>
+                <p className="text-gray-500 text-md">Escribí tus preferencias</p>
               </div>
               <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
                 <IoIosArrowForward />
@@ -119,7 +123,7 @@ export default function Home() {
             </div>
           </div>
           <Link
-            to={"/adulto/codigo"}
+            to={"../codigo"}
             className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
           >
             <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">

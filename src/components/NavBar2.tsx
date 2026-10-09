@@ -15,7 +15,7 @@ export default function NavBar2() {
     currentPath === "/adulto" ||
     currentPath === "/cuidador" ||
     currentPath === "/familia";
-  const isSalud = currentPath.startsWith("/adulto/salud");
+  const isMed = currentPath.startsWith("/adulto/medicamentos");
   const isContactos = currentPath.startsWith("/adulto/contactos");
   const isConfig = currentPath.startsWith("/adulto/configuracion");
 
@@ -37,14 +37,14 @@ export default function NavBar2() {
 
         <NavLink
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isSalud ? " bg-[#002B2F]/25 aspect-video" : " aspect-square"
+            isMed ? " bg-[#002B2F]/25 aspect-video" : " aspect-square"
           }`}
-          to={"/adulto/Salud"}
+          to={"/adulto/medicamentos"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             <MdOutlineMedicalServices />
           </div>
-          <p className="font-bold">Salud</p>
+          <p className="font-bold">Medicamentos</p>
         </NavLink>
 
         <NavLink
