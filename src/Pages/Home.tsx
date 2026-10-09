@@ -38,6 +38,9 @@ export default function Home() {
     }
   };
 
+  const fullName = usuario?.nombreCompleto;
+  const nombre = fullName?.split(" ")[0];
+
   const obtenerFechaActual = () => {
     const fecha = new Date();
     // Configuramos qué datos queremos (día de la semana, día del mes y mes)
@@ -58,7 +61,7 @@ export default function Home() {
         <Header />
         <div>
           <h1 className="font-bold text-2xl mb-5">
-            ¡Hola, {usuario?.nombreCompleto || "Usuario"}!
+            ¡Hola, {nombre || "Usuario"}!
           </h1>
           <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
         </div>
@@ -107,7 +110,7 @@ export default function Home() {
                   Mis voluntades y cuidados
                 </h2>
                 <p className="text-gray-500 text-md">
-                  Escribí tus preferencias
+                  Escribí tus
                 </p>
               </div>
               <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">

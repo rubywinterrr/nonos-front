@@ -13,7 +13,7 @@ export default function Ayuda() {
     <>
       <main className="mainBody bg-white">
         <Header />
-        <VueltaAtras />
+        <VueltaAtras titulo="Ayuda y soporte"/>
         <div className="w-full lg:w-40/100 p-4 bg-linear-65 from-indigo-100 to-sky-100 rounded-xl shadow-md inline-flex flex-col justify-start items-start gap-4 overflow-hidden">
           <div className="w-full inline-flex justify-start items-start gap-3">
             <div className="size-12 bg-white rounded-full shadow-md flex justify-center items-center">

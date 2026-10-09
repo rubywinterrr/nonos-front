@@ -1,6 +1,7 @@
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { HiOutlineCheckBadge } from "react-icons/hi2";
+import { useState, useEffect } from "react";
 import { FondoBlanco } from "../components/funcionFondoBlanco";
 import stock2 from "../assets/stock2.png";
 import { BiBulb } from "react-icons/bi";
@@ -13,11 +14,20 @@ import {
 import CuadroAsesor from "../components/CuadroContactarAsesor";
 export default function Tutorial1() {
   FondoBlanco();
+
+  const progresoObjetivo = 25;
+  const [progreso, setProgreso] = useState(0);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgreso(progresoObjetivo);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [progresoObjetivo]);
   return (
     <>
       <main className="mainBody bg-white">
         <Header />
-        <VueltaAtras />
+        <VueltaAtras titulo="Ayuda y soporte"/>
         <section className="flex w-full lg:w-35/100 flex-col shadow-lg rounded-3xl p-5 gap-5 items-center justify-start">
           <div className="w-full flex justify-between items-center">
             <p className="rounded-lg bg-[#DBE1FF] p-2">TUTORIAL PARA EMPEZAR</p>
@@ -36,7 +46,10 @@ export default function Tutorial1() {
             aria-valuemax={100}
             aria-valuenow={25}
           >
-            <div className="h-full w-1/4 rounded-full bg-blue-800"></div>
+            <div
+              className="h-full rounded-full bg-blue-800"
+              style={{ width: `${progreso}%` }}
+            ></div>
           </div>
           <div className="flex w-full text-gray-400 justify-between items-center text-lg font-semibold pl-1 pr-1">
             <p className="text-blue-800">1. Pulsera</p>
@@ -79,7 +92,9 @@ export default function Tutorial1() {
           <div className="rounded-2xl bg-[#DAEAF9] w-full gap-3 p-5 flex">
             <BiBulb className="aspect-square text-5xl p-2 bg-[#DBE1FF] rounded-full text-blue-700" />
             <div className="flex flex-col justify-start items-start gap-1 max-w-80/100 ">
-              <h3 className="text-blue-800 text-xl font-semibold">Consejo útil diario</h3>
+              <h3 className="text-blue-800 text-xl font-semibold">
+                Consejo útil diario
+              </h3>
               <p>
                 No hace falta sacártela para lavarte o bañarte. Es resistente al
                 agua y continúa cuidándote en la ducha.
