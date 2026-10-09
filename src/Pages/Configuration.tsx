@@ -3,6 +3,8 @@ import VueltaAtras from "../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
 import AjustesTexto from "../components/AjusteTamaños";
 import { MdOutlineNotifications, MdCheck } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
 export default function Config() {
   return (
     <>
@@ -42,7 +44,29 @@ export default function Config() {
           <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
           <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
         </div>
-          <AjustesTexto />
+        <AjustesTexto />
+        <div className="bg-white rounded-2xl w-full flex items-start justify-start p-7 gap-5 relative">
+          <AiOutlineQuestionCircle className="text-blue-600 bg-gray-100 p-2 text-5xl rounded-lg border-gray-300 border" />
+          <div className="flex flex-col items-start justify-start gap-1 max-w-80/100">
+            <h1 className="font-semibold text-2xl">Ayuda</h1>
+            <p className="text-gray-600">
+              Cómo usar NONOS y resolver problemas con guías sencillas.
+            </p>
+          </div>
+          <Link
+            className="bg-white text-blue-700 p-2 rounded-lg border flex items-center gap-2 border-gray-300 font-semibold absolute right-4 top-4 cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+            to={"../ayuda"}
+          >
+            Ver ayuda
+          </Link>
+        </div>
+        <div className="flex flex-col gap-3 p-5 items-center justify-center w-full bg-white rounded-2xl border border-gray-100">
+          <p className="text-blue-600 font-black">Acerca de NONOS</p>
+          <p className="font-bold text-lg">NONOS · Tecnología que acompaña</p>
+          <p className=" text-gray-600">
+            Versión 1.0 · Sistema seguro de acompañamiento
+          </p>
+        </div>
       </main>
     </>
   );
