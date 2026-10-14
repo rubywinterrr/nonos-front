@@ -1,8 +1,13 @@
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
-import Home from "./Pages/Adulto/Home";
-//import PanelAdulto from "./Pages/Adulto/panel-adulto";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
+import HomeAdulto from "./Pages/Adulto/Home";
 import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
-import PanelFamilia from "./Pages/Familia/panel-familia";
+import HomeFamilia from "./Pages/Familia/Home";
 import Ingreso from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
 import SOS from "./Pages/Adulto/PantallaSOS";
@@ -15,7 +20,7 @@ import Codigo from "./Pages/Adulto/CodigoDeEmergencia";
 import Ayuda from "./Pages/Adulto/Ayuda";
 import Tutorial1 from "./Pages/Adulto/Tutorial1";
 import Tutorial1_2 from "./Pages/Adulto/Tutorial1.2";
-import SinRuta from "./Pages/SinRuta"; 
+import SinRuta from "./Pages/SinRuta";
 
 function LayoutConFooter() {
   return (
@@ -32,11 +37,10 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Ingreso />} />
-
         <Route element={<LayoutConFooter />}>
           <Route path="adulto">
             <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<Home />} />
+            <Route path="home" element={<HomeAdulto />} />
             <Route path="sos" element={<SOS />} />
             <Route path="salud" element={<Salud />} />
             <Route path="contactos" element={<Contactos />} />
@@ -49,7 +53,10 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="familia" element={<PanelFamilia />} />
+          <Route path="familia">
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<HomeFamilia />} />
+          </Route>
           <Route path="cuidador" element={<PanelCuidador />} />
           <Route path="cuenta" element={<PagCuenta />} />
         </Route>
