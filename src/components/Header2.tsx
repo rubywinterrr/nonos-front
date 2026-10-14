@@ -23,7 +23,7 @@ export default function Header2() {
   }, [menuAbierto]);
 
   function Cuenta() {
-    navigate("/Cuenta");
+    navigate("/cuenta");
     console.log("Cuenta");
   }
 
@@ -33,7 +33,7 @@ export default function Header2() {
   }
 
   function IrConfig() {
-    navigate("/adulto/Configuracion");
+    navigate("/adulto/configuracion");
     console.log("Configuracion");
   }
 
@@ -95,7 +95,7 @@ export default function Header2() {
                 </li>
                 <li
                   className="p-6 border-b border-gray-100 text-xl font-bold text-slate-800 cursor-pointer md:hover:bg-gray-100 transition-colors"
-                  onClick={() => navigate("/adulto/Ayuda")}
+                  onClick={() => navigate("/adulto/ayuda")}
                 >
                   Ayuda
                 </li>

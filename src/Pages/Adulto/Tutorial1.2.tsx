@@ -1,18 +1,18 @@
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import { HiOutlineCheckBadge } from "react-icons/hi2";
-import { FondoBlanco } from "../components/funcionFondoBlanco";
+import { FondoBlanco } from "../../components/funcionFondoBlanco";
 import { useState, useEffect } from "react";
-import stock3 from "../assets/stock3.png";
+import stock3 from "../../assets/stock3.png";
 import { FaSmile } from "react-icons/fa";
-import BotonSiguiente from "../components/botonSiguiente";
+import BotonSiguiente from "../../components/botonSiguiente";
 import { MdSos } from "react-icons/md";
 import {
   MdChecklist,
   MdCheckCircleOutline,
   MdNotificationsActive,
 } from "react-icons/md";
-import CuadroAsesor from "../components/CuadroContactarAsesor";
+import CuadroAsesor from "../../components/CuadroContactarAsesor";
 export default function Tutorial1_2() {
   FondoBlanco();
   const progresoObjetivo = 50;

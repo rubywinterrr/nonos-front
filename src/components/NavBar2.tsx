@@ -26,7 +26,7 @@ export default function NavBar2() {
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isHome ? "bg-[#002B2F]/25 aspect-video" : " aspect-square"
           }`}
-          to={"/adulto/Home"}
+          to={"/adulto/home"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             {" "}
@@ -51,7 +51,7 @@ export default function NavBar2() {
           className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
             isContactos ? " bg-[#002B2F]/25 aspect-video" : "aspect-square"
           }`}
-          to={"/adulto/Contactos"}
+          to={"/adulto/contactos"}
         >
           <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             <MdOutlinePeopleAlt />{" "}

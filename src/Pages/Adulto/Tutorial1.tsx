@@ -1,17 +1,17 @@
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import { HiOutlineCheckBadge } from "react-icons/hi2";
 import { useState, useEffect } from "react";
-import { FondoBlanco } from "../components/funcionFondoBlanco";
-import stock2 from "../assets/stock2.png";
+import { FondoBlanco } from "../../components/funcionFondoBlanco";
+import stock2 from "../../assets/stock2.png";
 import { BiBulb } from "react-icons/bi";
-import BotonSiguiente from "../components/botonSiguiente";
+import BotonSiguiente from "../../components/botonSiguiente";
 import {
   MdOutlineWatch,
   MdChecklist,
   MdCheckCircleOutline,
 } from "react-icons/md";
-import CuadroAsesor from "../components/CuadroContactarAsesor";
+import CuadroAsesor from "../../components/CuadroContactarAsesor";
 export default function Tutorial1() {
   FondoBlanco();
 

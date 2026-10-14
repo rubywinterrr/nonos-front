@@ -15,9 +15,9 @@ export default function NavBar() {
     currentPath === "/adulto" ||
     currentPath === "/cuidador" ||
     currentPath === "/familia";
-  const isSalud = currentPath.startsWith("/salud");
-  const isContactos = currentPath.startsWith("/contactos");
-  const isSos = currentPath.startsWith("/sos");
+  const isSalud = currentPath.startsWith("/adulto/salud");
+  const isContactos = currentPath.startsWith("/adulto/contactos");
+  const isSos = currentPath.startsWith("/adulto/sos");
 
   return (
     <>
@@ -43,7 +43,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white"
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/adulto/Salud"}
+          to={"/adulto/salud"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             <MdOutlineMedicalServices />
@@ -57,7 +57,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white"
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/adulto/Contactos"}
+          to={"/adulto/contactos"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             <MdOutlinePeopleAlt />{" "}
@@ -71,7 +71,7 @@ export default function NavBar() {
               ? "bg-[#002B2F] text-white "
               : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          to={"/adulto/SOS"}
+          to={"/adulto/sos"}
         >
           <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
             <PiWarningDiamondBold />

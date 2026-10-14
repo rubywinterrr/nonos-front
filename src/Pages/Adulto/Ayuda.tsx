@@ -1,12 +1,12 @@
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import { Link } from "react-router-dom";
 import { FaHandHoldingHeart } from "react-icons/fa";
 import { BsPatchCheck } from "react-icons/bs";
 import { PiBookOpenText } from "react-icons/pi";
 import { MdOutlineMailOutline, MdArrowForward } from "react-icons/md";
-import Stock1 from "../assets/stock1.png";
-import { FondoBlanco } from "../components/funcionFondoBlanco";
+import Stock1 from "../../assets/stock1.png";
+import { FondoBlanco } from "../../components/funcionFondoBlanco";
 export default function Ayuda() {
   FondoBlanco();
   return (

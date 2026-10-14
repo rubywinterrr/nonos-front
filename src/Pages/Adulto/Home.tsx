@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Header from "../components/Header";
-import { useAuth } from "../hooks/useAuth";
+import Header from "../../components/Header";
+import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
-import { alertasService } from "../services/alertasService";
+import { alertasService } from "../../services/alertasService";
 import { RiAlertFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdOutlineMedication, MdOutlineContactPhone } from "react-icons/md";
@@ -24,7 +24,7 @@ export default function Home() {
 
     try {
       await alertasService.dispararEmergencia(usuario.id);
-      navigate("/adulto/SOS");
+      navigate("/adulto/sos");
     } catch (err) {
       console.error(err);
       // avisa si ya hay un SOS de los últimos 10 min
@@ -32,7 +32,7 @@ export default function Home() {
         err instanceof Error &&
         err.message === "Ya existe una alerta pendiente"
       ) {
-        navigate("/adulto/SOS");
+        navigate("/adulto/sos");
       } else {
         setErrorSOS("No se pudo enviar el pedido de ayuda. Probá de nuevo.");
       }

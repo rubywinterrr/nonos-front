@@ -19,7 +19,7 @@ export default function LogInForm() {
     setCargando(true);
     try {
       await login({ email, password });
-      navigate("/adulto/Home");
+      navigate("/adulto/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {

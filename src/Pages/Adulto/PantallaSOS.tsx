@@ -1,11 +1,11 @@
-import Header from "../components/Header";  
+import Header from "../../components/Header";  
 import { RxCross2 } from "react-icons/rx";
 import { MdOutlinePhone, MdNotificationsActive, MdOutlineHealthAndSafety, MdOutlinePeopleAlt } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
-import VueltaAtras from "../components/vueltaAtras";
+import VueltaAtras from "../../components/vueltaAtras";
 import { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
-import { usuarioService, type Vinculo } from "../services/usuariosService";
+import { useAuth } from "../../hooks/useAuth";
+import { usuarioService, type Vinculo } from "../../services/usuariosService";
 
 //import Boton1 from "../components/boton1";
 

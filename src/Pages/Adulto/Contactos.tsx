@@ -1,14 +1,14 @@
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import { FaHeart } from "react-icons/fa";
 import { BsChatLeftText } from "react-icons/bs";
 import { VscInfo } from "react-icons/vsc";
 import { MdOutlinePhone } from "react-icons/md";
 import { BiHealth } from "react-icons/bi";
-import TarjetaContactos from "../components/TarjetaContacto";
+import TarjetaContactos from "../../components/TarjetaContacto";
 import { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
-import { contactosService, type Contacto } from "../services/contactosService";
+import { useAuth } from "../../hooks/useAuth";
+import { contactosService, type Contacto } from "../../services/contactosService";
 
 // Vista para gestionar contactos o personas de emergencia vinculadas a la app.
 export default function Contactos() {

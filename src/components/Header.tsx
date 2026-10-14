@@ -7,7 +7,7 @@ import { MdOutlineHealthAndSafety } from "react-icons/md";
 export default function Header() {
   const navigate = useNavigate();
   function Cuenta() {
-    navigate("/Cuenta");
+    navigate("/cuenta");
     console.log("Cuenta");
   }
 

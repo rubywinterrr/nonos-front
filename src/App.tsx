@@ -1,20 +1,20 @@
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
-import Home from "./Pages/Home";
+import Home from "./Pages/Adulto/Home";
 //import PanelAdulto from "./Pages/Adulto/panel-adulto";
 import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
 import PanelFamilia from "./Pages/Familia/panel-familia";
 import Ingreso from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
-import SOS from "./Pages/PantallaSOS";
-import Salud from "./Pages/Salud";
-import Contactos from "./Pages/Contactos";
+import SOS from "./Pages/Adulto/PantallaSOS";
+import Salud from "./Pages/Adulto/Salud";
+import Contactos from "./Pages/Adulto/Contactos";
 import Config from "./Pages/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Navbar2 from "./components/NavBar2";
-import Codigo from "./Pages/CodigoDeEmergencia";
-import Ayuda from "./Pages/Ayuda";
-import Tutorial1 from "./Pages/Tutorial1";
-import Tutorial1_2 from "./Pages/Tutorial1.2";
+import Codigo from "./Pages/Adulto/CodigoDeEmergencia";
+import Ayuda from "./Pages/Adulto/Ayuda";
+import Tutorial1 from "./Pages/Adulto/Tutorial1";
+import Tutorial1_2 from "./Pages/Adulto/Tutorial1.2";
 import SinRuta from "./Pages/SinRuta"; 
 
 function LayoutConFooter() {
@@ -37,7 +37,7 @@ function App() {
           <Route path="adulto">
             <Route index element={<Navigate to="home" replace />} />
             <Route path="home" element={<Home />} />
-            <Route path="SOS" element={<SOS />} />
+            <Route path="sos" element={<SOS />} />
             <Route path="salud" element={<Salud />} />
             <Route path="contactos" element={<Contactos />} />
             <Route path="configuracion" element={<Config />} />

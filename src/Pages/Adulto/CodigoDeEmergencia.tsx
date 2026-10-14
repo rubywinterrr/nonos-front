@@ -1,8 +1,8 @@
-import { useAuth } from "../hooks/useAuth";
-import { usuarioService, type CodigoQR } from "../services/usuariosService";
+import { useAuth } from "../../hooks/useAuth";
+import { usuarioService, type CodigoQR } from "../../services/usuariosService";
 import { useEffect, useRef, useState } from "react";
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import {
   MdQrCodeScanner,
   MdFullscreen,
@@ -12,7 +12,7 @@ import {
 } from "react-icons/md";
 import { IoAlertCircle } from "react-icons/io5";
 import { GoQuestion } from "react-icons/go";
-import { qrService } from "../services/qrService";
+import { qrService } from "../../services/qrService";
 
 const TIMER_DURATION_SECONDS = 30 * 60;
 
