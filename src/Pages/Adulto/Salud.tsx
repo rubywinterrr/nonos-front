@@ -1,12 +1,17 @@
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import { FaRegAddressCard } from "react-icons/fa";
 import { LuEye, LuTriangleAlert } from "react-icons/lu";
-import { useAuth } from "../hooks/useAuth";
-import { MdOutlineBloodtype, MdOutlineMedication } from "react-icons/md";
+import { useAuth } from "../../hooks/useAuth";
+import {
+  MdOutlineBloodtype,
+  MdOutlineMedication,
+  MdLockClock,
+  MdOutlineSupportAgent,
+} from "react-icons/md";
 import { PiCalendarCheck } from "react-icons/pi";
 import { RiBookMarkedLine } from "react-icons/ri";
-import CajaMed from "../components/cajaMedicacion";
+import CajaMed from "../../components/cajaMedicacion";
 
 export default function Salud() {
   const { usuario } = useAuth();
@@ -101,10 +106,21 @@ export default function Salud() {
             por [doctor]){" "}
             {/* PONER INFO FECHA DE ACTUALIZACION Y NOMBRE DOCTOR */}
           </p>
-        <CajaMed />
-        <CajaMed />
-        <CajaMed />
+          <CajaMed />
+          <CajaMed />
+          <CajaMed />
         </div>
+        <div className="bg-gray-100 rounded-2xl flex items-start justify-start p-6 w-full gap-3 text-gray-500">
+          <MdLockClock className="text-7xl h-fit" />
+          <p>
+            Esta información es solo para consulta, no controla las tomas. Para
+            modificarla, consultá con tu cuidador o familiar.
+          </p>
+        </div>
+        <h1 className="flex p-4 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400 text-xl">
+          <MdOutlineSupportAgent className="text-3xl" /> Contactar a mi cuidador
+          para cambios
+        </h1>
       </main>
     </>
   );
