@@ -106,7 +106,10 @@ export default function Home() {
               </div>
             </div>
           </Link>
-          <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center">
+          <Link
+            className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
+            to={"../cuidados"}
+          >
             <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-3xl">
               <MdOutlineContactPhone />
             </div>
@@ -115,13 +118,15 @@ export default function Home() {
                 <h2 className="font-semibold text-xl">
                   Mis voluntades y cuidados
                 </h2>
-                <p className="text-gray-500 text-md">Escribí tus preferencias</p>
+                <p className="text-gray-500 text-md">
+                  Escribí tus preferencias
+                </p>
               </div>
               <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
                 <IoIosArrowForward />
               </div>
             </div>
-          </div>
+          </Link>
           <Link
             to={"../codigo"}
             className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"

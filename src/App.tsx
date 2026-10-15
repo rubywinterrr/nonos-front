@@ -21,6 +21,7 @@ import Ayuda from "./Pages/Adulto/Ayuda";
 import Tutorial1 from "./Pages/Adulto/Tutorial1";
 import Tutorial1_2 from "./Pages/Adulto/Tutorial1.2";
 import SinRuta from "./Pages/SinRuta";
+import Cuidados from "./Pages/Adulto/Cuidados";
 
 function LayoutConFooter() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route path="contactos" element={<Contactos />} />
             <Route path="configuracion" element={<Config />} />
             <Route path="codigo" element={<Codigo />} />
+            <Route path="cuidados" element={<Cuidados />} />
             <Route path="ayuda">
               <Route index element={<Ayuda />} />
               <Route path="tutorial1" element={<Tutorial1 />} />
