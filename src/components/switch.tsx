@@ -1,10 +1,15 @@
-export default function Switch({ checked = true, onChange }) {
+interface SwitchProps {
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+}
+
+export default function Switch({ checked = true, onChange }: SwitchProps) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
-      onClick={onChange}
+      onClick={() => onChange?.(!checked)}
       className={`relative flex h-7 w-13 cursor-pointer rounded-full p-0.5 ease-in-out focus:outline-none ${
         checked ? "bg-blue-600" : "bg-gray-300"
       }`}
