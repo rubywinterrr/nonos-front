@@ -51,7 +51,7 @@ export default function Tutorial1_2() {
               style={{ width: `${progreso}%` }}
             ></div>
           </div>
-          <div className="flex w-full text-gray-400 justify-between items-center text-lg font-semibold pl-1 pr-1">
+          <div className="flex w-full text-gray-400 justify-between items-center font-semibold pl-1 pr-1">
             <p>1. Pulsera</p>
             <p className="text-blue-800">2. Botón</p>
             <p>3. Familia</p>
@@ -95,7 +95,7 @@ export default function Tutorial1_2() {
             <FaSmile className="aspect-square text-5xl p-3 text-white rounded-full bg-blue-700" />
             <div className="flex flex-col justify-start items-start gap-2 max-w-80/100 ">
               <h3 className="font-bold text-xl">Un consejo para vos</h3>
-              <p className="text-lg">
+              <p className="">
                 No te preocupes por apretarlo sin querer. Tienes 10 segundos
                 para cancelarlo tocando la pulsera antes de que se envíen las
                 alarmas.

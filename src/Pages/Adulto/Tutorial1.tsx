@@ -51,7 +51,7 @@ export default function Tutorial1() {
               style={{ width: `${progreso}%` }}
             ></div>
           </div>
-          <div className="flex w-full text-gray-400 justify-between items-center text-lg font-semibold pl-1 pr-1">
+          <div className="flex w-full text-gray-400 justify-between items-center font-semibold pl-1 pr-1">
             <p className="text-blue-800">1. Pulsera</p>
             <p>2. Botón</p>
             <p>3. Familia</p>
@@ -101,17 +101,17 @@ export default function Tutorial1() {
               </p>
             </div>
           </div>
-          <div className="bg-[#EBF5FF] flex flex-col p-5 gap-3 rounded-2xl w-full">
-            <h1 className="flex gap-2 items-center justify-start text-xl font-semibold">
-              <MdChecklist className="text-3xl text-blue-700" />
+          <div className="bg-[#EBF5FF] flex flex-col p-4 gap-3 rounded-2xl w-full">
+            <h1 className="flex gap-2 items-start justify-start text-xl font-semibold">
+              <MdChecklist className="size-8 text-blue-700" />
               Comprobá antes de avanzar:
             </h1>
             <p className="text-lg flex items-start justify-start gap-2 pl-2">
-              <MdCheckCircleOutline className="text-green-800 text-4xl" />
+              <MdCheckCircleOutline className="text-green-800 size-9" />
               Que pase un dedo entre la correa y tu piel para evitar marcas.
             </p>
             <p className="text-lg flex items-start justify-start gap-2 pl-2">
-              <MdCheckCircleOutline className="text-green-800 text-4xl" />
+              <MdCheckCircleOutline className="text-green-800 size-9" />
               Que el botón rojo quede ubicado hacia el lado más accesible.
             </p>
           </div>

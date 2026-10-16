@@ -14,11 +14,11 @@ export default function Cuidados() {
         <Header />
         <VueltaAtras titulo="Mis voluntades y cuidados" />
         <section className="w-full flex flex-col gap-4">
-          <div className="w-full rounded-2xl bg-gray-100 border border-gray-200 flex flex-col p-5 gap-5">
-            <div className="w-full flex gap-3 items-center justify-start">
-              <IoMdHeart className="text-[#4A7FBF] p-2 bg-white border border-gray-200 rounded-xl text-5xl" />
-              <div className="flex flex-col gap-1 items-start justify-start">
-                <h1 className="text-xl font-semibold">
+          <div className="w-full rounded-2xl bg-gray-100 border border-gray-200 flex flex-col p-5 gap-5 pr-0">
+            <div className="w-full flex gap-3 items-start justify-start">
+              <IoMdHeart className="text-[#4A7FBF] p-2 bg-white border border-gray-200 rounded-xl size-12" />
+              <div className="flex flex-col max-w-75/100 items-start justify-start">
+                <h1 className="text-lg font-semibold">
                   Mis deseos en caso de emergencia
                 </h1>
                 <h2 className="text-[#4A7FBF]">
@@ -26,7 +26,7 @@ export default function Cuidados() {
                 </h2>
               </div>
             </div>
-            <p className="text-gray-500">
+            <p className="text-gray-500 pr-5">
               Aquí podés dejar indicaciones simples para que tu familia y el
               equipo médico sepan qué preferís en caso de emergencia. Podés
               modificarlas o actualizarlas cuando quieras.
@@ -41,8 +41,8 @@ Ej: "En caso de que me internen, no quiero que me ingresen un tubo” '
           <CajaPreferencias titulo="¿Cómo preferís ser atendido?" />
         </section>
         <div className="flex w-full rounded-2xl bg-zinc-100 border border-gray-200 p-5 gap-4">
-          <MdLock className="bg-white border border-gray-200 p-2.5 text-5xl rounded-lg text-[#4A7FBF]" />
-          <p className="max-w-83/100">
+          <MdLock className="bg-white border border-gray-200 p-2.5 size-12 rounded-lg text-[#4A7FBF]" />
+          <p className="max-w-75/100">
             Tu familia puede ver estas indicaciones desde su aplicación
             autorizada para respetarlas y comunicarlas ante cualquier atención
             médica.

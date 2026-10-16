@@ -17,14 +17,14 @@ export default function Salud() {
   const { usuario } = useAuth();
   return (
     <>
-      <main className="mainBody">
+      <main className="mainBody ">
         <Header />
         <VueltaAtras titulo="Mi información médica" />
         <div className="w-full p-5 rounded-2xl flex items-start justify-start bg-gray-100 gap-5">
-          <LuEye className="text-6xl bg-gray-200 p-3 rounded-full text-gray-500" />
-          <div className="flex flex-col items-start justify-start gap-1 max-w-80/100">
-            <h1 className="font-semibold text-xl">Vista de solo lectura</h1>
-            <p className="text-gray-500 text-lg">
+          <LuEye className="size-13 bg-gray-200 p-3 rounded-full text-gray-500" />
+          <div className="flex flex-col items-start justify-start gap-1 max-w-70/100">
+            <h1 className="font-semibold text-lg">Vista de solo lectura</h1>
+            <p className="text-gray-500">
               Podés mostrar esta pantalla al médico o farmacéutico.
             </p>
           </div>
@@ -111,14 +111,14 @@ export default function Salud() {
           <CajaMed />
         </div>
         <div className="bg-gray-100 rounded-2xl flex items-start justify-start p-6 w-full gap-3 text-gray-500">
-          <MdLockClock className="text-7xl h-fit" />
-          <p>
+          <MdLockClock className="size-8" />
+          <p className="max-w-80/100">
             Esta información es solo para consulta, no controla las tomas. Para
             modificarla, consultá con tu cuidador o familiar.
           </p>
         </div>
-        <h1 className="flex p-4 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400 text-xl">
-          <MdOutlineSupportAgent className="text-3xl" /> Contactar a mi cuidador
+        <h1 className="flex p-3 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400">
+          <MdOutlineSupportAgent className="size-8" /> Contactar a mi cuidador
           para cambios
         </h1>
       </main>

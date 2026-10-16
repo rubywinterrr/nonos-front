@@ -77,16 +77,7 @@ function IngresoContent() {
           : "¿Ya tiene cuenta? Inicie sesión"}
       </span>
 
-      {/* <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
-        
-        <hr className="border w-screen border-gray-200 m-0" />
-        <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63]">
-          ¿Olvidó su contraseña?
-        </h2>
-        <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63">
-          Contactar a Soporte
-        </h2>
-      </footer>*/}
+      <a href="/adulto/home">home</a>
     </main>
   );
 }
