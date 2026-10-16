@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { contactosService, type Contacto } from "../../services/contactosService";
 
-// Vista para gestionar contactos o personas de emergencia vinculadas a la app.
 export default function Contactos() {
 
   const { usuario } = useAuth();
