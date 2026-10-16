@@ -2,9 +2,10 @@ import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
 import AjustesTexto from "../components/AjusteTamaños";
-import { MdOutlineNotifications, MdCheck } from "react-icons/md";
+import { MdOutlineNotifications } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
+import ToggleNotifications from "../components/ToggleNotifications";
 export default function Config() {
   return (
     <>
@@ -29,20 +30,11 @@ export default function Config() {
             <div className="flex flex-col items-start justify-start gap-2 pt-1">
               <h1 className="font-semibold text-xl">Notificaciones</h1>
               <p className="text-gray-500 text-lg">
-                Elegí qué avisos querés recibir.
+                Recibí avisos de alertas y emergencias en este dispositivo.
               </p>
             </div>
-            <h3 className="bg-green-50 text-green-700 pl-2 pr-2 rounded-full border flex items-center gap-2 border-green-300/50 p-1 font-semibold absolute right-0 top-0">
-              <MdCheck />
-              Activadas
-            </h3>
           </div>
-          <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
-          <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
-          <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
-          <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
-          <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
-          <div className="w-full h-20 rounded-2xl border border-gray-400 bg-gray 200"></div>
+          <ToggleNotifications />
         </div>
         <AjustesTexto />
         <div className="bg-white rounded-2xl w-full flex items-start justify-start p-7 gap-5 relative">
