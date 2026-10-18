@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
-import AjustesTexto from "../components/AjusteTamaños";
+import AjustesTexto from "../components/AjusteTamanios";
 import { MdOutlineNotifications, MdCheck } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
