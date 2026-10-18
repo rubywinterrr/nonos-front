@@ -5,14 +5,12 @@ import type { Usuario } from "../services/authService";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
-    const [loading, setLoading] = useState(true);
+    // si no hay token no hay sesión que restaurar, así que arranca sin cargar
+    const [loading, setLoading] = useState(localStorage.getItem('nonos_token') !== null);
 
     useEffect(() => {
         const token = localStorage.getItem('nonos_token');
-        if (!token) {
-            setLoading(false);
-            return;
-        }
+        if (!token) return;
 
         authService.getProfile()
             .then((data) => setUsuario(data.user))
