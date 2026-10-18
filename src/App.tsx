@@ -22,6 +22,7 @@ import Tutorial1 from "./Pages/Adulto/Tutorial1";
 import Tutorial1_2 from "./Pages/Adulto/Tutorial1.2";
 import SinRuta from "./Pages/SinRuta";
 import Cuidados from "./Pages/Adulto/Cuidados";
+import RutaProtegida from "./components/RutaProtegida";
 
 function LayoutConFooter() {
   return (
@@ -38,6 +39,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Ingreso />} />
+        <Route element={<RutaProtegida />}>
         <Route element={<LayoutConFooter />}>
           <Route path="adulto">
             <Route index element={<Navigate to="home" replace />} />
@@ -61,6 +63,7 @@ function App() {
           </Route>
           <Route path="cuidador" element={<PanelCuidador />} />
           <Route path="cuenta" element={<PagCuenta />} />
+        </Route>
         </Route>
         <Route path="*" element={<SinRuta />} />
       </Routes>
