@@ -27,10 +27,11 @@ export default function RegisterForm() {
 
   const passwordRequirements = [
     { label: "Mínimo 8 caracteres", met: password.length >= 8 },
+    { label: "Al menos una mayúscula (A-Z)", met: /[A-Z]/.test(password) },
     { label: "Al menos un dígito (0-9)", met: /\d/.test(password) },
     {
-      label: "Al menos un carácter especial (! @ # $ % & * ?)",
-      met: /[^A-Za-z0-9\s]/.test(password),
+      label: 'Al menos un carácter especial (! @ # $ % ^ & * ( ) , . ? " : { } | < >)',
+      met: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     },
   ];
 
