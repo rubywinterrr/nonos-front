@@ -61,10 +61,10 @@ export default function Contactos() {
               <h2 className="text-md text-gray-400">Emergencias médicas</h2>
             </a>
           </div>
-          <div className="bg-white rounded-lg aspect-square h-full flex items-center justify-center flex-col gap-1 p-1 cursor-pointer">
+          <a href="tel:+5491130285858" className="bg-white rounded-lg aspect-square h-full flex items-center justify-center flex-col gap-1 p-1 cursor-pointer">
             <MdOutlinePhone className="text-3xl" />
             <p className="text-xs font-semibold">Llamar</p>
-          </div>
+          </a>
         </div>
         <div className="flex flex-col lg:flex-row gap-5 w-full flex-wrap">
           {loading && <p>Cargando contactos...</p>}
