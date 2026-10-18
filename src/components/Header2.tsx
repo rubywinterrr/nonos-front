@@ -24,17 +24,14 @@ export default function Header2() {
 
   function Cuenta() {
     navigate("/cuenta");
-    console.log("Cuenta");
   }
 
   function MenuDesplegable() {
     setMenuAbierto(!menuAbierto);
-    console.log("menu");
   }
 
   function IrConfig() {
     navigate("/adulto/configuracion");
-    console.log("Configuracion");
   }
 
   return (

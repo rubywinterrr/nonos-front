@@ -8,7 +8,6 @@ export default function Header() {
   const navigate = useNavigate();
   function Cuenta() {
     navigate("/cuenta");
-    console.log("Cuenta");
   }
 
   function NomPag() {
