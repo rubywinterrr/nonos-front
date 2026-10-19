@@ -59,7 +59,7 @@ export default function Salud() {
                 {" "}
                 <p className="text-gray-600">Grupo y factor</p>
                 <h1 className="text-xl font-bold">
-                  Grupo de sangre {/* PONER INFO GRUPO DE SANGRE */}
+                  Grupo de sangre {/* EL BACK NO TIENE ENDPOINT: grupo y factor */}
                 </h1>
               </div>
             </div>
@@ -69,15 +69,16 @@ export default function Salud() {
                 {" "}
                 <p className="text-gray-600">Cobertura / Prepaga</p>
                 <h1 className="text-xl font-bold">
-                  Cobertura {/* PONER INFO COBERTURA */}
+                  Cobertura {/* EL BACK NO TIENE ENDPOINT: cobertura / prepaga */}
                 </h1>
                 <p className="text-gray-600">
-                  N° 0000000000 {/* PONER INFO COBERTURA */}
+                  N° 0000000000 {/* EL BACK NO TIENE ENDPOINT: número de afiliado */}
                 </p>
               </div>
             </div>
 
             {/* SOLO APARECE SI TIENE UNA ALERGIA O ATENCION MEDICA */}
+            {/* EL BACK NO TIENE ENDPOINT de alergias (existe /condiciones en condicionesService: revisar si sirve para esto) */}
             <div className="bg-[#FFDAD6] rounded-2xl flex items-start justify-start p-5 w-full gap-3">
               {" "}
               <LuTriangleAlert className="text-4xl text-red-700" />
@@ -105,6 +106,7 @@ export default function Salud() {
             <PiCalendarCheck className=" text-2xl" /> Actualizado el ([fecha]
             por [doctor]){" "}
             {/* PONER INFO FECHA DE ACTUALIZACION Y NOMBRE DOCTOR */}
+            {/* NOMBRE DOCTOR: EL BACK NO TIENE ENDPOINT (no guarda quién hizo el cambio) */}
           </p>
           <CajaMed />
           <CajaMed />
