@@ -14,25 +14,34 @@ import { IoAlertCircle } from "react-icons/io5";
 import { GoQuestion } from "react-icons/go";
 import { qrService } from "../../services/qrService";
 
+// Duración de un código (30 min). Solo se usa como escala de la barra de progreso.
 const TIMER_DURATION_SECONDS = 30 * 60;
 
 export default function Codigo() {
   const { usuario } = useAuth();
   const emergencyCardRef = useRef<HTMLDivElement>(null);
-  const [secondsRemaining, setSecondsRemaining] = useState(
-    TIMER_DURATION_SECONDS,
-  );
+  const [ahora, setAhora] = useState(() => Date.now());
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [codigo, setCodigo] = useState<CodigoQR | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
   const [sinQR, setSinQR] = useState<boolean>(false);
 
+  // Segundos que faltan para que venza el código, calculados desde expiraEn (nunca menos de 0)
+  let secondsRemaining = 0;
+  if (codigo) {
+    const msRestantes = new Date(codigo.expiraEn).getTime() - ahora;
+    secondsRemaining = Math.max(0, Math.floor(msRestantes / 1000));
+  }
+
+  const apagado = codigo !== null && !codigo.isActivo;
+  const vencido = codigo !== null && codigo.isActivo && secondsRemaining === 0;
+  const vigente = codigo !== null && codigo.isActivo && secondsRemaining > 0;
+
+  // Actualiza la hora actual cada segundo para que el contador avance
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setSecondsRemaining((remaining) =>
-        remaining <= 1 ? TIMER_DURATION_SECONDS : remaining - 1,
-      );
+      setAhora(Date.now());
     }, 1000);
 
     return () => window.clearInterval(timer);
@@ -62,29 +71,51 @@ export default function Codigo() {
   }, [isFullscreen]);
 
   useEffect(() => { //fetchea codigo qr 
-  if (!usuario) return;
+    if (!usuario) return;
 
-  const fetchCodigo = async () => {
-    setLoading(true);
-    setError(null);
+    const fetchCodigo = async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const data = await usuarioService.getQR(usuario.id);
-      setCodigo(data);
-    } catch (err) {
-      console.error(err);
-      if (err instanceof Error && err.message === "QR not found") {
-        setSinQR(true);
-      } else {
-        setError("No se pudo cargar el código");
+      try {
+        const data = await usuarioService.getQR(usuario.id);
+        setCodigo(data);
+      } catch (err) {
+        console.error(err);
+        if (err instanceof Error && err.message === "QR not found") {
+          setSinQR(true);
+        } else {
+          setError("No se pudo cargar el código");
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  fetchCodigo();
-}, [usuario]);
+    };
+
+    fetchCodigo();
+  }, [usuario]);
+
+  // cuando el código vence, lo vuelve a pedir, el back renueva los QR vencidos
+  useEffect(() => {
+    if (!usuario || !vencido) return;
+
+    const volverAPedirCodigo = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await usuarioService.getQR(usuario.id);
+        setCodigo(data);
+      } catch (err) {
+        console.error(err);
+        setError("No se pudo actualizar el código");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    volverAPedirCodigo();
+  }, [usuario, vencido]);
 
   const toggleFullscreen = async () => {
     const card = emergencyCardRef.current;
@@ -110,7 +141,7 @@ export default function Codigo() {
       setIsFullscreen(true);
     }
   };
-  
+
   const generarCodigo = async () => {
     if (!usuario) return;
     setLoading(true);
@@ -123,6 +154,23 @@ export default function Codigo() {
     } catch (err) {
       console.error(err);
       setError("No se pudo generar el código");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // pide al back un código nuevo cuando el actual está vencido o apagado
+  const regenerarCodigo = async () => {
+    if (!usuario) return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await usuarioService.regenerarQR(usuario.id);
+      setCodigo(data);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo generar un código nuevo");
     } finally {
       setLoading(false);
     }
@@ -170,7 +218,18 @@ export default function Codigo() {
               <div className="bg-white rounded-xl text-5xl text-black p-10 w-full text-center">
                 {loading && "..."}
                 {error && <span className="text-red-700 text-xl">{error}</span>}
-                {codigo?.codigo || null }
+                {vigente && codigo?.codigo}
+                {vencido && <p className="text-xl">Tu código venció.</p>}
+                {apagado && <p className="text-xl">Tu código está apagado.</p>}
+                {(vencido || apagado) && !loading && (
+                  <button
+                    type="button"
+                    onClick={regenerarCodigo}
+                    className="text-xl bg-black text-white rounded-xl p-3 mt-3 cursor-pointer"
+                  >
+                    Generar código nuevo
+                  </button>
+                )}
                 {sinQR && (
                   <button
                     type="button"
