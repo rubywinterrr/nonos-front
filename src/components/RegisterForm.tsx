@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { authService } from "../services/authService";
+import rutaSegunRol from "../utils/rutaSegunRol";
 import {
   MdMailOutline,
   MdLock,
@@ -57,8 +58,8 @@ export default function RegisterForm() {
     setCargando(true);
     try {
       await authService.register({ nombreCompleto, email, password, rol });
-      await login({ email, password });
-      navigate("/adulto/home");
+      const usuarioLogueado = await login({ email, password });
+      navigate(rutaSegunRol(usuarioLogueado.rol));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {

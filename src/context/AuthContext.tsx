@@ -4,7 +4,7 @@ import type { Usuario, LoginCredentials } from '../services/authService';
 interface AuthContextType {
     usuario: Usuario | null;
     loading: boolean;
-    login: (credentials: LoginCredentials) => Promise<void>;
+    login: (credentials: LoginCredentials) => Promise<Usuario>;
     logout: () => Promise<void>;
 }
 

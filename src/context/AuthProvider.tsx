@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await authService.login(credentials);
         const data = await authService.getProfile();
         setUsuario(data.user);
+        return data.user;
     };
 
     const logout = async () => {

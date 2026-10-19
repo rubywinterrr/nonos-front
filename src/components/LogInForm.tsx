@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { MdMailOutline, MdLock, MdLogin } from "react-icons/md";
 import PasswordInput from "./PasswordInput";
+import rutaSegunRol from "../utils/rutaSegunRol";
 
 export default function LogInForm() {
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ export default function LogInForm() {
     setError("");
     setCargando(true);
     try {
-      await login({ email, password });
-      navigate("/adulto/home");
+      const usuarioLogueado = await login({ email, password });
+      navigate(rutaSegunRol(usuarioLogueado.rol));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
