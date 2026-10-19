@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import HomeAdulto from "./Pages/Adulto/Home";
-import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
+import HomeCuidador from "./Pages/Cuidador/Home";
 import HomeFamilia from "./Pages/Familia/Home";
 import Ingreso from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
@@ -40,30 +40,34 @@ function App() {
       <Routes>
         <Route path="/" element={<Ingreso />} />
         <Route element={<RutaProtegida />}>
-        <Route element={<LayoutConFooter />}>
-          <Route path="adulto">
-            <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<HomeAdulto />} />
-            <Route path="sos" element={<SOS />} />
-            <Route path="salud" element={<Salud />} />
-            <Route path="contactos" element={<Contactos />} />
-            <Route path="configuracion" element={<Config />} />
-            <Route path="codigo" element={<Codigo />} />
-            <Route path="cuidados" element={<Cuidados />} />
-            <Route path="ayuda">
-              <Route index element={<Ayuda />} />
-              <Route path="tutorial1" element={<Tutorial1 />} />
-              <Route path="tutorial1.2" element={<Tutorial1_2 />} />
+          <Route element={<LayoutConFooter />}>
+            <Route path="adulto">
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<HomeAdulto />} />
+              <Route path="sos" element={<SOS />} />
+              <Route path="salud" element={<Salud />} />
+              <Route path="contactos" element={<Contactos />} />
+              <Route path="configuracion" element={<Config />} />
+              <Route path="codigo" element={<Codigo />} />
+              <Route path="cuidados" element={<Cuidados />} />
+              <Route path="ayuda">
+                <Route index element={<Ayuda />} />
+                <Route path="tutorial1" element={<Tutorial1 />} />
+                <Route path="tutorial1.2" element={<Tutorial1_2 />} />
+              </Route>
             </Route>
-          </Route>
 
-          <Route path="familia">
+            <Route path="familia">
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<HomeFamilia />} />
+            </Route>
+            <Route path="cuidador" />
             <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<HomeFamilia />} />
+            <Route path="home" element={<HomeCuidador />} />
+            <Route />
+
+            <Route path="cuenta" element={<PagCuenta />} />
           </Route>
-          <Route path="cuidador" element={<PanelCuidador />} />
-          <Route path="cuenta" element={<PagCuenta />} />
-        </Route>
         </Route>
         <Route path="*" element={<SinRuta />} />
       </Routes>
