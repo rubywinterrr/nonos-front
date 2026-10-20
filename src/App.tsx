@@ -61,11 +61,10 @@ function App() {
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<HomeFamilia />} />
             </Route>
-            <Route path="cuidador" />
-            <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<HomeCuidador />} />
-            <Route />
-
+            <Route path="cuidador">
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<HomeCuidador />} />
+            </Route>
             <Route path="cuenta" element={<PagCuenta />} />
           </Route>
         </Route>
