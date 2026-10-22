@@ -12,9 +12,91 @@ import {
 import { PiCalendarCheck } from "react-icons/pi";
 import { RiBookMarkedLine } from "react-icons/ri";
 import CajaMed from "../../components/cajaMedicacion";
+import { useState, useEffect } from "react";
+import { medicamentosService, type Medicamento } from "../../services/medicamentosService";
+import { condicionesService, type Condicion } from "../../services/condicionesService";
+
+// calcula la edad en años a partir de la fecha de nacimiento que manda el back
+function calcularEdad(fechaNacimiento: string) {
+  const nacimiento = new Date(fechaNacimiento);
+  const hoy = new Date();
+
+  // el back guarda la fecha a las 00:00 UTC; con getUTC... no se corre al día anterior en Argentina
+  let edad = hoy.getFullYear() - nacimiento.getUTCFullYear();
+
+  const mesHoy = hoy.getMonth();
+  const mesNacimiento = nacimiento.getUTCMonth();
+  if (mesHoy < mesNacimiento) {
+    edad = edad - 1; // todavía no llegó el mes del cumpleaños
+  } else if (mesHoy === mesNacimiento && hoy.getDate() < nacimiento.getUTCDate()) {
+    edad = edad - 1; // es el mes, pero todavía no llegó el día
+  }
+
+  return edad;
+}
 
 export default function Salud() {
   const { usuario } = useAuth();
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+  const [ultimaActualizacion, setUltimaActualizacion] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [condiciones, setCondiciones] = useState<Condicion[]>([]);
+  const [errorCondiciones, setErrorCondiciones] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    // trae la medicación y busca la fecha del cambio más reciente entre todos los medicamentos
+    const fetchMedicamentos = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await medicamentosService.getMedicamentos(usuario.id);
+        setMedicamentos(data);
+
+        // si falla solo esta parte, la lista igual se muestra; solo se esconde la fecha
+        try {
+          let masReciente: string | null = null;
+          for (const medicamento of data) {
+            const cambios = await medicamentosService.getCambiosMedicamento(medicamento.id);
+            if (cambios.length === 0) continue;
+
+            // el back los manda del más nuevo al más viejo, así que el primero es el último cambio
+            const fecha = cambios[0].fechaCambio;
+            if (!masReciente || new Date(fecha).getTime() > new Date(masReciente).getTime()) {
+              masReciente = fecha;
+            }
+          }
+          setUltimaActualizacion(masReciente);
+        } catch (err) {
+          console.error(err);
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Hubo un error al cargar la medicación");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+        // trae las condiciones médicas activas del usuario (alergias, enfermedades, etc.)
+    const fetchCondiciones = async () => {
+      setErrorCondiciones(null);
+      try {
+        const data = await condicionesService.getCondiciones(usuario.id);
+        setCondiciones(data);
+      } catch (err) {
+        console.error(err);
+        setErrorCondiciones("No se pudieron cargar las condiciones médicas");
+      }
+    };
+
+    fetchMedicamentos();
+    fetchCondiciones();
+  }, [usuario]);
+
   return (
     <>
       <main className="mainBody ">
@@ -49,8 +131,11 @@ export default function Salud() {
               </div>
               <div className="flex flex-col gap-1 items-end justify-end">
                 <p className="text-gray-600">Edad</p>
-                <h1 className="text-xl font-bold">(num años)</h1>{" "}
-                {/* PONER INFO EDAD */}
+                <h1 className="text-xl font-bold">
+                {usuario?.fechaNacimiento
+                    ? `${calcularEdad(usuario.fechaNacimiento)} años`
+                    : "Sin dato de edad"}
+                  </h1>{" "}
               </div>
             </div>
             <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-start gap-5">
@@ -77,25 +162,27 @@ export default function Salud() {
               </div>
             </div>
 
-            {/* SOLO APARECE SI TIENE UNA ALERGIA O ATENCION MEDICA */}
-            {/* EL BACK NO TIENE ENDPOINT de alergias (existe /condiciones en condicionesService: revisar si sirve para esto) */}
+             {/* solo aparece si el usuario tiene alguna condición medica cargada (extra: antes vi que tenia alergia, pero el back no devuelve eso) */}
+              {condiciones.length > 0 && (
             <div className="bg-[#FFDAD6] rounded-2xl flex items-start justify-start p-5 w-full gap-3">
-              {" "}
               <LuTriangleAlert className="text-4xl text-red-700" />
               <div className="flex flex-col items-start justify-start max-w-80/100">
                 <h2 className="text-lg text-red-800 font-bold">
-                  ¡ATENCIÓN MÉDICA! ALERGIA CONFIRMADA
+                ¡ATENCIÓN MÉDICA! CONDICIONES A TENER EN CUENTA
                 </h2>
-                <h1 className="text-2xl text-red-700 font-bold">
-                  Alergia a la Penicilina
-                </h1>
-                <p className="text-red-800">
-                  No administrar penicilinas ni derivados betalactámicos.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+                  {condiciones.map((condicion) => (
+                    <div key={condicion.id} className="flex flex-col">
+                      <h1 className="text-2xl text-red-700 font-bold">
+                        {condicion.nombre}
+                      </h1>
+                      {condicion.descripcion && (
+                        <p className="text-red-800">{condicion.descripcion}</p>
+                      )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
         <div className="w-full flex flex-col gap-5 items-start justify-start">
           <h1 className="font-semibold text-xl flex items-center justify-start gap-1">
