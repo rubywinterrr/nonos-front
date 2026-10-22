@@ -1,45 +1,76 @@
-// Configuración principal de rutas de la aplicación.
-// Se define aquí el flujo principal entre login, home, perfiles y pantallas de salud/contactos.
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./Pages/Home";
-import PanelAdulto from "./Pages/Adulto/panel-adulto";
-import PanelCuidador from "./Pages/Cuidador/panel-cuidador";
-import PanelFamilia from "./Pages/Familia/panel-familia";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
+import HomeAdulto from "./Pages/Adulto/Home";
+import HomeCuidador from "./Pages/Cuidador/Home";
+import HomeFamilia from "./Pages/Familia/Home";
 import Ingreso from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
-import SOS from "./Pages/PantallaSOS";
-import Salud from "./Pages/Salud";
-import Contactos from "./Pages/Contactos";
+import SOS from "./Pages/Adulto/PantallaSOS";
+import Salud from "./Pages/Adulto/Salud";
+import Contactos from "./Pages/Adulto/Contactos";
 import Config from "./Pages/Configuration";
+import { ScrollToTop } from "./components/ScrollToTop";
+import Navbar2 from "./components/NavBar2";
+import Codigo from "./Pages/Adulto/CodigoDeEmergencia";
+import Ayuda from "./Pages/Adulto/Ayuda";
+import Tutorial1 from "./Pages/Adulto/Tutorial1";
+import Tutorial1_2 from "./Pages/Adulto/Tutorial1.2";
+import SinRuta from "./Pages/SinRuta";
+import Cuidados from "./Pages/Adulto/Cuidados";
+import RutaProtegida from "./components/RutaProtegida";
 
-function App() {
-  console.log("/adulto, /cuidador, /familia");
+function LayoutConFooter() {
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/Home" element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/Adulto" element={<PanelAdulto />} />
-          <Route path="/adulto" element={<PanelAdulto />} />
-          <Route path="/Familia" element={<PanelFamilia />} />
-          <Route path="/familia" element={<PanelFamilia />} />
-          <Route path="/Cuidador" element={<PanelCuidador />} />
-          <Route path="/cuidador" element={<PanelCuidador />} />
-          <Route path="/" element={<Ingreso />} />
-          <Route path="/cuenta" element={<PagCuenta />} />
-          <Route path="/Cuenta" element={<PagCuenta />} />
-          <Route path="/SOS" element={<SOS />} />
-          <Route path="/sos" element={<SOS />} />
-          <Route path="/Salud" element={<Salud />} />
-          <Route path="/salud" element={<Salud />} />
-          <Route path="/Contactos" element={<Contactos />} />
-          <Route path="/contactos" element={<Contactos />} />
-          <Route path="/Configuracion" element={<Config />} />
-          <Route path="/configuracion" element={<Config />} />
-        </Routes>
-      </BrowserRouter>
+      <Outlet />
+      <Navbar2 />
     </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Ingreso />} />
+        <Route element={<RutaProtegida />}>
+          <Route element={<LayoutConFooter />}>
+            <Route path="adulto">
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<HomeAdulto />} />
+              <Route path="sos" element={<SOS />} />
+              <Route path="salud" element={<Salud />} />
+              <Route path="contactos" element={<Contactos />} />
+              <Route path="configuracion" element={<Config />} />
+              <Route path="codigo" element={<Codigo />} />
+              <Route path="cuidados" element={<Cuidados />} />
+              <Route path="ayuda">
+                <Route index element={<Ayuda />} />
+                <Route path="tutorial1" element={<Tutorial1 />} />
+                <Route path="tutorial1.2" element={<Tutorial1_2 />} />
+              </Route>
+            </Route>
+
+            <Route path="familia">
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<HomeFamilia />} />
+            </Route>
+            <Route path="cuidador">
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<HomeCuidador />} />
+            </Route>
+            <Route path="cuenta" element={<PagCuenta />} />
+          </Route>
+        </Route>
+        <Route path="*" element={<SinRuta />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

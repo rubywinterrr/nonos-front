@@ -1,42 +1,69 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import iconCandado from "../assets/Icon-Candado.png";
-import iconEmail from "../assets/Icon-Email.png";
-import iconPersona from "../assets/Icon-Persona.png";
-import iconIngreso from "../assets/Icon-Ingreso.png";
-import iconIngresoBlack from "../assets/Icon-Ingreso-Black.png";
+import { useAuth } from "../hooks/useAuth";
+import { authService } from "../services/authService";
+import rutaSegunRol from "../utils/rutaSegunRol";
+import {
+  MdMailOutline,
+  MdLock,
+  MdLogin,
+  MdCheckCircle,
+  MdCancel,
+} from "react-icons/md";
+import { FaUser } from "react-icons/fa6";
+import PasswordInput from "./PasswordInput";
+
 export default function RegisterForm() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  const [nombreCompleto, setNombreCompleto] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  const [rol, setRol] = useState("");
+  const [opcionRol, setOpcionRol] = useState("");
   const [tipoCuidador, setTipoCuidador] = useState("");
-  const [botonEnHover, setBotonEnHover] = useState(false);
 
-  const handleLogin = async () => {
+  const passwordRequirements = [
+    { label: "Mínimo 8 caracteres", met: password.length >= 8 },
+    { label: "Al menos una mayúscula (A-Z)", met: /[A-Z]/.test(password) },
+    { label: "Al menos un dígito (0-9)", met: /\d/.test(password) },
+    {
+      label: 'Al menos un carácter especial (! @ # $ % ^ & * ( ) , . ? " : { } | < >)',
+      met: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    },
+  ];
+
+  const handleRegister = async () => {
     setError("");
+    if (!passwordRequirements.every((requirement) => requirement.met)) {
+      setError("La contraseña no cumple todos los requisitos.");
+      return;
+    }
+    if (!opcionRol) {
+      setError("Por favor, selecciona un rol para continuar.");
+      return;
+    }
+    if (opcionRol === "Cuidador" && !tipoCuidador) {
+      setError("Por favor, especifica el tipo de cuidador.");
+      return;
+    }
+
+    const rol =
+      opcionRol === "Adulto mayor" ? "ADULTO_MAYOR" :
+        opcionRol === "Cuidador" ? "CUIDADOR" : "FAMILIAR";
+
     setCargando(true);
     try {
-      await login({ email, password });
-      navigate("/Home");
+      await authService.register({ nombreCompleto, email, password, rol });
+      const usuarioLogueado = await login({ email, password });
+      navigate(rutaSegunRol(usuarioLogueado.rol));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
       setCargando(false);
-    }
-    if (!rol) {
-      setError("Por favor, selecciona un rol para continuar.");
-      return;
-    }
-    if (rol === "Cuidador" && !tipoCuidador) {
-      setError("Por favor, especifica el tipo de cuidador.");
-      return;
     }
   };
 
@@ -46,22 +73,20 @@ export default function RegisterForm() {
         className="w-90/100 md:w-60/100 lg:w-40/100 flex flex-col justify-center items-center gap-5"
         onSubmit={(e) => {
           e.preventDefault();
-          handleLogin();
+          handleRegister();
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconPersona}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <FaUser />
             Nombre completo
             <span className="font-bold text-red-500">*</span>
           </label>
           <input
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: Juan Carlos Cruz"
+            value={nombreCompleto}
+            onChange={(e) => setNombreCompleto(e.target.value)}
             required
           />
           <span className="text-xs text-gray-500">
@@ -70,11 +95,7 @@ export default function RegisterForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconEmail}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdMailOutline />
             Correo electrónico
             <span className="font-bold text-red-500">*</span>
           </label>
@@ -92,34 +113,48 @@ export default function RegisterForm() {
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
           <label className="text-lg flex items-center gap-2">
-            <img
-              src={iconCandado}
-              alt=""
-              className="h-6 w-6 object-contain p-0.5"
-            />
+            <MdLock />
             Contraseña
             <span className="font-bold text-red-500">*</span>
           </label>
-          <input
-            type="password"
+          <PasswordInput
             value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            name=""
-            id=""
-            className="w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+            onChange={setPassword}
             placeholder="Ej: Nonos1234!"
           />
           <span className="text-xs text-gray-500">
             La contraseña debe contener:
           </span>
-          <span className="text-xs text-gray-500">Mínimo 8 caracteres</span>
-          <span className="text-xs text-gray-500">
-            Al menos un digito (0-9)
-          </span>
-          <span className="text-xs text-gray-500">
-            Al menos un caracter especial (! @ # $ % & * ?)
-          </span>
+          {password.length === 0 ? (
+            <>
+              <span className="text-xs text-gray-500">Mínimo 8 caracteres</span>
+              <span className="text-xs text-gray-500">
+                Mínimo 8 caracteres
+              </span>
+              <span className="text-xs text-gray-500">
+                Al menos una mayúscula
+              </span>
+              <span className="text-xs text-gray-500">
+                Al menos un caracter especial (! @ # $ % & * ? etc.)
+              </span>
+            </>
+          ) : (
+            <ul className="flex flex-col gap-1" aria-live="polite">
+              {passwordRequirements.map((requirement) => (
+                <li
+                  key={requirement.label}
+                  className={`flex items-center gap-1 text-xs ${requirement.met ? "text-green-700" : "text-red-600"}`}
+                >
+                  {requirement.met ? (
+                    <MdCheckCircle aria-hidden="true" />
+                  ) : (
+                    <MdCancel aria-hidden="true" />
+                  )}
+                  {requirement.label}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="flex flex-col gap-5 mt-2 w-80/100 ">
           <div className="flex flex-col gap-1">
@@ -138,19 +173,18 @@ export default function RegisterForm() {
                 <button
                   type="button"
                   key={opcion}
-                  onClick={() => setRol(opcion)}
-                  className={`flex-1 p-3 border rounded-lg cursor-pointer text-center font-bold text-sm transition-all ${
-                    rol === opcion
-                      ? "border-black bg-gray-300 text-black shadow-inner"
-                      : "border-black bg-white text-black hover:bg-gray-100"
-                  }`}
+                  onClick={() => setOpcionRol(opcion)}
+                  className={`flex-1 p-3 border rounded-lg cursor-pointer text-center font-bold text-sm transition-all ${opcionRol === opcion
+                    ? "border-black bg-gray-300 text-black shadow-inner"
+                    : "border-black bg-white text-black hover:bg-gray-100"
+                    }`}
                 >
                   {opcion}
                 </button>
               ))}
             </div>
           </div>
-          {rol === "Cuidador" && (
+          {opcionRol === "Cuidador" && (
             <div className="flex flex-col gap-5 w-full">
               <div>
                 <p className="font-bold text-lg text-gray-800">
@@ -163,7 +197,10 @@ export default function RegisterForm() {
               <div className="flex justify-around">
                 {["Cuidador Físico", "Cuidador Digital"].map((tipo) => (
                   <button
-                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${tipoCuidador === tipo ? "bg-gray-300" : "hover:bg-gray-100"}`}
+                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${tipoCuidador === tipo
+                      ? "bg-gray-300"
+                      : "hover:bg-gray-100"
+                      }`}
                     onClick={() => setTipoCuidador(tipo)}
                     type="button"
                     key={tipo}
@@ -179,16 +216,10 @@ export default function RegisterForm() {
           className="h-15/100 w-70/100 shadow-md bg-black text-white rounded-xl p-2 flex justify-center items-center cursor-pointer ring ring-black hover:bg-[#F5F5F5] hover:text-black transition-none!"
           type="submit"
           disabled={cargando}
-          onMouseEnter={() => setBotonEnHover(true)}
-          onMouseLeave={() => setBotonEnHover(false)}
         >
           <p className="flex gap-3 items-center text-md transition-none!">
             {" "}
-            <img
-              src={botonEnHover ? iconIngresoBlack : iconIngreso}
-              alt=""
-              className="h-5 aspect-square object-contain p-0.5"
-            />
+            <MdLogin />
             {cargando ? "Entrando..." : "Ingresar"}
           </p>
         </button>

@@ -1,7 +1,8 @@
 import LogInForm from "../components/LogInForm";
 import RegisterForm from "../components/RegisterForm";
-import { useState, useEffect } from "react";
-import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { FondoBlanco } from "../components/funcionFondoBlanco";
 
 function IngresoContent() {
   const [hasAccount, setHasAccount] = useState(true);
@@ -10,17 +11,7 @@ function IngresoContent() {
     setHasAccount(!hasAccount);
   }
 
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log("Token:", tokenResponse),
-    onError: (error) => console.error("Error:", error),
-  });
-
-  useEffect(() => {
-    document.body.style.setProperty("background-color", "#F7F9FF", "important");
-    return () => {
-      document.body.style.removeProperty("background-color");
-    };
-  }, []);
+  FondoBlanco();
 
   return (
     <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">
@@ -36,14 +27,12 @@ function IngresoContent() {
           {hasAccount ? "Ingrese a NONOS" : "Registrese a NONOS"}
         </h2>
       </div>
-
-      <button
-        type="button"
-        onClick={() => login()}
-        className="w-80 cursor-pointer py-2.5 mt-10 px-4 bg-white border rounded-lg hover:bg-gray-200 flex items-center justify-center gap-3 font-medium text-gray-700 transition-all"
-      >
+    
+      <div className="group relative w-80 h-10">
+       {/* Lo que se ve: tu diseño */}
+      <div className="absolute inset-0 pointer-events-none bg-white border rounded-lg group-hover:bg-gray-200 flex items-center justify-center gap-3 font-medium text-gray-700 transition-all">
         <svg className="w-5 h-5" viewBox="0 0 24 24">
-          <path
+        <path
             fill="#4285F4"
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
           />
@@ -60,9 +49,20 @@ function IngresoContent() {
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
           />
         </svg>
-        Continuar con Google
-      </button>
+      Continuar con Google
+      </div>
 
+      {/* Lo que recibe el click: el botón real de Google, invisible */}
+    <div className="absolute inset-0 opacity-0 overflow-hidden cursor-pointer">
+      <GoogleLogin
+      onSuccess={(res) => console.log("idToken:", res.credential)}
+      onError={() => console.error("Falló el login con Google")}
+      width="320"
+      size="large"
+      />
+    </div>
+  </div>
+      
       <div className="flex items-center w-[80%] lg:w-[40%]">
         <div className="border-t grow border-gray-400"></div>
         <span className="px-4 text-md text-gray-500 font-semibold">O BIEN</span>
@@ -77,20 +77,7 @@ function IngresoContent() {
           : "¿Ya tiene cuenta? Inicie sesión"}
       </span>
 
-      <a href="/home" className="underline">
-        home
-      </a>
-
-      {/* <footer className="w-[80%] h-auto flex flex-col gap-5 items-center justify-center ">
-        
-        <hr className="border w-screen border-gray-200 m-0" />
-        <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63]">
-          ¿Olvidó su contraseña?
-        </h2>
-        <h2 className="active:underline cursor-pointer text-xl text-[#0D5C63">
-          Contactar a Soporte
-        </h2>
-      </footer>*/}
+      <a href="/adulto/home">home</a>
     </main>
   );
 }
@@ -98,7 +85,7 @@ function IngresoContent() {
 // Exportación envuelta en el Provider
 export default function Ingreso() {
   return (
-    <GoogleOAuthProvider clientId="329138846196-q5d13gj5v3ojlgge0f484jql8lo53fj5.apps.googleusercontent.com ">
+    <GoogleOAuthProvider clientId="329138846196-q5d13gj5v3ojlgge0f484jql8lo53fj5.apps.googleusercontent.com">
       <IngresoContent />
     </GoogleOAuthProvider>
   );

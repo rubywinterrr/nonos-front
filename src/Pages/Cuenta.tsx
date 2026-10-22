@@ -1,15 +1,31 @@
-import Footer from "../components/NavBar";
-import Header from "../components/Header2";
+import Header from "../components/Header";
+import VueltaAtras from "../components/vueltaAtras";
+import { useAuth } from "../hooks/useAuth";
 
-// Pantalla de perfil y configuración de la cuenta del usuario.
 export default function PagCuenta() {
+  const { logout } = useAuth();
+
   return (
     <>
-      <Header></Header>
-      <main className="w-screen h-main bg-gray-200 flex flex-col justify-center items-center">
-        <h1 className="text-4xl font-extrabold">Cuenta</h1>
+      <main className="mainBody">
+        <Header />
+        <VueltaAtras titulo="Mi Cuenta" />
+        <div className="bg-white rounded-2xl flex flex-col gap-5 p-5 w-full min-h-50">
+          <div className="flex">
+            <div className="flex flex-col items-start justify-center">
+              <h1 className="font-semibold text-lg">Username</h1>
+              <p>Edad y Adulto Mayor</p>
+            </div>
+          </div>
+        </div>
       </main>
-      <Footer></Footer>
+
+      <button
+        onClick={logout}
+        className="mt-6 bg-red-600 text-white font-semibold rounded-xl px-6 py-3 cursor-pointer"
+      >
+        Cerrar sesión
+      </button>
     </>
   );
 }

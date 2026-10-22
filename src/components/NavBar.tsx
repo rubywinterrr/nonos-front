@@ -1,21 +1,12 @@
-import IconHome from "../assets/icon-home.png";
-import IconHomeW from "../assets/icon-home-white.png";
-import IconContactos from "../assets/icon-contactos.png";
-import IconContactosW from "../assets/icon-contactos-white.png";
-import IconSalud from "../assets/icon-salud.png";
-import IconSaludW from "../assets/icon-salud-white.png";
-import IconSOS from "../assets/icon-sos.png";
-import IconSOSW from "../assets/icon-sos-white.png";
-import { useNavigate, useLocation } from "react-router-dom";
+import { GoHome } from "react-icons/go";
+import { MdOutlinePeopleAlt, MdOutlineMedicalServices } from "react-icons/md";
+import { PiWarningDiamondBold } from "react-icons/pi";
+import { useLocation, NavLink } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
 // Marca la pantalla activa y permite moverse entre Inicio, Salud, Contactos y SOS.
-export default function Footer() {
+export default function NavBar() {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Si la ruta actual es login, se deshabilita la navegación del footer.
-  const isLoginScreen = location.pathname === "/";
   const currentPath = location.pathname.toLowerCase();
 
   // Determina qué opción del footer está activa según la ruta actual.
@@ -24,103 +15,70 @@ export default function Footer() {
     currentPath === "/adulto" ||
     currentPath === "/cuidador" ||
     currentPath === "/familia";
-  const isSalud = currentPath.startsWith("/salud");
-  const isContactos = currentPath.startsWith("/contactos");
-  const isSos = currentPath.startsWith("/sos");
-
-  // Redirige a la vista de inicio del sistema.
-  function IrHome() {
-    navigate("/Home");
-    console.log("Home");
-  }
-
-  // Redirige a la sección de salud.
-  function IrSalud() {
-    navigate("/Salud");
-    console.log("Salud");
-  }
-
-  // Redirige a la vista de contactos.
-  function IrContactos() {
-    navigate("/Contactos");
-    console.log("Contactos");
-  }
-
-  // Redirige a la pantalla de emergencia SOS.
-  function IrSOS() {
-    navigate("/SOS");
-    console.log("Pantalla SOS");
-  }
+  const isSalud = currentPath.startsWith("/adulto/salud");
+  const isContactos = currentPath.startsWith("/adulto/contactos");
+  const isSos = currentPath.startsWith("/adulto/sos");
 
   return (
     <>
-      <footer className="bg-white border-t-2 border-[#002B2F] h-[11vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
-        <div
-          className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isHome ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
+      <nav className="bg-white border-t-2 border-[#002B2F] lg:h-[11vh] h-[12vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
+        <NavLink
+          className={`p-1 h-90/100 rounded-lg lg:rounded-bl-lg rounded-bl-[50%] lg:mb-0 mb-1 aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
+            isHome
+              ? "bg-[#002B2F] text-white"
+              : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrHome}
+          to={"/adulto/home"}
         >
-          <div
-            className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${isHome ? IconHomeW : IconHome})`,
-              backgroundSize: "70%",
-            }}
-          />
+          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+            {" "}
+            <GoHome />
+          </div>
           <p className="font-bold">Inicio</p>
-        </div>
+        </NavLink>
 
-        <div
-          className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isSalud ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
+        <NavLink
+          className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
+            isSalud
+              ? "bg-[#002B2F] text-white"
+              : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrSalud}
+          to={"/adulto/salud"}
         >
-          <div
-            className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${isSalud ? IconSaludW : IconSalud})`,
-              backgroundSize: "70%",
-            }}
-          />
+          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+            <MdOutlineMedicalServices />
+          </div>
           <p className="font-bold">Salud</p>
-        </div>
+        </NavLink>
 
-        <div
-          className={` p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isContactos ? "bg-[#002B2F] text-white" : "bg-white hover:bg-[#002B2F]/25"
+        <NavLink
+          className={` p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
+            isContactos
+              ? "bg-[#002B2F] text-white"
+              : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrContactos}
+          to={"/adulto/contactos"}
         >
-          <div
-            className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${
-                isContactos ? IconContactosW : IconContactos
-              })`,
-              backgroundSize: "70%",
-            }}
-          />
+          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+            <MdOutlinePeopleAlt />{" "}
+          </div>
           <p className="font-bold">Contactos</p>
-        </div>
+        </NavLink>
 
-        <div
-          className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
-            isSos ? "bg-[#002B2F] text-white " : "bg-white hover:bg-[#002B2F]/25"
+        <NavLink
+          className={`p-1 h-90/100 rounded-lg lg:rounded-br-lg rounded-br-[50%] lg:mb-0 mb-1 aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
+            isSos
+              ? "bg-[#002B2F] text-white "
+              : "bg-white hover:bg-[#002B2F]/25"
           }`}
-          onClick={isLoginScreen ? undefined : IrSOS}
+          to={"/adulto/sos"}
         >
-          <div
-            className="aspect-square h-35/100 md:h-55/100 bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${isSos ? IconSOSW : IconSOS})`,
-              backgroundSize: "70%",
-            }}
-          />
+          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+            <PiWarningDiamondBold />
+          </div>
           <p className="font-bold">SOS</p>
-        </div>
-      </footer>
+        </NavLink>
+      </nav>
     </>
   );
 }

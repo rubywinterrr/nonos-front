@@ -1,0 +1,110 @@
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
+import { FaHeart } from "react-icons/fa";
+import { BsChatLeftText } from "react-icons/bs";
+import { VscInfo } from "react-icons/vsc";
+import { MdOutlinePhone } from "react-icons/md";
+import { BiHealth } from "react-icons/bi";
+import TarjetaContactos from "../../components/TarjetaContacto";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { contactosService, type Contacto } from "../../services/contactosService";
+
+export default function Contactos() {
+
+  const { usuario } = useAuth();
+  const [contactos, setContactos] = useState<Contacto[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    const fetchContactos = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await contactosService.getContactos(usuario.id);
+        setContactos(data);
+      } catch (err) {
+        console.error(err);
+        setError("Hubo un error al cargar los contactos");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactos();
+  }, [usuario]);
+
+  return (
+    <>
+      <main className="mainBody gap-7">
+        <Header />
+        <div className="flex flex-col gap-3">
+          <VueltaAtras />
+          <h1 className="bg-gray-200 font-semibold text-md text-gray-500 p-3 rounded-full h-10 flex gap-2 items-center w-fit">
+            <FaHeart />
+            Acompañamiento diario
+          </h1>
+        </div>
+        <div className="rounded-2xl bg-black w-full h-23 flex items-center justify-between p-3 lg:w-32/100">
+          <div className="flex items-center gap-3 border h-full">
+            <div className="h-95/100 aspect-square rounded-full bg-red-600 p-4 flex justify-center items-center text-3xl text-white">
+              <BiHealth />
+            </div>
+            <a href="tel:+5491130285858" className="flex flex-col justify-baseline">
+              <h2 className="font-semibold text-white text-xl">
+                107 Ambulancia
+              </h2>
+              <h2 className="text-md text-gray-400">Emergencias médicas</h2>
+            </a>
+          </div>
+          <a href="tel:+5491130285858" className="bg-white rounded-lg aspect-square h-full flex items-center justify-center flex-col gap-1 p-1 cursor-pointer">
+            <MdOutlinePhone className="text-3xl" />
+            <p className="text-xs font-semibold">Llamar</p>
+          </a>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-5 w-full flex-wrap">
+          {loading && <p>Cargando contactos...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {contactos.map((contacto) => (
+            <TarjetaContactos
+              key={contacto.id}
+              nombreCompleto={contacto.nombre}
+              nombre={contacto.nombre}
+              fotoContacto="/fotoPerfil_1.jpeg" // el back por ahora no devuelve foto, se puede agregar más adelante
+              telefono={contacto.telefono}
+            />
+          ))}
+        </div>
+        <div className="w-full border-gray-400 border-t" />
+        <div className="flex flex-col w-full gap-4 items-center justify-center">
+          <div className="w-full bg-[#EFF4FC] rounded-xl h-40 flex justify-center items-center p-3 lg:w-40/100">
+            <div className="flex gap-3 w-full">
+              <div className=" h-full w-13/100 lg:flex lg:justify-center lg:items-baseline ">
+                <div className=" bg-[#D6E0F1] aspect-square w-full lg:w-80/100 lg:mt-2 p-2.5 rounded-full flex items-center justify-center text-2xl text-gray-500">
+                  <VscInfo />
+                </div>
+              </div>
+              <div className=" pt-1 flex flex-col w-87/100 gap-2 h-full">
+                <h1 className=" w-full h-24/100 font-semibold text-lg">
+                  ¿Necesitas agregar a alguien?
+                </h1>
+                <p className=" max-w-90/100 h-70/100 text-gray-500 text-md w-full">
+                  Tu familia gestiona los contactos para mayor seguridad. Puedes
+                  avisarles con un solo toque.
+                </p>{" "}
+              </div>
+            </div>
+          </div>
+          <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 lg:w-32/100">
+            <BsChatLeftText />
+            Avisar a {contactos.length > 0 ? contactos[0].nombre : "tu familia"} para agregar contactos.
+          </h1>
+        </div>
+      </main>
+    </>
+  );
+}

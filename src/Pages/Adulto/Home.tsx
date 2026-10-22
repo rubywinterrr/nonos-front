@@ -1,0 +1,168 @@
+import { useState } from "react";
+import Header from "../../components/Header";
+import { useAuth } from "../../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { alertasService } from "../../services/alertasService";
+import { RiAlertFill } from "react-icons/ri";
+import { IoIosArrowForward } from "react-icons/io";
+import { MdOutlineMedication, MdOutlineContactPhone } from "react-icons/md";
+import { LiaQrcodeSolid } from "react-icons/lia";
+
+// Página principal de inicio del usuario.
+// Presenta una estructura de bloques con secciones de contenido y el layout base del sistema.
+export default function Home() {
+  const { usuario } = useAuth();
+  const navigate = useNavigate();
+  const [enviando, setEnviando] = useState<boolean>(false);
+  const [errorSOS, setErrorSOS] = useState<string | null>(null);
+
+  // llama SOS en back y si sale bien, lleva a la pantalla de emergencia
+  const pedirAyuda = async () => {
+    if (!usuario) return;
+    setEnviando(true);
+    setErrorSOS(null);
+
+    try {
+      await alertasService.dispararEmergencia(usuario.id);
+      navigate("/adulto/sos");
+    } catch (err) {
+      console.error(err);
+      // avisa si ya hay un SOS de los últimos 10 min
+      if (
+        err instanceof Error &&
+        err.message === "Ya existe una alerta pendiente"
+      ) {
+        navigate("/adulto/sos");
+      } else {
+        setErrorSOS("No se pudo enviar el pedido de ayuda. Probá de nuevo.");
+      }
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const fullName = usuario?.nombreCompleto;
+  const nombre = fullName?.split(" ")[0];
+
+  const obtenerFechaActual = () => {
+    const fecha = new Date();
+    // Configuramos qué datos queremos (día de la semana, día del mes y mes)
+    const opciones: Intl.DateTimeFormatOptions = {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    };
+
+    // Obtenemos algo como "viernes, 15 de septiembre"
+    const fechaFormateada = fecha.toLocaleDateString("es-ES", opciones);
+
+    return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+  };
+  return (
+    <>
+      <main className="mainBody">
+        <Header />
+        <div>
+          <h1 className="font-bold text-2xl mb-5">
+            ¡Hola, {nombre || "Usuario"}!
+          </h1>
+          <h2 className="text-xl text-gray-600">{obtenerFechaActual()}</h2>
+        </div>
+        <div className="flex flex-col items-center justify-center gap-1 w-full">
+          <h1 className="font-semibold text-2xl">
+            Esta es tu condición de hoy
+          </h1>
+          <h2 className="text-1xl">Podés consultar tu estado abajo</h2>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:flex-wrap justify-center gap-5 w-full">
+          <div className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-30 p-4 shadow-md ">
+            <ol className="list-inside list-disc">
+              <li>0</li>
+              <li>1</li>
+              <li>2</li>
+              <li>3</li>
+              <li>4</li>
+            </ol>
+          </div>
+          <Link
+            to={"../salud"}
+            className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
+          >
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
+              <MdOutlineMedication />
+            </div>
+            <div className="flex items-center w-80/100 justify-between bder">
+              <div className="flex flex-col gap-1 justify-center">
+                <h2 className="font-semibold text-xl">
+                  Mi información de salud
+                </h2>
+                <p className="text-gray-500 text-md">
+                  Ver medicamentos y datos
+                </p>
+              </div>
+              <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
+                <IoIosArrowForward />
+              </div>
+            </div>
+          </Link>
+          <Link
+            className="bg-white rounded-2xl w-full lg:w-25/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
+            to={"../cuidados"}
+          >
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-3xl">
+              <MdOutlineContactPhone />
+            </div>
+            <div className="flex items-center w-80/100 justify-between">
+              <div className="flex flex-col gap-1 justify-center">
+                <h2 className="font-semibold text-xl">
+                  Mis voluntades y cuidados
+                </h2>
+                <p className="text-gray-500 text-md">
+                  Escribí tus preferencias
+                </p>
+              </div>
+              <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
+                <IoIosArrowForward />
+              </div>
+            </div>
+          </Link>
+          <Link
+            to={"../codigo"}
+            className="bg-white rounded-2xl w-full lg:w-30/100 md:w-60/100 min-h-20 p-4 shadow-md hover:bg-gray-100 flex gap-5 cursor-pointer items-center"
+          >
+            <div className="bg-[#E4E8F1] rounded-lg aspect-square w-15/100 m-1 flex items-center justify-center text-4xl">
+              <LiaQrcodeSolid />
+            </div>
+            <div className="flex items-center w-80/100 justify-between">
+              <div className="flex flex-col gap-1 justify-center">
+                <h2 className="font-semibold text-xl">Mi código de pulsera</h2>
+                <p className="text-gray-500 text-md">Ver código de 30 min</p>
+              </div>
+              <div className="aspect-square w-10/100 flex justify-center items-center text-3xl">
+                <IoIosArrowForward />
+              </div>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={pedirAyuda}
+            disabled={enviando}
+            className="bg-[#FF0000] rounded-2xl w-full md:w-30/100 min-h-30 p-5 md:p-8 shadow-md text-white cursor-pointer flex flex-col gap-3 justify-center items-center hover:bg-[#DE0000]"
+          >
+            <div className="bg-[#FF2626] rounded-full h-18 aspect-square flex justify-center items-center">
+              <RiAlertFill className="text-4xl" />
+            </div>
+            <div className="flex flex-col gap-1 justify-center items-center">
+              <h1 className="font-bold text-2xl">PEDIR AYUDA URGENTE</h1>
+              <p className="font-bold text-md text-white/70 text-center">
+                Presioná para notificar a tu familia y cuidadores
+              </p>
+            </div>
+          </button>
+          {errorSOS && <p className="text-red-600">{errorSOS}</p>}
+        </div>
+      </main>
+    </>
+  );
+}
