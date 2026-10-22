@@ -81,7 +81,7 @@ export default function Salud() {
       }
     };
 
-        // trae las condiciones médicas activas del usuario (alergias, enfermedades, etc.)
+      // trae las condiciones médicas activas del usuario (alergias, enfermedades, etc.)
     const fetchCondiciones = async () => {
       setErrorCondiciones(null);
       try {
@@ -162,27 +162,32 @@ export default function Salud() {
               </div>
             </div>
 
-             {/* solo aparece si el usuario tiene alguna condición medica cargada (extra: antes vi que tenia alergia, pero el back no devuelve eso) */}
-              {condiciones.length > 0 && (
-            <div className="bg-[#FFDAD6] rounded-2xl flex items-start justify-start p-5 w-full gap-3">
-              <LuTriangleAlert className="text-4xl text-red-700" />
-              <div className="flex flex-col items-start justify-start max-w-80/100">
-                <h2 className="text-lg text-red-800 font-bold">
-                ¡ATENCIÓN MÉDICA! CONDICIONES A TENER EN CUENTA
-                </h2>
+            {/* solo aparece si el usuario tiene alguna condición medica cargada (extra: antes vi que tenia alergia, pero el back no devuelve eso) */}
+            {condiciones.length > 0 && (
+              <div className="bg-[#FFDAD6] rounded-2xl flex items-start justify-start p-5 w-full gap-3">
+                <LuTriangleAlert className="text-4xl text-red-700" />
+                <div className="flex flex-col items-start justify-start max-w-80/100">
+                  <h2 className="text-lg text-red-800 font-bold">
+                    ¡ATENCIÓN MÉDICA! CONDICIONES A TENER EN CUENTA
+                  </h2>
                   {condiciones.map((condicion) => (
                     <div key={condicion.id} className="flex flex-col">
-                      <h1 className="text-2xl text-red-700 font-bold">
+                      <h3 className="text-2xl text-red-700 font-bold">
                         {condicion.nombre}
-                      </h1>
+                      </h3>
                       {condicion.descripcion && (
                         <p className="text-red-800">{condicion.descripcion}</p>
                       )}
-                      </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
+            {errorCondiciones && (
+              <p role="alert" className="text-red-700">{errorCondiciones}</p>
+            )}
+          </div>
+        </div>
 
         <div className="w-full flex flex-col gap-5 items-start justify-start">
           <h1 className="font-semibold text-xl flex items-center justify-start gap-1">
@@ -190,14 +195,26 @@ export default function Salud() {
             Medicación habitual actual
           </h1>
           <p className="flex items-center justify-start gap-1 text-gray-600">
-            <PiCalendarCheck className=" text-2xl" /> Actualizado el ([fecha]
-            por [doctor]){" "}
+            <PiCalendarCheck className="text-2xl" />
+            {ultimaActualizacion
+              ? `Actualizado el ${new Date(ultimaActualizacion).toLocaleDateString("es-AR")}`
+              : "Sin fecha de actualización registrada"}
             {/* PONER INFO FECHA DE ACTUALIZACION Y NOMBRE DOCTOR */}
             {/* NOMBRE DOCTOR: EL BACK NO TIENE ENDPOINT (no guarda quién hizo el cambio) */}
           </p>
-          <CajaMed />
-          <CajaMed />
-          <CajaMed />
+          {loading && <p className="text-gray-600">Cargando medicación...</p>}
+          {error && <p role="alert" className="text-red-700">{error}</p>}
+          {!loading && !error && medicamentos.length === 0 && (
+            <p className="text-gray-600">No hay medicación habitual registrada.</p>
+          )}
+          {medicamentos.map((medicamento) => (
+            <CajaMed
+              key={medicamento.id}
+              nombre={medicamento.nombre}
+              dosis={medicamento.dosis}
+              horarios={medicamento.horariosDelDia}
+            />
+          ))}
         </div>
         <div className="bg-gray-100 rounded-2xl flex items-start justify-start p-6 w-full gap-3 text-gray-500">
           <MdLockClock className="size-8" />

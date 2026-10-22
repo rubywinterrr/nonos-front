@@ -1,5 +1,5 @@
 import { CgPill } from "react-icons/cg";
-import { MdOutlineSchedule } from "react-icons/io";
+import { MdOutlineSchedule } from "react-icons/md";
 
 //FIJARSE EN EL FIGMA CADA COSA -- HAY UN EJEMPLO EN EL PRIMERO DE LA PANTALLA DE SALUD (MI INFO)
 interface Props {
