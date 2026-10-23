@@ -1,14 +1,18 @@
+import type { TipoAlerta } from './alertasService';
 import { apiFetch } from './api';
-import type { UsuarioPublico } from './invitacionesService';
+import type { UsuarioPublico, TipoCuidador, TipoVinculo} from './invitacionesService';
 
 export interface Vinculo {
   id: string;
   adultoMayorId: string;
   familiarId: string;
-  tipoVinculo: string;
+  tipoVinculo: TipoVinculo;
+  tipoCuidador: TipoCuidador;
   esContactoEmergencia: boolean;
   createdAt: string;
   familiar: UsuarioPublico;
+  prioridadContacto: number | null;
+  tipoNotificaciones: TipoAlerta[];
 }
 
 export interface CodigoQR {
@@ -27,6 +31,30 @@ export interface UsuarioById {
   fechaNacimiento: string | null;
   telefono: string | null;
   medidasAnticipadas: string | null;
+}
+
+export interface AdultoMayorVinculado {
+  id: string;
+  email: string;
+  nombreCompleto: string;
+  rol: 'ADULTO_MAYOR';
+  fechaNacimiento: string | null;
+  telefono: string | null;
+  fotoUrl: string | null;
+  activo: boolean;
+}
+
+export interface CambiosVinculo {
+  tipoVinculo: TipoVinculo;
+  // obligatorio si tipoVinculo es CUIDADOR; si es FAMILIAR, el back lo borra
+  tipoCuidador?: TipoCuidador;
+}
+
+export interface DatosContactoEmergencia {
+  familiarId: string, 
+  esContactoEmergencia: boolean, 
+  // empieza en 1; si ya está ocupada, el back asigna la siguiente libre
+  prioridadContacto?: number
 }
 
 export const usuarioService = {
@@ -78,5 +106,59 @@ export const usuarioService = {
       method: 'PUT',
       body: JSON.stringify({ medidasAnticipadas }),
     });
-  }
+  },
+
+  // GET /usuarios/:familiarId/adultos-mayores-vinculados (consigue adultos mayores vinculados a un familiar)
+  getAdultosMayoresVinculados: async (familiarId: string) => {
+    return await apiFetch<AdultoMayorVinculado[]>(`/usuarios/${familiarId}/adultos-mayores-vinculados`);
+  },
+
+  // GET /usuarios/:id/vinculos/:familiarId (consigue un vínculo entre un adulto mayor y un familiar)
+  getVinculo: async (id: string, familiarId: string) => {
+    return await apiFetch<Vinculo>(`/usuarios/${id}/vinculos/${familiarId}`);
+  }, 
+  
+  // PUT /usuarios/:id/vinculos/:familiarId (actualiza un vínculo entre un adulto mayor y un familiar)
+  actualizarVinculo: async (id: string, familiarId: string, data: CambiosVinculo) => {
+    return await apiFetch<Vinculo>(`/usuarios/${id}/vinculos/${familiarId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  // DELETE /usuarios/:id/vinculos/:familiarId (desvincula a un familiar del adulto mayor)
+  eliminarVinculo: async (id: string, familiarId: string) => {
+    return await apiFetch<{ message: string }>(`/usuarios/${id}/vinculos/${familiarId}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // PUT /usuarios/:id/contacto-emergencia (actualiza si un usuario es contacto de emergencia)
+  marcarContactoEmergencia: async (id: string, data: DatosContactoEmergencia) => {
+    return await apiFetch<Vinculo>(`/usuarios/${id}/contacto-emergencia`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  // GET /usuarios/:id/notificaciones/:adultoMayorId (alertas que el familiar recibe de ese adulto)
+  getNotificacionesRecibidas: async (id: string, adultoMayorId: string) => {
+    return await apiFetch<{ tipoNotificaciones: TipoAlerta[] }>(`/usuarios/${id}/notificaciones/${adultoMayorId}`);
+  },
+
+  // PUT /usuarios/:id/notificaciones/:adultoMayorId (reemplaza la lista completa de alertas que recibe)
+  editarNotificacionesRecibidas: async (id: string, adultoMayorId: string, data: { tipoNotificaciones: TipoAlerta[] }) => { 
+    return await apiFetch<{ tipoNotificaciones: TipoAlerta[] }>(`/usuarios/${id}/notificaciones/${adultoMayorId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  // DELETE /usuarios/:id (da de baja la cuenta y cierra todas sus sesiones)
+  eliminarCuenta: async (id: string) => {
+    return await apiFetch<{ message: string }>(`/usuarios/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
 };
