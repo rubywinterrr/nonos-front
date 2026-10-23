@@ -19,6 +19,16 @@ export interface CodigoQR {
   creadoEn: string;
 }
 
+export interface UsuarioById {
+  id: string;
+  email: string;
+  nombreCompleto: string;
+  rol: 'ADULTO_MAYOR' | 'FAMILIAR' | 'CUIDADOR';
+  fechaNacimiento: string | null;
+  telefono: string | null;
+  medidasAnticipadas: string | null;
+}
+
 export const usuarioService = {
   // GET /auth/me (perfil del usuario autenticado)
   getPerfil: async () => {
@@ -56,4 +66,17 @@ export const usuarioService = {
       method: 'DELETE' 
       });
   },
+
+  // GET /usuarios/:id
+  getUsuarioById: async (id: string) => {
+    return await apiFetch<UsuarioById>(`/usuarios/${id}`);
+  },
+
+  // PUT /usuarios/:id/medidas-anticipadas (actualiza medidas anticipadas, solo el propio adulto)
+  editarMedidasAnticipadas: async (id: string, medidasAnticipadas: string) => {
+    return await apiFetch<UsuarioById>(`/usuarios/${id}/medidas-anticipadas`, {
+      method: 'PUT',
+      body: JSON.stringify({ medidasAnticipadas }),
+    });
+  }
 };
