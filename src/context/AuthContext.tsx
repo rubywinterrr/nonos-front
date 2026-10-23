@@ -1,10 +1,11 @@
 import { createContext } from 'react';
-import type { Usuario, LoginCredentials } from '../services/authService';
+import { type Usuario, type LoginCredentials, authService } from '../services/authService';
 
 interface AuthContextType {
     usuario: Usuario | null;
     loading: boolean;
     login: (credentials: LoginCredentials) => Promise<Usuario>;
+    loginConGoogle: (idToken: string) => Promise<Usuario>;
     logout: () => Promise<void>;
 }
 

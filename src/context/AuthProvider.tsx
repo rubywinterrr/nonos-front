@@ -25,13 +25,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return data.user;
     };
 
+    // entra con la cuenta de Google: el back verifica el idToken y devuelve los tokens de Nonos
+    const loginConGoogle = async (idToken: string) => {
+        await authService.loginWithGoogle(idToken);
+        const data = await authService.getProfile();
+        setUsuario(data.user);
+        return data.user;
+    };
+
     const logout = async () => {
         await authService.logout();
         setUsuario(null);
     };
 
     return (
-        <AuthContext.Provider value={{ usuario, loading, login, logout }}>
+        <AuthContext.Provider value={{ usuario, loading, login, loginConGoogle, logout }}>
             {children}
         </AuthContext.Provider>
     );
