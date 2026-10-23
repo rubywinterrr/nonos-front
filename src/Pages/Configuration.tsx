@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
@@ -6,16 +6,20 @@ import AjustesTexto from "../components/AjusteTamanios";
 import { MdOutlineNotifications, MdCheck } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import { GoShieldLock, GoPlus } from "react-icons/go";
+import { GoShieldLock } from "react-icons/go";
 import { HiCheck } from "react-icons/hi2";
-import { LuUserRoundCheck } from "react-icons/lu";
-import Switch from "../components/switch";
 import PersonaVinculada from "../components/tarjetaPersonaVinculada";
-import Desplegable from "../components/menuDesplegable";
+import { LuUserRoundCheck } from "react-icons/lu";
+import { GoPlus } from "react-icons/go";
+
+import Switch from "../components/switch";
 
 export default function Config() {
-  const desplegableRef = useRef<HTMLDivElement>(null);
-
+  const PersonasVinculadas = [
+    { Nombre: "María", Ocupacion: "Familiar" },
+    { Nombre: "Dr. Lopéz", Ocupacion: "Doctor" },
+    { Nombre: "Carlos", Ocupacion: "Cuidador" },
+  ];
   const [configNotificaciones, setConfigNotificaciones] = useState({
     recibirNotificaciones: true,
     actividad: true,
@@ -24,24 +28,6 @@ export default function Config() {
   });
 
   const [cargando, setCargando] = useState(false);
-
-  const PersonasVinculadas = [
-    { Nombre: "María", Ocupacion: "Familiar" },
-    { Nombre: "Dr. Lopéz", Ocupacion: "Doctor" },
-    { Nombre: "Carlos", Ocupacion: "Cuidador" },
-  ];
-
-  const handleAgregarPersonas = () => {
-    if (desplegableRef.current) {
-      const offset = -220;
-      const y =
-        desplegableRef.current.getBoundingClientRect().top +
-        window.scrollY +
-        offset;
-
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  };
 
   const handleToggle = (key: keyof typeof configNotificaciones) => {
     setConfigNotificaciones((prev) => ({
@@ -57,7 +43,7 @@ export default function Config() {
     try {
       console.log(
         "Guardando configuración en el servidor:",
-        configNotificaciones,
+        configNotificaciones
       );
     } catch (error) {
       console.error("Error al guardar cambios:", error);
@@ -171,7 +157,6 @@ export default function Config() {
               />
             </div>
           </div>
-
           <div className="bg-white rounded-2xl w-full p-5 flex flex-col gap-7">
             <div className="flex w-full gap-5">
               <LuUserRoundCheck className="size-14 bg-blue-50 border border-blue-200 p-3 text-blue-600 rounded-xl" />
@@ -193,19 +178,11 @@ export default function Config() {
               ))}
             </div>
 
-            <h1
-              onClick={handleAgregarPersonas}
-              className="font-semibold text-blue-600 flex items-center justify-center gap-2 bg-blue-100/70 border-4 border-dashed hover:bg-blue-100 cursor-pointer active:bg-blue-200 border-blue-700 w-full p-5 pt-4 pb-4 rounded-2xl text-xl select-none"
-            >
+            <h1 className="font-semibold text-blue-600 flex items-center justify-center gap-2 bg-blue-100/70 border-4 border-dashed hover:bg-blue-100 cursor-pointer active:bg-blue-200 border-blue-700 w-full p-5 pt-4 pb-4 rounded-2xl text-xl select-none">
               <GoPlus className="size-8" /> Agregar personas
             </h1>
           </div>
-
           <AjustesTexto />
-
-          <div ref={desplegableRef} className="w-full">
-            <Desplegable />
-          </div>
 
           <button
             type="submit"

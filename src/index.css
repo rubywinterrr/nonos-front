@@ -87,5 +87,5 @@ html::-webkit-scrollbar {
   align-items: baseline;
   padding: 1.25rem; /* p-5 */
   padding-bottom: 15vh; /* pb-[15vh] */
-  gap: 2.5rem; /* gap-10 */
+  gap: 1.75rem; /* gap-7 */
 }

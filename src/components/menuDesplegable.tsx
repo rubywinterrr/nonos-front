@@ -151,8 +151,8 @@ export default function Desplegable() {
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
 
-          <p className="text-center text-slate-800 font-medium flex items-center justify-center gap-2 mt-1">
-            <HiOutlineShieldCheck className="text-xl" />
+          <p className="text-start text-slate-800 font-medium flex items-center justify-start gap-0 mt-1">
+            <HiOutlineShieldCheck className="size-6" />
             Podés retirar el acceso en cualquier momento
           </p>
         </form>
