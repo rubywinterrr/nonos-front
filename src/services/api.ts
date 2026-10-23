@@ -1,4 +1,6 @@
-const BASE_URL = 'https://proyectos-tic.ort.edu.ar/nonos/api'; //cambiar si se quiere apuntar a otro back
+const BASE_URL = import.meta.env.PROD
+  ? '/api'
+  : 'https://proyectos-tic.ort.edu.ar/nonos/api'; //cambiar si se quiere apuntar a otro back
 
 // hace UN pedido al back, con el token que haya guardado en ese momento
 const hacerPedido = async (endpoint: string, options: RequestInit) => { //requestInit es un tipo de TS que describe las opciones que podes pasarle a fetch, como method, body, headers, etc
