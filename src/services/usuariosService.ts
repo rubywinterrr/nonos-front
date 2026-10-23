@@ -1,5 +1,6 @@
 import type { TipoAlerta } from './alertasService';
 import { apiFetch } from './api';
+import type { Usuario } from './authService';
 import type { UsuarioPublico, TipoCuidador, TipoVinculo} from './invitacionesService';
 
 export interface Vinculo {
@@ -57,6 +58,13 @@ export interface DatosContactoEmergencia {
   prioridadContacto?: number
 }
 
+export interface CambiosPerfil {
+  email?: string,
+  nombreCompleto?: string,
+  fechaNacimiento?: string | null,
+  telefono?: string | null,
+}
+
 export const usuarioService = {
   // GET /auth/me (perfil del usuario autenticado)
   getPerfil: async () => {
@@ -64,8 +72,8 @@ export const usuarioService = {
   },
 
   // PUT /usuarios/:id (requiere el id del usuario logueado)
-  actualizarPerfil: async (id: string, data: Record<string, unknown>) => {
-    return await apiFetch(`/usuarios/${id}`, {
+  actualizarPerfil: async (id: string, data: CambiosPerfil) => {
+    return await apiFetch<Usuario>(`/usuarios/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
