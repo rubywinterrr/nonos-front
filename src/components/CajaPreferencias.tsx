@@ -6,10 +6,14 @@ import { useState } from "react";
 interface Props {
   placeholder?: string,
   titulo: string,
+  value: string,
+  onChange: (texto: string) => void,
 }
 export default function CajaPreferencias({
   placeholder = "Escriba aquí.",
   titulo,
+  value,
+  onChange,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   return (
@@ -21,7 +25,12 @@ export default function CajaPreferencias({
             {titulo}
           </h1>
         </div>
-        <InputCuidados editable={isEditing} placeholder={placeholder} />
+        <InputCuidados
+          editable={isEditing}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+        />
         <button
           onClick={() => setIsEditing((editing) => !editing)}
           className="bg-[#E9EEF6] font-medium cursor-pointer hover:bg-gray-200 active:bg-gray-300 rounded-lg w-full flex items-center justify-center gap-3 p-5 text-xl"
