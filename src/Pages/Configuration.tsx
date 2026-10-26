@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { usuarioService, type Vinculo } from "../services/usuariosService";
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
@@ -11,15 +13,44 @@ import { HiCheck } from "react-icons/hi2";
 import PersonaVinculada from "../components/tarjetaPersonaVinculada";
 import { LuUserRoundCheck } from "react-icons/lu";
 import { GoPlus } from "react-icons/go";
-
 import Switch from "../components/switch";
 
+// texto que se muestra debajo del nombre de cada persona vinculada
+function textoVinculo(vinculo: Vinculo) {
+  if (vinculo.tipoVinculo === "FAMILIAR") return "Familiar";
+  if (vinculo.tipoCuidador === "FISICO") return "Cuidador físico";
+  if (vinculo.tipoCuidador === "DIGITAL") return "Cuidador digital";
+  return "Cuidador";
+}
+
 export default function Config() {
-  const PersonasVinculadas = [
-    { Nombre: "María", Ocupacion: "Familiar" },
-    { Nombre: "Dr. Lopéz", Ocupacion: "Doctor" },
-    { Nombre: "Carlos", Ocupacion: "Cuidador" },
-  ];
+  const { usuario } = useAuth();
+  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
+  const [loadingVinculos, setLoadingVinculos] = useState<boolean>(false);
+  const [errorVinculos, setErrorVinculos] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    // trae las personas vinculadas al adulto (familiares y cuidadores)
+    const fetchVinculos = async () => {
+      setLoadingVinculos(true);
+      setErrorVinculos(null);
+
+      try {
+        const data = await usuarioService.getVinculos(usuario.id);
+        setVinculos(data);
+      } catch (err) {
+        console.error(err);
+        setErrorVinculos("Hubo un error al cargar las personas vinculadas");
+      } finally {
+        setLoadingVinculos(false);
+      }
+    };
+
+    fetchVinculos();
+  }, [usuario]);
+  
   const [configNotificaciones, setConfigNotificaciones] = useState({
     recibirNotificaciones: true,
     actividad: true,
@@ -169,11 +200,16 @@ export default function Config() {
               </div>
             </div>
             <div className="flex flex-col w-full gap-5">
-              {PersonasVinculadas.map((persona, index) => (
+              {loadingVinculos && <p>Cargando personas vinculadas...</p>}
+              {errorVinculos && <p className="text-red-600">{errorVinculos}</p>}
+              {!loadingVinculos && !errorVinculos && vinculos.length === 0 && (
+                <p className="text-gray-500">Todavía no tenés personas vinculadas.</p>
+              )}
+              {vinculos.map((vinculo) => (
                 <PersonaVinculada
-                  key={index}
-                  nombre={persona.Nombre}
-                  ocupacion={persona.Ocupacion}
+                  key={vinculo.id}
+                  nombre={vinculo.familiar.nombreCompleto}
+                  ocupacion={textoVinculo(vinculo)}
                 />
               ))}
             </div>

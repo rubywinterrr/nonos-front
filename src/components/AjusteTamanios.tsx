@@ -1,19 +1,14 @@
 import { useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa6";
+import { leerTamanioGuardado, aplicarTamanioTexto, type TamanioTexto } from "../utils/tamanioTexto";
 
 export default function AjustesTexto() {
-  const [tamaño, setTamaño] = useState<"normal" | "grande" | "muy_grande">(
-    "grande",
-  );
+  // arranca con el tamaño que la persona eligió la última vez
+  const [tamaño, setTamaño] = useState<TamanioTexto>(leerTamanioGuardado());
 
+  // cada vez que cambia, se aplica a toda la app y se guarda
   useEffect(() => {
-    if (tamaño === "normal") {
-      document.documentElement.style.fontSize = "15px";
-    } else if (tamaño === "grande") {
-      document.documentElement.style.fontSize = "16px";
-    } else if (tamaño === "muy_grande") {
-      document.documentElement.style.fontSize = "17px";
-    }
+    aplicarTamanioTexto(tamaño);
   }, [tamaño]);
 
   return (

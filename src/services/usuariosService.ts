@@ -8,7 +8,7 @@ export interface Vinculo {
   adultoMayorId: string;
   familiarId: string;
   tipoVinculo: TipoVinculo;
-  tipoCuidador: TipoCuidador;
+  tipoCuidador: TipoCuidador | null;
   esContactoEmergencia: boolean;
   createdAt: string;
   familiar: UsuarioPublico;
