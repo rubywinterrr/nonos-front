@@ -9,10 +9,18 @@ import { IoWatchOutline } from "react-icons/io5";
 import { IoIosLink } from "react-icons/io";
 
 import Desplegable from "../components/menuDesplegable";
+import calcularEdad from "../utils/calcularEdad";
+
+// pasa el rol del back a un texto para la pantalla
+function textoRol(rol: string) {
+  if (rol === "ADULTO_MAYOR") return "Adulto mayor";
+  if (rol === "FAMILIAR") return "Familiar";
+  return "Cuidador";
+}
 
 export default function PagCuenta() {
-  const { logout } = useAuth();
-
+  const { usuario, logout } = useAuth();
+  const esAdulto = usuario?.rol === "ADULTO_MAYOR";
 
   return (
     <>
@@ -28,12 +36,18 @@ export default function PagCuenta() {
             />
             <div className="flex flex-col items-start justify-center">
               <span className="flex items-center gap-2">
-                <h1 className="font-semibold text-lg">Nombre</h1>
-                <p className="p-0.5 px-3 text-xs font-semibold text-emerald-800 bg-green-50 border border-green-300 rounded-full">
-                  Titular
-                </p>
+                <h1 className="font-semibold text-lg">{usuario?.nombreCompleto}</h1>
+                {esAdulto && (
+                  <p className="p-0.5 px-3 text-xs font-semibold text-emerald-800 bg-green-50 border border-green-300 rounded-full">
+                    Titular
+                  </p>
+                )}
               </span>
-              <p className="text-gray-500 text-sm">Edad • Adulto Mayor</p>
+              <p className="text-gray-500 text-sm">
+                {usuario?.fechaNacimiento
+                  ? `${calcularEdad(usuario.fechaNacimiento)} años`
+                  : "Sin dato de edad"}{" "} • {textoRol(usuario?.rol ?? "")}
+              </p>
             </div>
           </div>
           <span className="w-full border-t border-t-gray-200 py-1 mt-3" />
@@ -47,7 +61,7 @@ export default function PagCuenta() {
                   </div>
                 </div>
                 <div className="justify-center text-slate-900 text-sm font-semibold leading-5">
-                  email
+                  {usuario?.email}
                 </div>
               </div>
             </div>
@@ -58,20 +72,22 @@ export default function PagCuenta() {
                   TELÉFONO VINCULADO
                 </div>
                 <div className="justify-center text-slate-900 text-sm font-semibold leading-5">
-                  numero
+                  {usuario?.telefono || "Sin número de telefono"}
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {/* por ahora los dispositivos solo se muestran al adulto mayor: falta definir qué ve el familiar */}
+        {esAdulto && (
         <div className="w-full rounded-2xl bg-white p-5 gap-5 flex flex-col items-start justify-start">
           <div className="flex w-full gap-2">
             <FiSmartphone className="size-8 bg-blue-50 text-blue-600 rounded-full p-2 stroke-2" />
             <div className="flex flex-col max-w-80/100">
               <h1 className="font-bold">Pulsera y botón</h1>
               <p className="text-gray-700 text-sm">
-                Dispositivos de cuidado de José: botón de emergencia y pulsera
-                de salud.
+                Tus dispositivos de cuidado: botón de emergencia y pulsera de
+                salud.
               </p>
             </div>
           </div>
@@ -132,8 +148,10 @@ export default function PagCuenta() {
             </div>
           </div>
         </div>
+        )}
 
-        <Desplegable />
+        {/* el back no deja invitar a un cuidador */}
+        {usuario?.rol !== "CUIDADOR" && <Desplegable />}
       </main>
 
       <button

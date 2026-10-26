@@ -4,6 +4,7 @@ import {
   Route,
   Outlet,
   Navigate,
+  useLocation
 } from "react-router-dom";
 import HomeAdulto from "./Pages/Adulto/Home";
 import HomeCuidador from "./Pages/Cuidador/Home";
@@ -34,6 +35,14 @@ function LayoutConFooter() {
   );
 }
 
+// PARCHE: al terminar de conectar la pulsera, el back vuelve a /adulto-mayor/dispositivos,
+// que no existe en el front. Esto manda a /cuenta conservando el ?conectado=1 o ?conectado=0.
+// Sacarlo cuando el back redirija directo a /cuenta.
+function VueltaPulsera() {
+  const location = useLocation();
+  return <Navigate to={`/cuenta${location.search}`} replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -41,6 +50,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Ingreso />} />
         <Route element={<RutaProtegida />}>
+          <Route path="adulto-mayor/dispositivos" element={<VueltaPulsera />} />
           <Route element={<LayoutConFooter />}>
             <Route path="adulto">
               <Route index element={<Navigate to="home" replace />} />

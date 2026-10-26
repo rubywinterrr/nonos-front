@@ -3,11 +3,17 @@ import { IoIosArrowDown } from "react-icons/io";
 import { LuUserRoundPlus } from "react-icons/lu";
 import { HiDeviceTablet, HiCheck, HiOutlineShieldCheck } from "react-icons/hi2";
 import { MdOutlineHealthAndSafety, MdFamilyRestroom } from "react-icons/md";
+import { useAuth } from "../hooks/useAuth";
+import { invitacionesService, type NuevaInvitacion } from "../services/invitacionesService";
 
 export default function Desplegable() {
   const [isOpen, setIsOpen] = useState(false);
   const [rolSeleccionado, setRolSeleccionado] = useState("");
   const [error, setError] = useState("");
+  const { usuario } = useAuth();
+  const [email, setEmail] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [mensaje, setMensaje] = useState("");
 
   const opciones = [
     {
@@ -30,15 +36,45 @@ export default function Desplegable() {
     },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+    // crea la invitación en el back con el mail y el rol elegidos
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setMensaje("");
 
     if (!rolSeleccionado) {
       setError("Por favor, selecciona un rol para continuar.");
       return;
     }
 
+    // el back necesita saber quién invita: el adulto mayor o un familiar
+    const datos: NuevaInvitacion = {
+      emailDestino: email.trim(),
+      tipoVinculo: "FAMILIAR",
+      direccion: usuario?.rol === "FAMILIAR" ? "EMISOR_ES_FAMILIAR" : "EMISOR_ES_ADULTO_MAYOR",
+    };
+    // pasa la opción elegida a lo que espera el back (tipoCuidador solo va si es cuidador)
+    if (rolSeleccionado === "fisico") {
+      datos.tipoVinculo = "CUIDADOR";
+      datos.tipoCuidador = "FISICO";
+    }
+    if (rolSeleccionado === "digital") {
+      datos.tipoVinculo = "CUIDADOR";
+      datos.tipoCuidador = "DIGITAL";
+    }
+
+    setEnviando(true);
+    try {
+      await invitacionesService.crearInvitacion(datos);
+      setMensaje(`Invitación creada para ${email.trim()}. Vence en 7 días.`);
+      setEmail("");
+      setRolSeleccionado("");
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "No se pudo crear la invitación");
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -54,7 +90,8 @@ export default function Desplegable() {
               Invitar a un nuevo acompañante
             </h1>
             <p className="text-gray-600 text-lg">
-              Le llegará un enlace por correo electrónico para vincularse.
+              La persona va a ver la invitación al entrar a NONOS con ese
+              correo.
             </p>
           </div>
         </div>
@@ -75,9 +112,8 @@ export default function Desplegable() {
               Correo electrónico de la persona
             </label>
             <input
-              id="email"
-              type="email"
-              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="ej: familiar@correo.com"
               className="w-full rounded-2xl bg-white h-14 px-4 text-slate-800 border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 text-base shadow-sm"
             />
@@ -146,10 +182,12 @@ export default function Desplegable() {
             type="submit"
             className="w-95/100 bg-[#1a62ff] text-xl cursor-pointer hover:bg-blue-700 active:scale-[0.99] text-white font-medium py-3.5 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm mt-2 border-0"
           >
-            <HiCheck className="text-2xl stroke-2" /> Enviar invitación
+            <HiCheck className="text-2xl stroke-2" /> {" "}
+            {enviando ? "Enviando..." : "Enviar invitación"}
           </button>
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
+          {mensaje && <p className="text-green-700 text-sm">{mensaje}</p>}
 
           <p className="text-start text-slate-800 font-medium flex items-center justify-start gap-0 mt-1">
             <HiOutlineShieldCheck className="size-6" />
