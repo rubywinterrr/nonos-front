@@ -185,7 +185,7 @@ export default function Codigo() {
       <main className="mainBody gap-7">
         <Header />
         <div className="flex flex-col gap-3">
-          <VueltaAtras />
+          <VueltaAtras titulo="Código de emergencia" />
           <h1 className="bg-gray-200 font-semibold text-md text-gray-500 p-3 rounded-full h-10 flex gap-2 items-center w-fit">
             <IoAlertCircle className="text-xl" />
             EMERGENCIA ACTIVA

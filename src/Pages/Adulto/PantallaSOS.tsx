@@ -50,7 +50,7 @@ export default function SOS() {
         <Header />
         <section className="w-full flex flex-col lg:flex-row items-baseline gap-3 lg:items-center lg:gap-25">
           <section className="w-full flex flex-col lg:w-50/100 gap-8">
-            <VueltaAtras />
+            <VueltaAtras titulo="Estado de alerta" />
             <div className="w-full flex justify-center items-center">
               <h1 className="bg-[#D6E0F1] rounded-full w-65/100 xl:w-45/100 h-10 flex justify-center items-center text-1xl font-semibold shadow-lg gap-3">
                 <FaCheckCircle className="text-xl" />

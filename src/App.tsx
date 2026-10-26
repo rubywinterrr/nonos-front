@@ -23,6 +23,7 @@ import Tutorial1_2 from "./Pages/Adulto/Tutorial1.2";
 import SinRuta from "./Pages/SinRuta";
 import Cuidados from "./Pages/Adulto/Cuidados";
 import RutaProtegida from "./components/RutaProtegida";
+import AdmVinculo from "./Pages/Adulto/administrarVinculo";
 
 function LayoutConFooter() {
   return (
@@ -50,6 +51,7 @@ function App() {
               <Route path="configuracion" element={<Config />} />
               <Route path="codigo" element={<Codigo />} />
               <Route path="cuidados" element={<Cuidados />} />
+              <Route path="Administrar-Vinculo" element={<AdmVinculo />} />
               <Route path="ayuda">
                 <Route index element={<Ayuda />} />
                 <Route path="tutorial1" element={<Tutorial1 />} />
