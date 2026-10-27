@@ -205,10 +205,10 @@ export default function Salud() {
             modificarla, consultá con tu cuidador o familiar.
           </p>
         </div>
-        <h1 className="flex p-3 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400">
+        {/*<h1 className="flex p-3 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400">
           <MdOutlineSupportAgent className="size-8" /> Contactar a mi cuidador
           para cambios
-        </h1>
+        </h1>*/}
       </main>
     </>
   );
