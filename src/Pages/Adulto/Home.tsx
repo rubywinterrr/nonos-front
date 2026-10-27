@@ -79,7 +79,7 @@ export default function Home() {
               <div className="min-w-0">
                 <h2 id="mi-perfil" className="text-lg font-bold leading-snug sm:text-xl">{usuario?.nombreCompleto || "Usuario"}</h2>
                 <p className="text-sm font-semibold leading-normal text-[#424656]">
-                  Adulto mayor · {usuario?.fechaNacimiento
+                  ROL · {usuario?.fechaNacimiento
                     ? `${calcularEdad(usuario.fechaNacimiento)} años`
                     : "Sin dato de edad"}
                 </p>
