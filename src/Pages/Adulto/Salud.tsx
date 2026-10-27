@@ -7,7 +7,6 @@ import {
   MdOutlineBloodtype,
   MdOutlineMedication,
   MdLockClock,
-  MdOutlineSupportAgent,
 } from "react-icons/md";
 import { PiCalendarCheck } from "react-icons/pi";
 import { RiBookMarkedLine } from "react-icons/ri";
