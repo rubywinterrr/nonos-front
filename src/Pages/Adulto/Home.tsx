@@ -29,9 +29,11 @@ import {
 } from "react-icons/md";
 import { LiaQrcodeSolid } from "react-icons/lia";
 import obtenerFechaActual, { obtenerDiaActual } from "../../utils/obtenerFechaActual";
+import calcularEdad from "../../utils/calcularEdad";
 
 export default function Home() {
   const { usuario } = useAuth();
+  const nombre = usuario?.nombreCompleto?.trim().split(/\s+/)[0];
   const navigate = useNavigate();
   const [enviando, setEnviando] = useState<boolean>(false);
   const [errorSOS, setErrorSOS] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export default function Home() {
       <Header />
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 wrap-anywhere">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-2xl font-bold leading-9 tracking-tight">Hola, José</h1>
+          <h1 className="text-2xl font-bold leading-9 tracking-tight">Hola, {nombre || "Usuario"}</h1>
           <p className="text-base leading-relaxed text-[#424656]">{obtenerFechaActual()}</p>
         </div>
 
@@ -75,8 +77,12 @@ export default function Home() {
             <div className="flex min-w-0 items-center gap-3">
               <MdPerson aria-hidden="true" className="size-12 shrink-0 rounded-full bg-[#D4E4F3] p-2 text-[#424656]" />
               <div className="min-w-0">
-                <h2 id="mi-perfil" className="text-lg font-bold leading-snug sm:text-xl">José Perez</h2>
-                <p className="text-sm font-semibold leading-normal text-[#424656]">Papá · 78 años</p>
+                <h2 id="mi-perfil" className="text-lg font-bold leading-snug sm:text-xl">{usuario?.nombreCompleto || "Usuario"}</h2>
+                <p className="text-sm font-semibold leading-normal text-[#424656]">
+                  Adulto mayor · {usuario?.fechaNacimiento
+                    ? `${calcularEdad(usuario.fechaNacimiento)} años`
+                    : "Sin dato de edad"}
+                </p>
               </div>
             </div>
             <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-[#84F6E6]/40 px-2.5 py-1 text-xs font-bold uppercase leading-normal tracking-wide text-[#006A61]">
