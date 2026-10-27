@@ -26,6 +26,7 @@ import Cuidados from "./Pages/Adulto/Cuidados";
 import RutaProtegida from "./components/RutaProtegida";
 import AdmVinculo from "./Pages/Adulto/administrarVinculo";
 import SignosVitales from "./Pages/Familia/signosVitales";
+import MedicacionActual from "./Pages/Adulto/MedicacionActual";
 
 function LayoutConFooter() {
   return (
@@ -58,6 +59,7 @@ function App() {
               <Route path="home" element={<HomeAdulto />} />
               <Route path="sos" element={<SOS />} />
               <Route path="salud" element={<Salud />} />
+              <Route path="medicamentos" element={<MedicacionActual />} />
               <Route path="contactos" element={<Contactos />} />
               <Route path="configuracion" element={<Config />} />
               <Route path="codigo" element={<Codigo />} />
