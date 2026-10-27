@@ -16,7 +16,7 @@ import Salud from "./Pages/Adulto/Salud";
 import Contactos from "./Pages/Adulto/Contactos";
 import Config from "./Pages/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
-import Navbar2 from "./components/NavBar2";
+import Navbar from "./components/NavBar";
 import Codigo from "./Pages/Adulto/CodigoDeEmergencia";
 import Ayuda from "./Pages/Adulto/Ayuda";
 import Tutorial1 from "./Pages/Adulto/Tutorial1";
@@ -30,7 +30,7 @@ function LayoutConFooter() {
   return (
     <>
       <Outlet />
-      <Navbar2 />
+      <Navbar />
     </>
   );
 }

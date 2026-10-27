@@ -1,6 +1,6 @@
 import { GoHome } from "react-icons/go";
 import { MdOutlinePeopleAlt, MdOutlineMedicalServices } from "react-icons/md";
-import { PiWarningDiamondBold } from "react-icons/pi";
+import { VscGear } from "react-icons/vsc";
 import { useLocation, NavLink } from "react-router-dom";
 
 // Barra de navegación inferior reutilizable.
@@ -11,26 +11,24 @@ export default function NavBar() {
 
   // Determina qué opción del footer está activa según la ruta actual.
   const isHome =
-    currentPath === "/home" ||
+    currentPath === "/adulto/home" ||
     currentPath === "/adulto" ||
     currentPath === "/cuidador" ||
     currentPath === "/familia";
-  const isSalud = currentPath.startsWith("/adulto/salud");
+  const isMed = currentPath.startsWith("/adulto/medicamentos");
   const isContactos = currentPath.startsWith("/adulto/contactos");
-  const isSos = currentPath.startsWith("/adulto/sos");
+  const isConfig = currentPath.startsWith("/adulto/configuracion");
 
   return (
     <>
-      <nav className="bg-white border-t-2 border-[#002B2F] lg:h-[11vh] h-[12vh] w-screen fixed bottom-0 flex flex-row justify-evenly items-center">
+      <nav className="bg-white/65 backdrop-blur-xs rounded-full border-b border-b-black/20 shadow-lg lg:h-[11vh] h-[9vh] min-w-90/100 fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-row justify-evenly items-center inset-shadow-sm inset-shadow-white">
         <NavLink
-          className={`p-1 h-90/100 rounded-lg lg:rounded-bl-lg rounded-bl-[50%] lg:mb-0 mb-1 aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
-            isHome
-              ? "bg-[#002B2F] text-white"
-              : "bg-white hover:bg-[#002B2F]/25"
+          className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
+            isHome ? "bg-[#002B2F]/25 aspect-video" : " aspect-square"
           }`}
           to={"/adulto/home"}
         >
-          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+          <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             {" "}
             <GoHome />
           </div>
@@ -38,45 +36,39 @@ export default function NavBar() {
         </NavLink>
 
         <NavLink
-          className={`p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
-            isSalud
-              ? "bg-[#002B2F] text-white"
-              : "bg-white hover:bg-[#002B2F]/25"
+          className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
+            isMed ? " bg-[#002B2F]/25 aspect-video" : " aspect-square"
           }`}
-          to={"/adulto/salud"}
+          to={"/adulto/medicamentos"}
         >
-          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+          <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             <MdOutlineMedicalServices />
           </div>
-          <p className="font-bold">Salud</p>
+          <p className="font-bold">Medicamentos</p>
         </NavLink>
 
         <NavLink
-          className={` p-1 h-93/100 rounded-lg aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
-            isContactos
-              ? "bg-[#002B2F] text-white"
-              : "bg-white hover:bg-[#002B2F]/25"
+          className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
+            isContactos ? " bg-[#002B2F]/25 aspect-video" : "aspect-square"
           }`}
           to={"/adulto/contactos"}
         >
-          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
+          <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
             <MdOutlinePeopleAlt />{" "}
           </div>
           <p className="font-bold">Contactos</p>
         </NavLink>
 
         <NavLink
-          className={`p-1 h-90/100 rounded-lg lg:rounded-br-lg rounded-br-[50%] lg:mb-0 mb-1 aspect-square flex justify-center items-center flex-col gap-1 cursor-pointer transition-all duration-150 ${
-            isSos
-              ? "bg-[#002B2F] text-white "
-              : "bg-white hover:bg-[#002B2F]/25"
+          className={`p-1 h-85/100 rounded-full flex justify-center items-center flex-col cursor-pointer transition-all duration-150 ${
+            isConfig ? " bg-[#002B2F]/25 aspect-video" : "  aspect-square"
           }`}
-          to={"/adulto/sos"}
+          to={"/adulto/configuracion"}
         >
-          <div className="aspect-square h-35/100 md:h-55/100 lg:text-3xl text-2xl lg:pt-1">
-            <PiWarningDiamondBold />
+          <div className="flex items-center justify-center aspect-square min-h-40/100 md:min-h-55/100 lg:text-3xl text-3xl lg:pt-1 ">
+            <VscGear />
           </div>
-          <p className="font-bold">SOS</p>
+          <p className="font-bold">Ajustes</p>
         </NavLink>
       </nav>
     </>
