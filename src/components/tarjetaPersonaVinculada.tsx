@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 interface Props {
   nombre: string;
   ocupacion: string;
@@ -20,9 +21,9 @@ export default function PersonaVinculada({ nombre, ocupacion }: Props) {
           <p className="text-gray-600">{ocupacion}</p>
         </div>
       </div>
-      <button className="text-blue-600 font-semibold text-lg bg-white rounded-xl p-2 border border-slate-300 cursor-pointer hover:bg-gray-100 active:bg-gray-200">
+      <Link to={"./administrar-vinculo"} className="text-blue-600 font-semibold text-lg bg-white rounded-xl p-2 border border-slate-300 cursor-pointer hover:bg-gray-100 active:bg-gray-200">
         Administrar
-      </button>
+      </Link>
     </div>
   );
 }
