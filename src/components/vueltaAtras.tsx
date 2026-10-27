@@ -16,7 +16,7 @@ export default function VueltaAtras({ titulo = "NONOS"}: Prop) {
         <h2 className="text-lg lg:text-xl font-semibold text-gray-500">
           FICHA DE CONSULTA
         </h2>
-        <h1 className="font-semibold text-2xl lg:text-3xl">{titulo}</h1>
+        <h1 className="border-b-2 border-white/70 font-semibold text-2xl lg:text-3xl">{titulo}</h1>
       </div>
     </div>
   );

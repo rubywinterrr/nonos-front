@@ -25,6 +25,7 @@ import SinRuta from "./Pages/SinRuta";
 import Cuidados from "./Pages/Adulto/Cuidados";
 import RutaProtegida from "./components/RutaProtegida";
 import AdmVinculo from "./Pages/Adulto/administrarVinculo";
+import SignosVitales from "./Pages/Familia/signosVitales";
 
 function LayoutConFooter() {
   return (
@@ -72,6 +73,7 @@ function App() {
             <Route path="familia">
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<HomeFamilia />} />
+              <Route path="signos" element={<SignosVitales />} />
             </Route>
             <Route path="cuidador">
               <Route index element={<Navigate to="home" replace />} />

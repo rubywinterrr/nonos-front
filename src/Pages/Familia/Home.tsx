@@ -1,4 +1,5 @@
 import Header from "../../components/Header";
+import { Link } from "react-router-dom";
 import { LuActivity, LuHeartPulse, LuWatch } from "react-icons/lu";
 import {
   MdArrowForward,
@@ -153,10 +154,10 @@ export default function HomeFamilia() {
             ))}
           </dl>
 
-          <button type="button" className={`flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-[#EBF5FF] px-4 py-2.5 text-lg font-bold leading-6 tracking-normal text-[#0049CC] ${foco}`}>
+          <Link to={"../signos"} className={`flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-[#EBF5FF] px-4 py-2.5 text-lg font-bold leading-6 tracking-normal text-[#0049CC] ${foco}`}>
             Ver signos específicos
             <MdArrowForward aria-hidden="true" className="size-4 shrink-0 text-[#0049CC]" />
-          </button>
+          </Link>
         </section>
 
         <section className={tarjeta} aria-labelledby="rutina-hoy">
