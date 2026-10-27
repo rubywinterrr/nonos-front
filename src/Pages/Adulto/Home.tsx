@@ -28,6 +28,7 @@ import {
   MdWbSunny,
 } from "react-icons/md";
 import { LiaQrcodeSolid } from "react-icons/lia";
+import obtenerFechaActual, { obtenerDiaActual } from "../../utils/obtenerFechaActual";
 
 export default function Home() {
   const { usuario } = useAuth();
@@ -66,7 +67,7 @@ export default function Home() {
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 wrap-anywhere">
         <div className="flex flex-col gap-0.5">
           <h1 className="text-2xl font-bold leading-9 tracking-tight">Hola, José</h1>
-          <p className="text-base leading-relaxed text-[#424656]">Viernes, 24 de Octubre · 16:40 hs</p>
+          <p className="text-base leading-relaxed text-[#424656]">{obtenerFechaActual()}</p>
         </div>
 
         <section className="flex w-full min-w-0 flex-col gap-3 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="mi-perfil">
@@ -199,7 +200,7 @@ export default function Home() {
               <MdOutlineCalendarToday aria-hidden="true" className="size-5 shrink-0 text-[#0B5FFF]" />
               Rutina de hoy
             </h2>
-            <span className="text-sm font-semibold text-[#424656]">Viernes</span>
+            <span className="text-sm font-semibold text-[#424656]">{obtenerDiaActual()}</span>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#EBF5FF] p-3.5">
             <div className="flex min-w-0 items-center gap-3">

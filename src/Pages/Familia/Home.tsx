@@ -1,4 +1,5 @@
 import Header from "../../components/Header";
+import obtenerFechaActual, { obtenerDiaActual } from "../../utils/obtenerFechaActual";
 import { Link } from "react-router-dom";
 import { LuActivity, LuHeartPulse, LuWatch } from "react-icons/lu";
 import {
@@ -31,7 +32,7 @@ export default function HomeFamilia() {
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32 pt-6">
         <div className="flex flex-col gap-0.5">
           <h1 className="text-2xl font-bold leading-9 tracking-tight">Hola, Sofía</h1>
-          <p className="text-base leading-relaxed text-[#424656]">Viernes, 24 de Octubre · 16:40 hs</p>
+          <p className="text-base leading-relaxed text-[#424656]">{obtenerFechaActual()}</p>
         </div>
 
         <section className="flex w-full flex-col gap-3 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="persona-vinculada">
@@ -152,7 +153,7 @@ export default function HomeFamilia() {
               <MdOutlineCalendarToday aria-hidden="true" className="size-5 shrink-0 text-[#0B5FFF]" />
               Rutina de hoy
             </h2>
-            <span className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">Viernes</span>
+            <span className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">{obtenerDiaActual()}</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-3 rounded-xl bg-[#EBF5FF] p-3 sm:p-3.5">
