@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://nonos-back.vercel.app/:path*"
+      "destination": "https://proyectos-tic.ort.edu.ar/nonos/api/:path*"
     },
     {
       "source": "/(.*)",
