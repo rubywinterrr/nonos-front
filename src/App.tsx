@@ -27,6 +27,7 @@ import RutaProtegida from "./components/RutaProtegida";
 import AdmVinculo from "./Pages/Adulto/administrarVinculo";
 import SignosVitales from "./Pages/Familia/signosVitales";
 import MedicacionActual from "./Pages/Adulto/MedicacionActual";
+import ConfigCuenta1 from "./Pages/configCuenta1";
 
 function LayoutConFooter() {
   return (
@@ -54,8 +55,10 @@ function App() {
         <Route element={<RutaProtegida />}>
           <Route path="adulto-mayor/dispositivos" element={<VueltaPulsera />} />
           <Route element={<LayoutConFooter />}>
+
             <Route path="adulto">
               <Route index element={<Navigate to="home" replace />} />
+              <Route path="configurar-cuenta" element={<ConfigCuenta1 />} />
               <Route path="home" element={<HomeAdulto />} />
               <Route path="sos" element={<SOS />} />
               <Route path="salud" element={<Salud />} />
@@ -77,12 +80,14 @@ function App() {
               <Route path="home" element={<HomeFamilia />} />
               <Route path="signos" element={<SignosVitales />} />
             </Route>
+
             <Route path="cuidador">
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<HomeCuidador />} />
             </Route>
             <Route path="cuenta" element={<PagCuenta />} />
           </Route>
+
         </Route>
         <Route path="*" element={<SinRuta />} />
       </Routes>
