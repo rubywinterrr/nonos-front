@@ -2,7 +2,7 @@ import LogInForm from "../components/LogInForm";
 import RegisterForm from "../components/RegisterForm";
 import { useState } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { FondoBlanco } from "../components/funcionFondoBlanco";
+import { FondoBlanco } from "../utils/funcionFondoBlanco";
 
 function IngresoContent() {
   const [hasAccount, setHasAccount] = useState(true);
