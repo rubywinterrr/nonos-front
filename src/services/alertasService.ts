@@ -69,4 +69,13 @@ export const alertasService = {
     getFeedback: async (alertaId: string) => {
         return await apiFetch<Feedback[]>(`/alertas/feedback/${alertaId}`);
     },
+
+    // PUT /alertas/:id/cancelar ("Fue una falsa alarma"; avisa a los contactos de emergencia)
+    // 409 si la alerta ya no está PENDIENTE (ya cancelada o resuelta)
+    cancelarAlerta: async (id: string) => {
+        return await apiFetch<Alerta>(`/alertas/${id}/cancelar`, {
+            method: 'PUT',
+        });
+    },
+
 };

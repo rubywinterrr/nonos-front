@@ -1,5 +1,12 @@
 import { apiFetch } from './api';
 
+// así guarda el back el grupo sanguíneo; para mostrarlo usar textoGrupoSanguineo (utils)
+export type GrupoSanguineo =
+  | 'A_POSITIVO' | 'A_NEGATIVO'
+  | 'B_POSITIVO' | 'B_NEGATIVO'
+  | 'AB_POSITIVO' | 'AB_NEGATIVO'
+  | 'O_POSITIVO' | 'O_NEGATIVO';
+
 export interface Usuario {
   id: string;
   email: string;
@@ -8,6 +15,11 @@ export interface Usuario {
   fechaNacimiento: string | null;
   telefono: string | null;
   fotoUrl: string | null;
+  dni: number | null;
+  domicilio: string | null;
+  grupoSanguineo: GrupoSanguineo | null;
+  obraSocial: string | null;
+  carnetObraSocial: string | null;
   activo: boolean;
   createdAt: string;
   updatedAt: string;
@@ -95,4 +107,20 @@ export const authService = {
       window.location.href = '/';
     }
   },
+
+    // POST /auth/logout-all (cierra la sesión en TODOS los dispositivos; responde 204 sin contenido)
+  logoutAll: async () => {
+    try {
+      await apiFetch<void>('/auth/logout-all', {
+        method: 'POST',
+      });
+    } catch {
+      // Si falla la red, forzamos salida local de todos modos
+    } finally {
+      localStorage.removeItem('nonos_token');
+      localStorage.removeItem('nonos_refresh_token');
+      window.location.href = '/';
+    }
+  },
+
 };
