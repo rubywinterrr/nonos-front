@@ -48,7 +48,7 @@ const renovarToken = async (): Promise<boolean> => {
 const cerrarSesion = () => {
   localStorage.removeItem('nonos_token');
   localStorage.removeItem('nonos_refresh_token');
-  window.location.href = '/';
+  window.location.href = '/ingresar';
 };
 
 // convierte la respuesta en datos, o tira un error si algo salió mal
