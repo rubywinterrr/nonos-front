@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { medicamentosService, type Medicamento } from "../../services/medicamentosService";
 import { condicionesService, type Condicion } from "../../services/condicionesService";
 import calcularEdad from "../../utils/calcularEdad";
+import textoGrupoSanguineo from "../../utils/textoGrupoSanguineo";
 
 export default function Salud() {
   const { usuario } = useAuth();
@@ -125,7 +126,7 @@ export default function Salud() {
                 {" "}
                 <p className="text-gray-600">Grupo y factor</p>
                 <h1 className="text-xl font-bold">
-                  {usuario?.grupoSanguineo || "Sin dato de grupo sanguíneo"}
+                  {textoGrupoSanguineo(usuario?.grupoSanguineo ?? null) || "Sin dato de grupo sanguíneo"}
                 </h1>
               </div>
             </div>
