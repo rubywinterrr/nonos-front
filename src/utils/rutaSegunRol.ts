@@ -10,5 +10,5 @@ export default function rutaSegunRol(rol: string) {
   if (rol === "CUIDADOR") {
     return "/cuidador";
   }
-  return "/";
+  return "/ingresar";
 }

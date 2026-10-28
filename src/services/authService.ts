@@ -104,11 +104,11 @@ export const authService = {
     } finally {
       localStorage.removeItem('nonos_token');
       localStorage.removeItem('nonos_refresh_token'); // <- Limpia el refreshToken
-      window.location.href = '/';
+      window.location.href = '/ingresar';
     }
   },
 
-    // POST /auth/logout-all (cierra la sesión en TODOS los dispositivos; responde 204 sin contenido)
+  // POST /auth/logout-all (cierra la sesión en TODOS los dispositivos; responde 204 sin contenido)
   logoutAll: async () => {
     try {
       await apiFetch<void>('/auth/logout-all', {
@@ -119,7 +119,7 @@ export const authService = {
     } finally {
       localStorage.removeItem('nonos_token');
       localStorage.removeItem('nonos_refresh_token');
-      window.location.href = '/';
+      window.location.href = '/ingresar';
     }
   },
 
