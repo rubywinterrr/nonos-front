@@ -1,6 +1,6 @@
 import type { TipoAlerta } from './alertasService';
 import { apiFetch } from './api';
-import type { Usuario } from './authService';
+import type { GrupoSanguineo, Usuario } from './authService';
 import type { UsuarioPublico, TipoCuidador, TipoVinculo} from './invitacionesService';
 
 export interface Vinculo {
@@ -32,6 +32,12 @@ export interface UsuarioById {
   fechaNacimiento: string | null;
   telefono: string | null;
   medidasAnticipadas: string | null;
+  indicacionesCuidado: string | null;
+  dni: number | null;
+  domicilio: string | null;
+  grupoSanguineo: GrupoSanguineo | null;
+  obraSocial: string | null;
+  carnetObraSocial: string | null;
 }
 
 export interface AdultoMayorVinculado {
@@ -52,17 +58,39 @@ export interface CambiosVinculo {
 }
 
 export interface DatosContactoEmergencia {
-  familiarId: string, 
-  esContactoEmergencia: boolean, 
+  familiarId: string;
+  esContactoEmergencia: boolean;
   // empieza en 1; si ya está ocupada, el back asigna la siguiente libre
-  prioridadContacto?: number
+  prioridadContacto?: number;
 }
 
 export interface CambiosPerfil {
-  email?: string,
-  nombreCompleto?: string,
-  fechaNacimiento?: string | null,
-  telefono?: string | null,
+  email?: string;
+  nombreCompleto?: string;
+  // formato "1950-03-10", tiene que ser en el pasado; null la borra
+  fechaNacimiento?: string | null;
+  // dígitos, espacios y guiones, de 6 a 20, con + opcional; null lo borra
+  telefono?: string | null;
+  dni?: number | null;
+  domicilio?: string | null; // máx. 200 caracteres
+  grupoSanguineo?: GrupoSanguineo | null;
+  obraSocial?: string | null; // máx. 100 caracteres
+  carnetObraSocial?: string | null; // máx. 50 caracteres
+}
+
+// interruptores de Configuración > Notificaciones (las del propio usuario sobre sí mismo)
+export interface PreferenciasNotificacion {
+  notifActividad: boolean;
+  notifBienestar: boolean;
+  // se guarda pero todavía no silencia nada (el back no manda recordatorios)
+  notifRecordatorios: boolean;
+}
+
+// para editar: se mandan solo los interruptores que cambian
+export interface CambiosPreferencias {
+  notifActividad?: boolean;
+  notifBienestar?: boolean;
+  notifRecordatorios?: boolean;
 }
 
 export const usuarioService = {
@@ -169,4 +197,25 @@ export const usuarioService = {
     });
   },
 
+    // PUT /usuarios/:id/indicaciones-cuidado (texto libre del adulto para quien lo cuida, máx. 5000; solo el propio adulto)
+  editarIndicacionesCuidado: async (id: string, indicacionesCuidado: string) => {
+    return await apiFetch<UsuarioById>(`/usuarios/${id}/indicaciones-cuidado`, {
+      method: 'PUT',
+      body: JSON.stringify({ indicacionesCuidado }),
+    });
+  },
+
+  // GET /usuarios/:id/preferencias-notificaciones (solo el propio usuario)
+  getPreferenciasNotificacion: async (id: string) => {
+    return await apiFetch<PreferenciasNotificacion>(`/usuarios/${id}/preferencias-notificaciones`);
+  },
+
+  // PUT /usuarios/:id/preferencias-notificaciones (manda solo los que cambian; devuelve los tres)
+  editarPreferenciasNotificacion: async (id: string, data: CambiosPreferencias) => {
+    return await apiFetch<PreferenciasNotificacion>(`/usuarios/${id}/preferencias-notificaciones`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+  
 };

@@ -125,7 +125,7 @@ export default function Salud() {
                 {" "}
                 <p className="text-gray-600">Grupo y factor</p>
                 <h1 className="text-xl font-bold">
-                  Grupo de sangre {/* EL BACK NO TIENE ENDPOINT: grupo y factor */}
+                  {usuario?.grupoSanguineo || "Sin dato de grupo sanguíneo"}
                 </h1>
               </div>
             </div>
@@ -135,11 +135,11 @@ export default function Salud() {
                 {" "}
                 <p className="text-gray-600">Cobertura / Prepaga</p>
                 <h1 className="text-xl font-bold">
-                  Cobertura {/* EL BACK NO TIENE ENDPOINT: cobertura / prepaga */}
+                  {usuario?.obraSocial || "Sin dato de cobertura"}
                 </h1>
-                <p className="text-gray-600">
-                  N° 0000000000 {/* EL BACK NO TIENE ENDPOINT: número de afiliado */}
-                </p>
+                  {usuario?.carnetObraSocial && (
+                  <p className="text-gray-600">N° {usuario.carnetObraSocial}</p>
+                )}
               </div>
             </div>
 
