@@ -13,7 +13,8 @@ const hacerPedido = async (endpoint: string, options: RequestInit) => { //reques
     headers['Authorization'] = `Bearer ${token}`; //arma request header de autorizacion como pide el back, con el token si existe
   }
 
-  return await fetch(`${BASE_URL}${endpoint}`, { ...options, headers }); //devuelve fetch con url completa y header armado 
+  // cache: 'no-store' hace que el navegador siempre le pregunte al back y no use respuestas viejas guardadas
+  return await fetch(`${BASE_URL}${endpoint}`, { ...options, headers, cache: 'no-store' }); //devuelve fetch con url completa y header armado 
 
 };
 
