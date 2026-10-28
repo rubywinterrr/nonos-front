@@ -94,5 +94,6 @@ html::-webkit-scrollbar {
   padding: 1.25rem; /* p-5 */
   padding-inline: calc(var(--spacing) * 4) /* 1rem = 16px */;
   padding-bottom: 15vh; /* pb-[15vh] */
+  padding-top: 9.5vh;
   gap: 1.75rem; /* gap-7 */
 }
