@@ -78,11 +78,11 @@ export default function SOS() {
             <div className="w-full p-5 gap-5 flex flex-col rounded-2xl bg-white">
               <div className="bg-white shadow-lg rounded-2xl min-h-40 w-full flex flex-col items-center gap-3 p-5">
                 <div className="flex justify-between items-center w-full">
-                  <h1 className="font-semibold text-xl flex items-center">
+                  <h1 className="font-semibold text-lg flex items-center">
                     <MdOutlinePeopleAlt className="mr-2 size-6 text-blue-800" />
                     Contactos notificados
                   </h1>
-                  <p className="text-blue-800 bg-blue-50 border border-blue-100 p-1 px-3 rounded-full font-semibold ">
+                  <p className="text-blue-800 bg-blue-50 border border-blue-100 p-1 px-3 text-xs rounded-full font-semibold ">
                     {vinculos.length} de {vinculos.length}
                   </p>
                 </div>

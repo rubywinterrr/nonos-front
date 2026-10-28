@@ -1,13 +1,19 @@
 * {
   box-sizing: border-box;
-  transition: all 0.5s ease, color 0s, background 0.2s, border-color 0s, fill 0s, stroke 0s;
+  transition:
+    all 0.5s ease,
+    color 0s,
+    background 0.2s,
+    border-color 0s,
+    fill 0s,
+    stroke 0s;
 }
 
 body {
   min-height: 100vh;
   overflow-y: scroll;
   /* Asegura que el contenido sea desplazable */
-  background-color: #B9D2FF;
+  background-color: #b9d2ff;
 }
 
 html {
@@ -70,9 +76,9 @@ html::-webkit-scrollbar {
 @import "tailwindcss";
 
 @theme {
-  --background-color-main: #F7F9FF;
+  --background-color-main: #f7f9ff;
   /*clase: bg-main */
-  --background-color-main-blue: #B9D2FF;
+  --background-color-main-blue: #b9d2ff;
   /*clase: bg-main-blue */
   --height-main: 89vh;
   /* clase: h-main */
@@ -80,12 +86,13 @@ html::-webkit-scrollbar {
 
 @utility mainBody {
   min-height: var(--height-main, 89vh);
-  background-color: var(--background-color-main-blue, #B9D2FF);
+  background-color: var(--background-color-main-blue, #b9d2ff);
   width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: baseline;
   padding: 1.25rem; /* p-5 */
+  padding-inline: calc(var(--spacing) * 4) /* 1rem = 16px */;
   padding-bottom: 15vh; /* pb-[15vh] */
   gap: 1.75rem; /* gap-7 */
 }
