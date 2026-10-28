@@ -84,6 +84,133 @@ html::-webkit-scrollbar {
   /* clase: h-main */
 }
 
+/* ---------- Landing: animación de la pulsera ---------- */
+
+/* la landing no usa la transición global de 0.5s en todo (hace que los hover se sientan lentos) */
+.landing,
+.landing * {
+  transition-duration: 0.15s;
+}
+
+/* la pulsera sube y baja despacio, con un leve giro */
+@keyframes landing-flotar {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+
+  50% {
+    transform: translateY(-14px) rotate(-2deg);
+  }
+}
+
+.landing-flotar {
+  animation: landing-flotar 6s ease-in-out infinite;
+}
+
+/* ondas que salen de la pulsera: la señal que llega a la red */
+@keyframes landing-onda {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+.landing-onda {
+  animation: landing-onda 4.5s ease-out infinite;
+}
+
+.landing-onda-2 {
+  animation-delay: 1.5s;
+}
+
+.landing-onda-3 {
+  animation-delay: 3s;
+}
+
+/* pantalla: 4 datos, cada uno visible 3 segundos de un ciclo de 12 */
+@keyframes landing-dato {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  4%,
+  22% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  26%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.landing-dato {
+  opacity: 0;
+  animation: landing-dato 12s ease-in-out infinite;
+}
+
+.landing-dato-2 {
+  animation-delay: 3s;
+}
+
+.landing-dato-3 {
+  animation-delay: 6s;
+}
+
+.landing-dato-4 {
+  animation-delay: 9s;
+}
+
+/* línea del pulso que se dibuja */
+@keyframes landing-ecg {
+  0% {
+    stroke-dashoffset: 140;
+  }
+
+  60%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.landing-ecg {
+  stroke-dasharray: 140;
+  animation: landing-ecg 1.5s ease-out infinite;
+}
+
+/* quien prefiere menos movimiento ve la pulsera quieta, con el pulso fijo */
+@media (prefers-reduced-motion: reduce) {
+
+  .landing-flotar,
+  .landing-onda,
+  .landing-ecg {
+    animation: none;
+  }
+
+  .landing-onda {
+    display: none;
+  }
+
+  .landing-dato {
+    animation: none;
+  }
+
+  .landing-dato-1 {
+    opacity: 1;
+  }
+}
+
+
 @utility mainBody {
   min-height: var(--height-main, 89vh);
   background-color: var(--background-color-main-blue, #b9d2ff);
@@ -91,9 +218,14 @@ html::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  padding: 1.25rem; /* p-5 */
-  padding-inline: calc(var(--spacing) * 4) /* 1rem = 16px */;
-  padding-bottom: 15vh; /* pb-[15vh] */
+  padding: 1.25rem;
+  /* p-5 */
+  padding-inline: calc(var(--spacing) * 4)
+    /* 1rem = 16px */
+  ;
+  padding-bottom: 15vh;
+  /* pb-[15vh] */
   padding-top: 9.5vh;
-  gap: 1.75rem; /* gap-7 */
+  gap: 1.75rem;
+  /* gap-7 */
 }

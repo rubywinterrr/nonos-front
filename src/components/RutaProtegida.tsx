@@ -14,5 +14,5 @@ export default function RutaProtegida() {
     return <Navigate to="/" replace />;
   }
 
-  return <Outlet />;
+  return <Navigate to="/ingresar" replace />;
 }

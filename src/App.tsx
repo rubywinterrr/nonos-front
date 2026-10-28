@@ -29,6 +29,7 @@ import SignosVitales from "./Pages/Familia/signosVitales";
 import MedicacionActual from "./Pages/Adulto/MedicacionActual";
 import RutaPorRol from "./components/RutaPorRol";
 import ConfigCuenta1 from "./Pages/configCuenta1";
+import Landing from "./Pages/Landing";
 
 function LayoutConFooter() {
   return (
@@ -52,7 +53,8 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Ingreso />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/ingresar" element={<Ingreso />} />
         <Route element={<RutaProtegida />}>
           <Route path="adulto-mayor/dispositivos" element={<VueltaPulsera />} />
           <Route element={<LayoutConFooter />}>
