@@ -28,6 +28,7 @@ import AdmVinculo from "./Pages/Adulto/administrarVinculo";
 import SignosVitales from "./Pages/Familia/signosVitales";
 import MedicacionActual from "./Pages/Adulto/MedicacionActual";
 import RutaPorRol from "./components/RutaPorRol";
+import ConfigCuenta1 from "./Pages/configCuenta1";
 
 function LayoutConFooter() {
   return (
@@ -57,6 +58,7 @@ function App() {
           <Route element={<LayoutConFooter />}>
             <Route path="adulto" element={<RutaPorRol rol="ADULTO_MAYOR" />}>
               <Route index element={<Navigate to="home" replace />} />
+              <Route path="configurar-cuenta" element={<ConfigCuenta1 />} />
               <Route path="home" element={<HomeAdulto />} />
               <Route path="sos" element={<SOS />} />
               <Route path="salud" element={<Salud />} />
@@ -84,6 +86,7 @@ function App() {
             </Route>
             <Route path="cuenta" element={<PagCuenta />} />
           </Route>
+
         </Route>
         <Route path="*" element={<SinRuta />} />
       </Routes>

@@ -2,7 +2,6 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { HiOutlineCheckBadge } from "react-icons/hi2";
 import { useState, useEffect } from "react";
-import { FondoBlanco } from "../../components/funcionFondoBlanco";
 import stock2 from "../../assets/stock2.png";
 import { BiBulb } from "react-icons/bi";
 import BotonSiguiente from "../../components/botonSiguiente";
@@ -13,8 +12,6 @@ import {
 } from "react-icons/md";
 import CuadroAsesor from "../../components/CuadroContactarAsesor";
 export default function Tutorial1() {
-  FondoBlanco();
-
   const progresoObjetivo = 25;
   const [progreso, setProgreso] = useState(0);
   useEffect(() => {
@@ -25,7 +22,7 @@ export default function Tutorial1() {
   }, [progresoObjetivo]);
   return (
     <>
-      <main className="mainBody bg-white">
+      <main className="mainBody">
         <Header />
         <VueltaAtras titulo="Ayuda y soporte"/>
         <section className="flex w-full lg:w-35/100 flex-col shadow-lg rounded-3xl p-5 gap-5 items-center justify-start">

@@ -1,4 +1,3 @@
-import { FondoBlanco } from "../../components/funcionFondoBlanco";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { IoMdHeart } from "react-icons/io";
@@ -38,7 +37,6 @@ function separarTexto(texto: string) {
 }
 
 export default function Cuidados() {
-  FondoBlanco();
   const { usuario } = useAuth();
   const [evitar, setEvitar] = useState("");
   const [acompanante, setAcompanante] = useState("");
@@ -98,7 +96,7 @@ export default function Cuidados() {
 
   return (
     <>
-      <main className="mainBody bg-white">
+      <main className="mainBody">
         <Header />
         <VueltaAtras titulo="Mis voluntades y cuidados" />
         <section className="w-full flex flex-col gap-4">

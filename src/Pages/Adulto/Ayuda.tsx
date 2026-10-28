@@ -6,12 +6,10 @@ import { BsPatchCheck } from "react-icons/bs";
 import { PiBookOpenText } from "react-icons/pi";
 import { MdOutlineMailOutline, MdArrowForward } from "react-icons/md";
 import Stock1 from "../../assets/stock1.png";
-import { FondoBlanco } from "../../components/funcionFondoBlanco";
 export default function Ayuda() {
-  FondoBlanco();
   return (
     <>
-      <main className="mainBody bg-white">
+      <main className="mainBody">
         <Header />
         <VueltaAtras titulo="Ayuda y soporte"/>
         <div className="w-full lg:w-40/100 p-4 bg-linear-65 from-indigo-100 to-sky-100 rounded-xl shadow-md inline-flex flex-col justify-start items-start gap-4 overflow-hidden">
