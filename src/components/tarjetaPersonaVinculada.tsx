@@ -4,12 +4,13 @@ interface Props {
   ocupacion: string;
 }
 export default function PersonaVinculada({ nombre, ocupacion }: Props) {
+    // inicial del nombre para el círculo; "Dr" si el nombre empieza con "Dr"
   function PrimeraLetra() {
-    const CheckDr =
-      nombre.slice()[0].toLowerCase() + nombre.slice()[1].toLowerCase();
-    if (CheckDr !== "dr") return nombre.slice()[0].toUpperCase();
-    else return "Dr";
+    if (!nombre) return "?";
+    if (nombre.slice(0, 2).toLowerCase() === "dr") return "Dr";
+    return nombre[0].toUpperCase();
   }
+
   return (
     <div className="bg-blue-50/80 w-full p-3 rounded-2xl min-h-25 border border-slate-300 flex items-center justify-between">
       <div className="flex items-center justify-center gap-3">

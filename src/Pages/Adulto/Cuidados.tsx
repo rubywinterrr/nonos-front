@@ -45,6 +45,9 @@ export default function Cuidados() {
   const [error, setError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState<boolean>(false);
   const [mensaje, setMensaje] = useState<string | null>(null);
+    // indicaciones extra: texto libre aparte, para quien cuida en el día a día
+  const [indicacionesExtra, setIndicacionesExtra] = useState("");
+  const [mostrarExtra, setMostrarExtra] = useState(false);
 
   useEffect(() => {
     if (!usuario) return;
@@ -60,6 +63,12 @@ export default function Cuidados() {
         setEvitar(partes.evitar);
         setAcompanante(partes.acompanante);
         setAtencion(partes.atencion);
+
+        // si ya había indicaciones extra guardadas, se muestra la caja directamente
+        const extra = data.indicacionesCuidado ?? "";
+        setIndicacionesExtra(extra);
+
+        if (extra) setMostrarExtra(true);
       } catch (err) {
         console.error(err);
         setError("Hubo un error al cargar tus indicaciones");
@@ -84,8 +93,14 @@ export default function Cuidados() {
         setError("Tus indicaciones son muy largas. Probá acortarlas un poco.");
         return;
       }
+      
+      if (indicacionesExtra.length > 5000) {
+        setError("Las indicaciones extra son muy largas. Probá acortarlas un poco.");
+        return;
+      }
       await usuarioService.editarMedidasAnticipadas(usuario.id, texto);
-      setMensaje("Tus indicaciones se guardaron");
+      // las indicaciones extra se guardan aparte, en su propio campo
+      await usuarioService.editarIndicacionesCuidado(usuario.id, indicacionesExtra);
     } catch (err) {
       console.error(err);
       setError("No se pudieron guardar tus indicaciones");
@@ -145,10 +160,23 @@ Ej: "En caso de que me internen, no quiero que me ingresen un tubo” '
             médica.
           </p>
         </div>
-        {/* el back no tiene dónde guardar INDICACIONES EXTRA: este botón queda sin conectar por ahora */}
-        <h2 className="w-full rounded-2xl border-dashed border-3 text-lg p-5 border-gray-300 bg-white flex gap-3 items-center justify-center hover:bg-zinc-100 cursor-pointer active:bg-zinc-200">
-          <LuCirclePlus className="text-[#4A7FBF] text-2xl"/>Agregar otra indicación o deseo
-        </h2>
+                {mostrarExtra ? (
+          <CajaPreferencias
+            titulo="Otras indicaciones para quien te cuida"
+            placeholder='Escriba aquí.
+            Ej: "Prefiero que me hablen fuerte" o "No me gusta el café"'
+            value={indicacionesExtra}
+            onChange={setIndicacionesExtra}
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setMostrarExtra(true)}
+            className="w-full rounded-2xl border-dashed border-3 text-lg p-5 border-gray-300 bg-white flex gap-3 items-center justify-center hover:bg-zinc-100 cursor-pointer active:bg-zinc-200"
+          >
+            <LuCirclePlus className="text-[#4A7FBF] text-2xl"/>Agregar otra indicación o deseo
+          </button>
+        )}
         {error && <p className="text-red-600">{error}</p>}
         {mensaje && <p className="text-green-700">{mensaje}</p>}
         <button
