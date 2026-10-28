@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { usuarioService, type Vinculo } from "../services/usuariosService";
+import { usuarioService, type Vinculo, type PreferenciasNotificacion } from "../services/usuariosService";
 import Header from "../components/Header";
 import VueltaAtras from "../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
@@ -51,33 +51,70 @@ export default function Config() {
     fetchVinculos();
   }, [usuario]);
   
-  const [configNotificaciones, setConfigNotificaciones] = useState({
-    recibirNotificaciones: true,
-    actividad: true,
-    bienestar: true,
-    recordatorios: true,
+  // interruptores de notificaciones: arrancan prendidos (como en el back) hasta que llegan los guardados
+  const [configNotificaciones, setConfigNotificaciones] = useState<PreferenciasNotificacion>({
+    notifActividad: true,
+    notifBienestar: true,
+    notifRecordatorios: true,
   });
-
   const [cargando, setCargando] = useState(false);
+  const [errorGuardar, setErrorGuardar] = useState<string | null>(null);
+  const [mensajeGuardar, setMensajeGuardar] = useState<string | null>(null);
 
-  const handleToggle = (key: keyof typeof configNotificaciones) => {
+  useEffect(() => {
+    if (!usuario) return;
+
+    // trae las preferencias guardadas para mostrar los interruptores como están
+    const fetchPreferencias = async () => {
+      try {
+        const data = await usuarioService.getPreferenciasNotificacion(usuario.id);
+        setConfigNotificaciones(data);
+      } catch (err) {
+        console.error(err);
+        setErrorGuardar("No se pudieron cargar tus preferencias de notificaciones");
+      }
+    };
+
+    fetchPreferencias();
+  }, [usuario]);
+
+  // "Recibir notificaciones" no existe en el back: está prendido si alguna de las tres lo está
+  const recibirNotificaciones =
+    configNotificaciones.notifActividad ||
+    configNotificaciones.notifBienestar ||
+    configNotificaciones.notifRecordatorios;
+
+  // prende o apaga un interruptor (todavía no se guarda: eso pasa en "Guardar cambios")
+  const handleToggle = (key: keyof PreferenciasNotificacion) => {
     setConfigNotificaciones((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // el general prende o apaga los tres juntos
+  const handleToggleGeneral = () => {
+    setConfigNotificaciones({
+      notifActividad: !recibirNotificaciones,
+      notifBienestar: !recibirNotificaciones,
+      notifRecordatorios: !recibirNotificaciones,
+    });
+  };
+
+  // guarda los interruptores en el back
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
+    if (!usuario) return;
     setCargando(true);
+    setErrorGuardar(null);
+    setMensajeGuardar(null);
 
     try {
-      console.log(
-        "Guardando configuración en el servidor:",
-        configNotificaciones
-      );
-    } catch (error) {
-      console.error("Error al guardar cambios:", error);
+      await usuarioService.editarPreferenciasNotificacion(usuario.id, configNotificaciones);
+      setMensajeGuardar("Tus cambios se guardaron");
+    } catch (err) {
+      console.error(err);
+      setErrorGuardar("No se pudieron guardar los cambios");
     } finally {
       setCargando(false);
     }
@@ -136,8 +173,8 @@ export default function Config() {
                 </p>
               </div>
               <Switch
-                checked={configNotificaciones.recibirNotificaciones}
-                onChange={() => handleToggle("recibirNotificaciones")}
+                checked={recibirNotificaciones}
+                onChange={handleToggleGeneral}
               />
             </div>
 
@@ -161,8 +198,8 @@ export default function Config() {
                 <p className="text-gray-600">Pasos y movimiento diario</p>
               </div>
               <Switch
-                checked={configNotificaciones.actividad}
-                onChange={() => handleToggle("actividad")}
+                checked={configNotificaciones.notifActividad}
+                onChange={() => handleToggle("notifActividad")}
               />
             </div>
 
@@ -172,8 +209,8 @@ export default function Config() {
                 <p className="text-gray-600">Monitoreo de descanso y salud</p>
               </div>
               <Switch
-                checked={configNotificaciones.bienestar}
-                onChange={() => handleToggle("bienestar")}
+                checked={configNotificaciones.notifBienestar}
+                onChange={() => handleToggle("notifBienestar")}
               />
             </div>
 
@@ -183,8 +220,8 @@ export default function Config() {
                 <p className="text-gray-600">Avisos generales del día</p>
               </div>
               <Switch
-                checked={configNotificaciones.recordatorios}
-                onChange={() => handleToggle("recordatorios")}
+                checked={configNotificaciones.notifRecordatorios}
+                onChange={() => handleToggle("notifRecordatorios")}
               />
             </div>
           </div>
@@ -228,6 +265,8 @@ export default function Config() {
             <HiCheck className="text-2xl stroke-2" />{" "}
             {cargando ? "Guardando..." : "Guardar cambios"}
           </button>
+          {errorGuardar && <p className="text-red-600">{errorGuardar}</p>}
+          {mensajeGuardar && <p className="text-green-700">{mensajeGuardar}</p>}
         </form>
 
         <div className="border-t w-full border-gray-500" />
