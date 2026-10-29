@@ -27,7 +27,7 @@ export default function ContactosFamilia() {
 
   return (
     <>
-    <main className="mainBody gap-0 bg-[#B7C8F0] px-4 pt-24 pb-28 text-[#16222C]">
+    <main className="mainBody gap-0">
       <Header />
       <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
         <div className="flex items-center gap-2">

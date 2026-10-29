@@ -8,10 +8,13 @@ import {
 } from "react-router-dom";
 import HomeAdulto from "./Pages/Adulto/Home";
 import HomeCuidador from "./Pages/Cuidador/Home";
+import SeccionPendiente from "./Pages/Cuidador/SeccionPendiente";
 import HomeFamilia from "./Pages/Familia/Home";
 import ContactosFamilia from "./Pages/Familia/contactos";
 import Ingreso from "./Pages/LogIn";
-import PagCuenta from "./Pages/Cuenta";
+import PagCuenta from "./Pages/Adulto/Cuenta";
+import CuentaFamilia from "./Pages/Familia/Cuenta";
+import { useAuth } from "./hooks/useAuth";
 import SOS from "./Pages/Adulto/PantallaSOS";
 import Salud from "./Pages/Adulto/Salud";
 import Contactos from "./Pages/Adulto/Contactos";
@@ -49,6 +52,11 @@ function LayoutConFooter() {
 function VueltaPulsera() {
   const location = useLocation();
   return <Navigate to={`/cuenta${location.search}`} replace />;
+}
+
+function CuentaSegunRol() {
+  const { usuario } = useAuth();
+  return usuario?.rol === "FAMILIAR" ? <CuentaFamilia /> : <PagCuenta />;
 }
 
 function App() {
@@ -90,8 +98,11 @@ function App() {
             <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<HomeCuidador />} />
+              <Route path="medicamentos" element={<SeccionPendiente titulo="Medicinas" />} />
+              <Route path="contactos" element={<SeccionPendiente titulo="Contactos" />} />
+              <Route path="configuracion" element={<SeccionPendiente titulo="Ajustes" />} />
             </Route>
-            <Route path="cuenta" element={<PagCuenta />} />
+            <Route path="cuenta" element={<CuentaSegunRol />} />
           </Route>
 
         </Route>

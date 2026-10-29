@@ -1,59 +1,32 @@
-import { useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
-import { LuUserRoundPlus } from "react-icons/lu";
-import { HiDeviceTablet, HiCheck, HiOutlineShieldCheck } from "react-icons/hi2";
-import { MdOutlineHealthAndSafety, MdFamilyRestroom } from "react-icons/md";
+import { useState, type FormEvent } from "react";
+import { LuCheck, LuChevronDown, LuMonitor, LuShieldCheck, LuUserRoundPlus, LuUsersRound } from "react-icons/lu";
 import { useAuth } from "../hooks/useAuth";
 import { invitacionesService, type NuevaInvitacion } from "../services/invitacionesService";
 
 export default function Desplegable() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [rolSeleccionado, setRolSeleccionado] = useState("");
+  const [isOpen, setIsOpen] = useState(true);
+  const [rolSeleccionado, setRolSeleccionado] = useState("familiar");
+  const [nivelAcceso, setNivelAcceso] = useState("predeterminado");
   const [error, setError] = useState("");
   const { usuario } = useAuth();
   const [email, setEmail] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
-  const opciones = [
-    {
-      id: "familiar",
-      titulo: "Familiar",
-      descripcion: "Avisos de bienestar y alertas de emergencia",
-      icono: <MdFamilyRestroom className="text-2xl text-blue-700" />,
-    },
-    {
-      id: "fisico",
-      titulo: "Cuidador físico",
-      descripcion: "Control del adulto mayor y registro de actividad",
-      icono: <MdOutlineHealthAndSafety className="text-2xl text-[#2c3e50]" />,
-    },
-    {
-      id: "digital",
-      titulo: "Cuidador digital",
-      descripcion: "Control de medicación y registro de NONOS",
-      icono: <HiDeviceTablet className="text-2xl text-[#2c3e50]" />,
-    },
-  ];
-
-    // crea la invitación en el back con el mail y el rol elegidos
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Conserva el envío de invitaciones que ya usa el backend.
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setMensaje("");
-
     if (!rolSeleccionado) {
       setError("Por favor, selecciona un rol para continuar.");
       return;
     }
-
-    // el back necesita saber quién invita: el adulto mayor o un familiar
     const datos: NuevaInvitacion = {
       emailDestino: email.trim(),
       tipoVinculo: "FAMILIAR",
       direccion: usuario?.rol === "FAMILIAR" ? "EMISOR_ES_FAMILIAR" : "EMISOR_ES_ADULTO_MAYOR",
     };
-    // pasa la opción elegida a lo que espera el back (tipoCuidador solo va si es cuidador)
     if (rolSeleccionado === "fisico") {
       datos.tipoVinculo = "CUIDADOR";
       datos.tipoCuidador = "FISICO";
@@ -62,7 +35,6 @@ export default function Desplegable() {
       datos.tipoVinculo = "CUIDADOR";
       datos.tipoCuidador = "DIGITAL";
     }
-
     setEnviando(true);
     try {
       await invitacionesService.crearInvitacion(datos);
@@ -78,123 +50,58 @@ export default function Desplegable() {
   };
 
   return (
-    <div className="w-full max-w-md flex flex-col gap-4">
-      <div
-        className="bg-white rounded-2xl w-full min-h-40 p-5 flex items-center justify-between cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="flex gap-3">
-          <LuUserRoundPlus className="size-14 text-blue-700 bg-indigo-100 p-3 rounded-2xl" />
-          <div className="max-w-70/100 flex flex-col gap-1">
-            <h1 className="font-semibold text-xl">
-              Invitar a un nuevo acompañante
-            </h1>
-            <p className="text-gray-600 text-lg">
-              La persona va a ver la invitación al entrar a NONOS con ese
-              correo.
-            </p>
-          </div>
-        </div>
-        {isOpen ? (
-          <IoIosArrowDown className="text-5xl " />
-        ) : (
-          <IoIosArrowDown className="text-5xl -rotate-90" />
-        )}
-      </div>
+    <section aria-label="Invitar a un nuevo acompañante" className="flex w-full flex-col gap-3">
+      <button type="button" aria-expanded={isOpen} onClick={() => setIsOpen(!isOpen)} className="flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-white p-4 text-left hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#E7EDFB] text-[#1550E0]"><LuUserRoundPlus aria-hidden="true" className="size-6" /></span>
+        <span className="min-w-0 flex-1"><span className="block text-sm font-bold leading-5">Invitar a un nuevo acompañante</span><span className="mt-0.5 block text-xs leading-4 text-[#435059]">Le llegará un enlace por correo electrónico para vincularse.</span></span>
+        <LuChevronDown aria-hidden="true" className={`size-5 shrink-0 text-[#1550E0] transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+      </button>
 
       {isOpen && (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full items-center mt-1">
-          <div className="flex flex-col gap-1.5 w-full">
-            <label
-              htmlFor="email"
-              className="text-base font-medium text-slate-900"
-            >
-              Correo electrónico de la persona
-            </label>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="ej: familiar@correo.com"
-              className="w-full rounded-2xl bg-white h-14 px-4 text-slate-800 border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500 text-base shadow-sm"
-            />
+        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
+          <div>
+            <label htmlFor="email-invitacion" className="block text-sm font-bold leading-5">Correo electrónico de la persona</label>
+            <input id="email-invitacion" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ej: familiar@gmail.com" className="mt-1.5 h-12 w-full rounded-xl border border-[#D7DFE6] bg-white px-4 text-sm shadow-xs outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]" />
           </div>
 
-          <div className="w-95/100 mt-1">
-            <h2 className="text-xl font-medium text-slate-900 mb-2.5 select-none">
-              Elegí que rol tendrá:
-            </h2>
+          <fieldset className="flex flex-col gap-2.5">
+            <legend className="mb-2.5 text-sm font-bold">Elegí qué rol tendrá:</legend>
+            <button type="button" aria-pressed={rolSeleccionado === "familiar"} onClick={() => setRolSeleccionado("familiar")} className={`flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${rolSeleccionado === "familiar" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E7EDFB] text-[#1550E0]"><LuUsersRound aria-hidden="true" className="size-5" /></span>
+              <span className="min-w-0 flex-1"><span className={`block text-sm font-bold ${rolSeleccionado === "familiar" ? "text-[#1550E0]" : ""}`}>Familiar</span><span className="block text-xs leading-4 text-[#435059]">Avisos de bienestar y alertas de emergencia</span></span>
+              <span className={`flex size-5 shrink-0 items-center justify-center rounded-full ${rolSeleccionado === "familiar" ? "bg-[#1550E0] text-white" : "border border-[#B7C8F0] bg-[#E7EDFB]"}`}>{rolSeleccionado === "familiar" && <LuCheck aria-hidden="true" className="size-3" />}</span>
+            </button>
+            <button type="button" aria-pressed={rolSeleccionado === "fisico"} onClick={() => setRolSeleccionado("fisico")} className={`flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${rolSeleccionado === "fisico" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E9EEF2] text-[#435059]"><LuShieldCheck aria-hidden="true" className="size-5" /></span>
+              <span className="min-w-0 flex-1"><span className={`block text-sm font-bold ${rolSeleccionado === "fisico" ? "text-[#1550E0]" : ""}`}>Cuidador físico</span><span className="block text-xs leading-4 text-[#435059]">Control del adulto mayor y registro de actividad</span></span>
+              <span className={`flex size-5 shrink-0 items-center justify-center rounded-full ${rolSeleccionado === "fisico" ? "bg-[#1550E0] text-white" : "border border-[#B7C8F0] bg-[#E7EDFB]"}`}>{rolSeleccionado === "fisico" && <LuCheck aria-hidden="true" className="size-3" />}</span>
+            </button>
+            <button type="button" aria-pressed={rolSeleccionado === "digital"} onClick={() => setRolSeleccionado("digital")} className={`flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${rolSeleccionado === "digital" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E9EEF2] text-[#435059]"><LuMonitor aria-hidden="true" className="size-5" /></span>
+              <span className="min-w-0 flex-1"><span className={`block text-sm font-bold ${rolSeleccionado === "digital" ? "text-[#1550E0]" : ""}`}>Cuidador digital</span><span className="block text-xs leading-4 text-[#435059]">Control de medicación y registro de NONOS</span></span>
+              <span className={`flex size-5 shrink-0 items-center justify-center rounded-full ${rolSeleccionado === "digital" ? "bg-[#1550E0] text-white" : "border border-[#B7C8F0] bg-[#E7EDFB]"}`}>{rolSeleccionado === "digital" && <LuCheck aria-hidden="true" className="size-3" />}</span>
+            </button>
+          </fieldset>
 
-            <div className="flex flex-col gap-2.5 items-center">
-              {opciones.map((opcion) => {
-                const isSelected = rolSeleccionado === opcion.id;
-                return (
-                  <div
-                    key={opcion.id}
-                    onClick={() => {
-                      setRolSeleccionado(opcion.id);
-                      setError("");
-                    }}
-                    className={`p-4 rounded-2xl flex items-center justify-between cursor-pointer w-full transition-all duration-200 border-2 select-none ${
-                      isSelected
-                        ? "bg-[#e4ebfe] border-[#1d5eff]"
-                        : "bg-white border-transparent hover:bg-slate-50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <div
-                        className={`w-11 h-11 rounded-full flex items-center justify-center ${
-                          isSelected ? "bg-blue-100/80" : "bg-slate-100"
-                        }`}
-                      >
-                        {opcion.icono}
-                      </div>
+          <fieldset className="flex flex-col gap-2.5">
+            <legend className="text-sm font-bold leading-5">Nivel de acceso a los datos médicos y personales:</legend>
+            <p className="-mt-1 text-xs leading-4 text-[#435059]">Definí cuánta información del adulto mayor podrá ver el cuidador al ingresar.</p>
+            <button type="button" aria-pressed={nivelAcceso === "predeterminado"} onClick={() => setNivelAcceso("predeterminado")} className={`w-full cursor-pointer rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${nivelAcceso === "predeterminado" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
+              <span className="flex items-center gap-2"><span className={`flex-1 text-sm font-bold ${nivelAcceso === "predeterminado" ? "text-[#1550E0]" : ""}`}>Acceso predeterminado</span><span className="rounded-full bg-[#E7EDFB] px-2 py-0.5 text-xs font-bold text-[#1550E0]">Recomendado</span><span className={`flex size-5 shrink-0 items-center justify-center rounded-full ${nivelAcceso === "predeterminado" ? "bg-[#1550E0] text-white" : "border border-[#B7C8F0] bg-[#E7EDFB]"}`}>{nivelAcceso === "predeterminado" && <LuCheck aria-hidden="true" className="size-3" />}</span></span>
+              <span className="mt-2 block text-xs leading-5 text-[#435059]">Solo información esencial para el rol: alertas, estado diario y datos de emergencia básicos.</span>
+            </button>
+            <button type="button" aria-pressed={nivelAcceso === "completo"} onClick={() => setNivelAcceso("completo")} className={`w-full cursor-pointer rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${nivelAcceso === "completo" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
+              <span className="flex items-center gap-2"><span className={`flex-1 text-sm font-bold ${nivelAcceso === "completo" ? "text-[#1550E0]" : ""}`}>Acceso completo</span><span className={`flex size-5 shrink-0 items-center justify-center rounded-full ${nivelAcceso === "completo" ? "bg-[#1550E0] text-white" : "border border-[#B7C8F0] bg-[#E7EDFB]"}`}>{nivelAcceso === "completo" && <LuCheck aria-hidden="true" className="size-3" />}</span></span>
+              <span className="mt-2 block text-xs leading-5 text-[#435059]">Acceso total a la ficha clínica: historial médico, medidas anticipadas, acceso a todos los contactos y demás.</span>
+            </button>
+          </fieldset>
 
-                      <div>
-                        <h3
-                          className={`font-bold text-base leading-snug ${
-                            isSelected ? "text-[#1d5eff]" : "text-slate-900"
-                          }`}
-                        >
-                          {opcion.titulo}
-                        </h3>
-                        <p className="text-xs text-slate-600 mt-0.5">
-                          {opcion.descripcion}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
-                        isSelected
-                          ? "bg-[#1a62ff] text-white"
-                          : "bg-slate-200/80"
-                      }`}
-                    >
-                      {isSelected && <HiCheck className="text-sm stroke-2" />}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="w-95/100 bg-[#1a62ff] text-xl cursor-pointer hover:bg-blue-700 active:scale-[0.99] text-white font-medium py-3.5 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm mt-2 border-0"
-          >
-            <HiCheck className="text-2xl stroke-2" /> {" "}
-            {enviando ? "Enviando..." : "Enviar invitación"}
-          </button>
-
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          {mensaje && <p className="text-green-700 text-sm">{mensaje}</p>}
-
-          <p className="text-start text-slate-800 font-medium flex items-center justify-start gap-0 mt-1">
-            <HiOutlineShieldCheck className="size-6" />
-            Podés retirar el acceso en cualquier momento
-          </p>
+          <button type="submit" disabled={enviando} className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 text-base font-bold text-white hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"><LuCheck aria-hidden="true" className="size-5" />{enviando ? "Enviando..." : "Enviar invitación"}</button>
+          {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+          {mensaje && <p role="status" className="text-sm text-green-700">{mensaje}</p>}
+          <p className="flex items-center gap-1 text-xs text-[#0B4C2B]"><LuShieldCheck aria-hidden="true" className="size-4" />Podés retirar el acceso en cualquier momento</p>
         </form>
       )}
-    </div>
+    </section>
   );
 }
