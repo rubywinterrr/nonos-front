@@ -91,7 +91,7 @@ export default function ConfigCuenta1() {
                 htmlFor="fecha-nacimiento"
                 className="flex flex-wrap items-baseline gap-x-2 text-base font-bold"
               >
-                Fecha de nacimiento{" "}
+                Fecha de nacimiento <span aria-hidden="true" className="text-red-600">*</span>{" "}
                 <span className="text-sm font-normal text-[#435059]">
                   (Día / Mes / Año)
                 </span>
@@ -103,6 +103,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="fecha-nacimiento"
+                  required
                   type="date"
                   placeholder="Ej: 15 / 08 / 1948"
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
@@ -112,7 +113,7 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="dni" className="text-base font-bold">
-                Número de Documento (DNI)
+                Número de Documento (DNI) <span aria-hidden="true" className="text-red-600">*</span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuCreditCard
@@ -121,6 +122,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="dni"
+                  required
                   type="number"
                   placeholder="Ej: 6.840.120"
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
@@ -130,7 +132,7 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="domicilio" className="text-base font-bold">
-                Domicilio particular
+                Domicilio particular <span aria-hidden="true" className="text-red-600">*</span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuHouse
@@ -139,6 +141,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="domicilio"
+                  required
                   type="text"
                   placeholder="Calle, número y localidad..."
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
@@ -167,7 +170,7 @@ export default function ConfigCuenta1() {
                 htmlFor="grupo-sanguineo"
                 className="max-w-48 text-base font-bold leading-6"
               >
-                Grupo sanguíneo y factor
+                Grupo sanguíneo y factor <span aria-hidden="true" className="text-red-600">*</span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuDroplet
@@ -176,6 +179,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="grupo-sanguineo"
+                  required
                   type="text"
                   placeholder="Ej: O+"
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
@@ -185,10 +189,11 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5 pt-2">
               <label htmlFor="cobertura" className="text-base font-bold">
-                Obra Social o Prepaga
+                Obra Social o Prepaga <span aria-hidden="true" className="text-red-600">*</span>
               </label>
               <input
                 id="cobertura"
+                required
                 type="text"
                 placeholder="Escribí tu cobertura médica..."
                 className="min-h-14 w-full rounded-2xl bg-[#E7EDFB] px-4 text-lg text-[#435059] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
@@ -197,7 +202,7 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5 pt-2">
               <label htmlFor="credencial" className="text-base font-bold">
-                Número de carnet / credencial
+                Número de carnet / credencial <span aria-hidden="true" className="text-red-600">*</span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuCreditCard
@@ -206,6 +211,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="credencial"
+                  required
                   type="number"
                   placeholder="Número en tu credencial..."
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"

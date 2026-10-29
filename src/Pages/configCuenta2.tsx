@@ -44,6 +44,9 @@ export default function ConfigCuenta2() {
   const [mostrarCampo, setMostrarCampo] = useState(false);
   const [nuevaCondicion, setNuevaCondicion] = useState("");
   const [condicionesAgregadas, setCondicionesAgregadas] = useState<string[]>([]);
+  const [respuestaAlergias, setRespuestaAlergias] = useState<"si" | "no" | null>(null);
+  const [respuestaMedicacion, setRespuestaMedicacion] = useState<"si" | "no" | null>(null);
+  const [medicacionesAdicionales, setMedicacionesAdicionales] = useState<number[]>([]);
 
   function agregarCondicion(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -88,21 +91,21 @@ export default function ConfigCuenta2() {
             <LuTriangleAlert aria-hidden="true" className="size-9 shrink-0 rounded-xl bg-[#F9E9E9] p-2 text-[#B3261E]" />
             Alergias conocidas
           </button>
-          <p className="text-base leading-6">¿Tenés alergia a algún medicamento o alimento?</p>
+          <p className="text-base leading-6">¿Tenés alergia a algún medicamento o alimento? <span aria-hidden="true" className="text-red-600">*</span></p>
           <div className="grid grid-cols-2 gap-3">
-            <button type="button" className="flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-2 text-base font-semibold hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]">
+            <button type="button" aria-pressed={respuestaAlergias === "si"} onClick={() => setRespuestaAlergias("si")} className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaAlergias === "si" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}>
               <LuCircleCheck aria-hidden="true" className="size-5 shrink-0" />
               Sí, tengo
             </button>
-            <button type="button" className="flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-2 text-base font-semibold hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]">
+            <button type="button" aria-pressed={respuestaAlergias === "no"} onClick={() => setRespuestaAlergias("no")} className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaAlergias === "no" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}>
               <LuCircleX aria-hidden="true" className="size-5 shrink-0" />
               No tengo
             </button>
           </div>
-          <div className="flex flex-col gap-2 pt-1">
-            <label htmlFor="alergias" className="text-sm font-semibold leading-5 text-[#435059]">Escribí tus alergias para que figuren destacadas:</label>
-            <textarea id="alergias" rows={3} placeholder="Ej: Alergia a la penicilina, aspirinas, mariscos, frutos secos..." className="min-h-24 w-full resize-y rounded-2xl bg-[#E7EDFB] p-4 text-base leading-6 text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
-          </div>
+          {respuestaAlergias === "si" && <div className="flex flex-col gap-2 pt-1">
+            <label htmlFor="alergias" className="text-sm font-semibold leading-5 text-[#435059]">Escribí tus alergias para que figuren destacadas: <span aria-hidden="true" className="text-red-600">*</span></label>
+            <textarea id="alergias" required rows={3} placeholder="Ej: Alergia a la penicilina, aspirinas, mariscos, frutos secos..." className="min-h-24 w-full resize-y rounded-2xl bg-[#E7EDFB] p-4 text-base leading-6 text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
+          </div>}
         </section>
 
         <section aria-labelledby="condiciones-medicas" className="flex w-full flex-col gap-4 rounded-3xl bg-white p-5 shadow-xs">
@@ -127,8 +130,8 @@ export default function ConfigCuenta2() {
           </button>
           {mostrarCampo && (
             <form onSubmit={agregarCondicion} className="flex flex-col gap-2">
-              <label htmlFor="nueva-condicion" className="text-sm font-semibold text-[#435059]">Nueva condición médica</label>
-              <input id="nueva-condicion" autoFocus value={nuevaCondicion} onChange={(evento) => setNuevaCondicion(evento.target.value)} placeholder="Escribí una condición médica" className="min-h-14 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
+              <label htmlFor="nueva-condicion" className="text-sm font-semibold text-[#435059]">Nueva condición médica <span aria-hidden="true" className="text-red-600">*</span></label>
+              <input id="nueva-condicion" required autoFocus value={nuevaCondicion} onChange={(evento) => setNuevaCondicion(evento.target.value)} placeholder="Escribí una condición médica" className="min-h-14 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
               <button type="submit" className="min-h-12 cursor-pointer rounded-xl bg-[#144BD3] px-4 font-semibold text-white hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B]">Agregar</button>
             </form>
           )}
@@ -139,23 +142,28 @@ export default function ConfigCuenta2() {
             <LuPill aria-hidden="true" className="size-9 shrink-0 rounded-xl bg-[#E8FAF1] p-2 text-[#007B46]" />
             Medicación diaria
           </h2>
-          <p className="text-base leading-6">¿Tomás alguna medicación o pastilla todos los días?</p>
+          <p className="text-base leading-6">¿Tomás alguna medicación o pastilla todos los días? <span aria-hidden="true" className="text-red-600">*</span></p>
           <div className="grid grid-cols-2 gap-3">
-            <button type="button" className="flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-2 text-base font-semibold hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]">
+            <button type="button" aria-pressed={respuestaMedicacion === "si"} onClick={() => setRespuestaMedicacion("si")} className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaMedicacion === "si" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}>
               <LuCircleCheck aria-hidden="true" className="size-5 shrink-0" />
               Sí, tengo
             </button>
-            <button type="button" className="flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-2 text-base font-semibold hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]">
+            <button type="button" aria-pressed={respuestaMedicacion === "no"} onClick={() => setRespuestaMedicacion("no")} className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaMedicacion === "no" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}>
               <LuCircleX aria-hidden="true" className="size-5 shrink-0" />
               No tengo
             </button>
           </div>
-          <label htmlFor="medicamentos" className="text-sm font-semibold leading-5 text-[#435059]">Escribí los medicamentos y los mg para que figuren destacadas:</label>
-          <input id="medicamentos" type="text" placeholder="Ej: Lozartón 500mg" className="min-h-15 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
-          <button type="button" className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#E7EDFB] px-3 text-base font-semibold text-[#0D328B] hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]">
-            <LuPlus aria-hidden="true" className="size-5 shrink-0" />
-            Agregar otra medicación
-          </button>
+          {respuestaMedicacion === "si" && <div className="flex w-full flex-col gap-4">
+            <label htmlFor="medicamentos" className="text-sm font-semibold leading-5 text-[#435059]">Escribí los medicamentos y los mg para que figuren destacadas: <span aria-hidden="true" className="text-red-600">*</span></label>
+            <input id="medicamentos" required type="text" placeholder="Ej: Lozartón 500mg" className="min-h-15 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
+            {medicacionesAdicionales.map((numero) => (
+              <input key={numero} required type="text" aria-label={`Medicación adicional ${numero} (obligatoria)`} placeholder="Ej: Lozartón 500mg" className="min-h-15 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]" />
+            ))}
+            <button type="button" onClick={() => setMedicacionesAdicionales((actuales) => [...actuales, actuales.length + 1])} className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#E7EDFB] px-3 text-base font-semibold text-[#0D328B] hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]">
+              <LuPlus aria-hidden="true" className="size-5 shrink-0" />
+              Agregar otra medicación
+            </button>
+          </div>}
         </section>
 
         <aside className="flex w-full items-center gap-3 rounded-2xl bg-[#E7EDFB] p-4">
