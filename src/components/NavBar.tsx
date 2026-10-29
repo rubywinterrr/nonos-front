@@ -17,7 +17,9 @@ export default function NavBar() {
   const isMed =
     currentPath.startsWith("/adulto/medicamentos") ||
     currentPath.startsWith("/adulto/salud");
-  const isContactos = currentPath.startsWith("/adulto/contactos");
+  const isContactos =
+    currentPath.startsWith("/adulto/contactos") ||
+    currentPath.startsWith("/familia/contactos");
   const isConfig = currentPath.startsWith("/adulto/configuracion");
 
   return (

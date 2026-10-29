@@ -9,6 +9,7 @@ import {
 import HomeAdulto from "./Pages/Adulto/Home";
 import HomeCuidador from "./Pages/Cuidador/Home";
 import HomeFamilia from "./Pages/Familia/Home";
+import ContactosFamilia from "./Pages/Familia/contactos";
 import Ingreso from "./Pages/LogIn";
 import PagCuenta from "./Pages/Cuenta";
 import SOS from "./Pages/Adulto/PantallaSOS";
@@ -84,6 +85,7 @@ function App() {
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<HomeFamilia />} />
               <Route path="signos" element={<SignosVitales />} />
+              <Route path="contactos" element={<ContactosFamilia />} />
             </Route>
             <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
               <Route index element={<Navigate to="home" replace />} />

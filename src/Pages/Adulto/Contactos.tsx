@@ -72,7 +72,6 @@ export default function Contactos() {
           {contactos.map((contacto) => (
             <TarjetaContactos
               key={contacto.id}
-              nombreCompleto={contacto.nombre}
               nombre={contacto.nombre}
               fotoContacto="/fotoPerfil_1.jpeg" // el back por ahora no devuelve foto, se puede agregar más adelante
               telefono={contacto.telefono}
