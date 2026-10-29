@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { invitacionesService, type NuevaInvitacion } from "../services/invitacionesService";
 
 export default function Desplegable() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [rolSeleccionado, setRolSeleccionado] = useState("familiar");
   const [nivelAcceso, setNivelAcceso] = useState("predeterminado");
   const [error, setError] = useState("");
