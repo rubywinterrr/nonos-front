@@ -1,6 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { MdOutlineHealthAndSafety } from "react-icons/md";
 import {
   LuActivity,
   LuArrowLeft,
@@ -61,7 +60,7 @@ export default function ConfigCuenta2() {
   const [mostrarCampo, setMostrarCampo] = useState(false);
   const [nuevaCondicion, setNuevaCondicion] = useState("");
   const [condicionesAgregadas, setCondicionesAgregadas] = useState<string[]>(
-    [],
+    []
   );
   const [respuestaAlergias, setRespuestaAlergias] = useState<
     "si" | "no" | null
@@ -83,13 +82,9 @@ export default function ConfigCuenta2() {
   }
 
   return (
-    <main className="mainBody" >
-      <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b border-[#D7DFE6] bg-[#B7C8F0] px-4">
+    <main className="mainBody">
+      <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
-          <MdOutlineHealthAndSafety
-            aria-hidden="true"
-            className="size-7 text-[#00A5B5]"
-          />
           <span className="text-xl font-bold">NONOS</span>
         </div>
       </header>
@@ -161,7 +156,11 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaAlergias === "si"}
               onClick={() => setRespuestaAlergias("si")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaAlergias === "si" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
+                respuestaAlergias === "si"
+                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+              }`}
             >
               <LuCircleCheck aria-hidden="true" className="size-5 shrink-0" />
               Sí, tengo
@@ -170,7 +169,11 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaAlergias === "no"}
               onClick={() => setRespuestaAlergias("no")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaAlergias === "no" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
+                respuestaAlergias === "no"
+                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+              }`}
             >
               <LuCircleX aria-hidden="true" className="size-5 shrink-0" />
               No tengo
@@ -303,7 +306,11 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaMedicacion === "si"}
               onClick={() => setRespuestaMedicacion("si")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaMedicacion === "si" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
+                respuestaMedicacion === "si"
+                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+              }`}
             >
               <LuCircleCheck aria-hidden="true" className="size-5 shrink-0" />
               Sí, tengo
@@ -312,7 +319,11 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaMedicacion === "no"}
               onClick={() => setRespuestaMedicacion("no")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaMedicacion === "no" ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]" : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"}`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
+                respuestaMedicacion === "no"
+                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+              }`}
             >
               <LuCircleX aria-hidden="true" className="size-5 shrink-0" />
               No tengo

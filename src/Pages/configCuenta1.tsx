@@ -2,7 +2,6 @@ import {
   MdBadge,
   MdFavorite,
   MdMedicalServices,
-  MdOutlineHealthAndSafety,
   MdOutlineSecurity,
 } from "react-icons/md";
 import {
@@ -18,12 +17,8 @@ import { Link } from "react-router-dom";
 export default function ConfigCuenta1() {
   return (
     <main className="mainBody gap-0">
-      <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b border-[#D7DFE6] bg-[#B7C8F0] px-4">
+      <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
-          <MdOutlineHealthAndSafety
-            aria-hidden="true"
-            className="size-7 text-[#00A5B5]"
-          />
           <span className="text-xl font-bold">NONOS</span>
         </div>
       </header>

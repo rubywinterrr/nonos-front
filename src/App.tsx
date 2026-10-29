@@ -4,7 +4,7 @@ import {
   Route,
   Outlet,
   Navigate,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 import HomeAdulto from "./Pages/Adulto/Home";
 import HomeCuidador from "./Pages/Cuidador/Home";
@@ -35,6 +35,12 @@ import RutaPorRol from "./components/RutaPorRol";
 import ConfigCuenta1 from "./Pages/configCuenta1";
 import ConfigCuenta2 from "./Pages/configCuenta2";
 import Landing from "./Pages/Landing";
+import ConfigFam from "./Pages/Familia/configuracion";
+import MedFam from "./Pages/Familia/med";
+import InfoAdulto from "./Pages/Familia/infoAdulto";
+import Historial from "./Pages/Familia/historial";
+import CodigoEmergencia from "./Pages/Familia/codigo";
+import MedidasAnticipadas from "./Pages/Familia/medidasAnticipadas";
 
 function LayoutConFooter() {
   const location = useLocation();
@@ -94,17 +100,34 @@ function App() {
               <Route path="home" element={<HomeFamilia />} />
               <Route path="signos" element={<SignosVitales />} />
               <Route path="contactos" element={<ContactosFamilia />} />
+              <Route path="configuracion" element={<ConfigFam />} />
+              <Route path="medicacion" element={<MedFam />} />
+              <Route path="historial/adulto" element={<Historial />} />
+              <Route path="codigo-emergencia" element={<CodigoEmergencia />} />
+              <Route
+                path="medidas-anticipadas"
+                element={<MedidasAnticipadas />}
+              />
+              <Route path="info/adulto" element={<InfoAdulto />} />
             </Route>
             <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<HomeCuidador />} />
-              <Route path="medicamentos" element={<SeccionPendiente titulo="Medicinas" />} />
-              <Route path="contactos" element={<SeccionPendiente titulo="Contactos" />} />
-              <Route path="configuracion" element={<SeccionPendiente titulo="Ajustes" />} />
+              <Route
+                path="medicamentos"
+                element={<SeccionPendiente titulo="Medicinas" />}
+              />
+              <Route
+                path="contactos"
+                element={<SeccionPendiente titulo="Contactos" />}
+              />
+              <Route
+                path="configuracion"
+                element={<SeccionPendiente titulo="Ajustes" />}
+              />
             </Route>
             <Route path="cuenta" element={<CuentaSegunRol />} />
           </Route>
-
         </Route>
         <Route path="*" element={<SinRuta />} />
       </Routes>

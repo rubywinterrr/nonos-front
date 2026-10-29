@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MdOutlineHealthAndSafety } from "react-icons/md";
 import fotoPulsera from "../assets/pulsera.png";
+import { FondoBlanco } from "../utils/funcionFondoBlanco";
 
 // datos que mide la pulsera: cada uno se muestra unos segundos y pasa al siguiente (animación en index.css)
 const datosPulsera = [
@@ -29,9 +30,18 @@ const pasos = [
 ];
 
 const mediciones = [
-  { dato: "Pulso", uso: "Avisa si la frecuencia cardíaca está demasiado alta o demasiado baja." },
-  { dato: "Oxígeno en sangre", uso: "Avisa si el oxígeno baja de lo esperable." },
-  { dato: "Pasos y sueño", uso: "Muestran la rutina del día y avisan si cambia de golpe." },
+  {
+    dato: "Pulso",
+    uso: "Avisa si la frecuencia cardíaca está demasiado alta o demasiado baja.",
+  },
+  {
+    dato: "Oxígeno en sangre",
+    uso: "Avisa si el oxígeno baja de lo esperable.",
+  },
+  {
+    dato: "Pasos y sueño",
+    uso: "Muestran la rutina del día y avisan si cambia de golpe.",
+  },
 ];
 
 const perfilEmergencia = [
@@ -51,7 +61,8 @@ const usuarios = [
   },
   {
     quien: "Familiar",
-    texto: "Se mantiene informado aunque no esté cerca y elige qué alertas recibir.",
+    texto:
+      "Se mantiene informado aunque no esté cerca y elige qué alertas recibir.",
   },
   {
     quien: "Cuidador",
@@ -60,17 +71,28 @@ const usuarios = [
   },
   {
     quien: "Médico de emergencia",
-    texto: "No necesita cuenta. Entra al perfil de emergencia con el QR de la pulsera y un código temporal.",
+    texto:
+      "No necesita cuenta. Entra al perfil de emergencia con el QR de la pulsera y un código temporal.",
   },
 ];
 
 // foto de la pulsera flotando, con ondas de señal y los datos que mide apareciendo de a uno
 function Pulsera() {
+  FondoBlanco();
   return (
-    <div className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center overflow-hidden rounded-[3rem] bg-[#B9D2FF]">
-      <span aria-hidden="true" className="landing-onda absolute size-64 rounded-full border-2 border-[#0B5FFF]/50" />
-      <span aria-hidden="true" className="landing-onda landing-onda-2 absolute size-64 rounded-full border-2 border-[#0B5FFF]/50" />
-      <span aria-hidden="true" className="landing-onda landing-onda-3 absolute size-64 rounded-full border-2 border-[#0B5FFF]/50" />
+    <div className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center overflow-hidden rounded-[3rem] bg-main-blue">
+      <span
+        aria-hidden="true"
+        className="landing-onda absolute size-64 rounded-full border-2 border-[#0B5FFF]/50"
+      />
+      <span
+        aria-hidden="true"
+        className="landing-onda landing-onda-2 absolute size-64 rounded-full border-2 border-[#0B5FFF]/50"
+      />
+      <span
+        aria-hidden="true"
+        className="landing-onda landing-onda-3 absolute size-64 rounded-full border-2 border-[#0B5FFF]/50"
+      />
 
       <img
         src={fotoPulsera}
@@ -83,11 +105,17 @@ function Pulsera() {
         {datosPulsera.map((dato, indice) => (
           <div
             key={dato.titulo}
-            className={`landing-dato landing-dato-${indice + 1} absolute inset-0 flex flex-col justify-center gap-0.5 rounded-2xl bg-white px-4 shadow-lg shadow-[#0049CC]/20`}
+            className={`landing-dato landing-dato-${
+              indice + 1
+            } absolute inset-0 flex flex-col justify-center gap-0.5 rounded-2xl bg-white px-4 shadow-lg shadow-[#0049CC]/20`}
           >
-            <span className="text-sm font-semibold text-[#006A61]">{dato.titulo}</span>
+            <span className="text-sm font-semibold text-[#006A61]">
+              {dato.titulo}
+            </span>
             <span className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-extrabold leading-none tracking-tight text-[#0E1D28]">{dato.valor}</span>
+              <span className="text-3xl font-extrabold leading-none tracking-tight text-[#0E1D28]">
+                {dato.valor}
+              </span>
               <span className="text-sm text-[#4A5866]">{dato.unidad}</span>
             </span>
             {indice === 0 && (
@@ -113,10 +141,16 @@ function Pulsera() {
 // landing pública de NONOS: qué es, cómo funciona y acceso a la plataforma
 export default function Landing() {
   return (
-    <div className="landing min-h-screen bg-[#F7F9FF] text-[#0E1D28]">
+    <div className="landing min-h-screen bg-main text-[#0E1D28]">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
-        <Link to="/" className="flex items-center gap-2 text-2xl font-extrabold tracking-tight">
-          <MdOutlineHealthAndSafety aria-hidden="true" className="size-9 text-[#0B5FFF]" />
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-2xl font-extrabold tracking-tight"
+        >
+          <MdOutlineHealthAndSafety
+            aria-hidden="true"
+            className="size-9 text-[#0B5FFF]"
+          />
           NONOS
         </Link>
         <Link
@@ -134,8 +168,9 @@ export default function Landing() {
               Tecnología que acompaña.
             </h1>
             <p className="max-w-xl text-xl leading-relaxed text-[#2E3B47]">
-              NONOS conecta a un adulto mayor con las personas que lo cuidan: una pulsera, un botón de
-              emergencia y una plataforma web que ordena la información importante y avisa cuando hace falta.
+              NONOS conecta a un adulto mayor con las personas que lo cuidan:
+              una pulsera, un botón de emergencia y una plataforma web que
+              ordena la información importante y avisa cuando hace falta.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
@@ -162,61 +197,88 @@ export default function Landing() {
             </h2>
             <div className="flex max-w-xl flex-col gap-5 text-lg leading-relaxed text-[#C9D6E8]">
               <p>
-                Un adulto mayor puede ser atendido por distintos médicos, hospitales, familiares y cuidadores.
-                Cada uno conoce una parte de su situación, y cuando hace falta decidir o actuar rápido, la
+                Un adulto mayor puede ser atendido por distintos médicos,
+                hospitales, familiares y cuidadores. Cada uno conoce una parte
+                de su situación, y cuando hace falta decidir o actuar rápido, la
                 información no está o está desactualizada.
               </p>
               <p>
-                NONOS no es una historia clínica ni reemplaza a los profesionales de la salud. Es un punto de
-                información ordenado y actualizado con lo que sirve para cuidar.
+                NONOS no es una historia clínica ni reemplaza a los
+                profesionales de la salud. Es un punto de información ordenado y
+                actualizado con lo que sirve para cuidar.
               </p>
             </div>
           </div>
         </section>
 
-        <section id="como-funciona" className="mx-auto w-full max-w-6xl scroll-mt-6 px-5 py-20 sm:px-8 lg:py-28">
+        <section
+          id="como-funciona"
+          className="mx-auto w-full max-w-6xl scroll-mt-6 px-5 py-20 sm:px-8 lg:py-28"
+        >
           <h2 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
             Cómo funciona
           </h2>
           <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
             {pasos.map((paso, indice) => (
-              <li key={paso.titulo} className="flex flex-col gap-3 border-t-4 border-[#0B5FFF] pt-5">
-                <span className="text-5xl font-extrabold leading-none text-[#0B5FFF]">{indice + 1}</span>
+              <li
+                key={paso.titulo}
+                className="flex flex-col gap-3 border-t-4 border-[#0B5FFF] pt-5"
+              >
+                <span className="text-5xl font-extrabold leading-none text-[#0B5FFF]">
+                  {indice + 1}
+                </span>
                 <h3 className="text-2xl font-bold">{paso.titulo}</h3>
-                <p className="max-w-sm text-lg leading-relaxed text-[#2E3B47]">{paso.texto}</p>
+                <p className="max-w-sm text-lg leading-relaxed text-[#2E3B47]">
+                  {paso.texto}
+                </p>
               </li>
             ))}
           </ol>
         </section>
 
-        <section className="bg-[#B9D2FF]">
+        <section className="bg-main-blue">
           <div className="mx-auto grid w-full max-w-6xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
             <div className="flex flex-col gap-6">
-              <h2 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">La pulsera</h2>
+              <h2 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+                La pulsera
+              </h2>
               <p className="max-w-xl text-lg leading-relaxed text-[#1B2A38]">
-                Una pulsera Fitbit conectada a NONOS por Google Health. No hace falta tocar nada: los datos se
-                sincronizan solos y NONOS los usa para algo concreto.
+                Una pulsera Fitbit conectada a NONOS por Google Health. No hace
+                falta tocar nada: los datos se sincronizan solos y NONOS los usa
+                para algo concreto.
               </p>
               <dl className="flex flex-col divide-y divide-[#0E1D28]/15 border-y border-[#0E1D28]/15">
                 {mediciones.map((medicion) => (
-                  <div key={medicion.dato} className="grid gap-1 py-4 sm:grid-cols-[11rem_1fr] sm:gap-6">
+                  <div
+                    key={medicion.dato}
+                    className="grid gap-1 py-4 sm:grid-cols-[11rem_1fr] sm:gap-6"
+                  >
                     <dt className="text-lg font-bold">{medicion.dato}</dt>
-                    <dd className="text-lg leading-relaxed text-[#1B2A38]">{medicion.uso}</dd>
+                    <dd className="text-lg leading-relaxed text-[#1B2A38]">
+                      {medicion.uso}
+                    </dd>
                   </div>
                 ))}
               </dl>
             </div>
-            <div className="flex flex-col justify-end gap-4 rounded-[2rem] bg-[#F7F9FF] p-8 sm:p-10">
-              <span aria-hidden="true" className="flex size-20 items-center justify-center rounded-full bg-[#F20D0D] shadow-lg shadow-red-600/30">
+            <div className="flex flex-col justify-end gap-4 rounded-4xl bg-main p-8 sm:p-10">
+              <span
+                aria-hidden="true"
+                className="flex size-20 items-center justify-center rounded-full bg-[#F20D0D] shadow-lg shadow-red-600/30"
+              >
                 <span className="size-10 rounded-full border-4 border-white/80" />
               </span>
-              <h3 className="text-3xl font-extrabold tracking-tight">Botón de emergencia</h3>
+              <h3 className="text-3xl font-extrabold tracking-tight">
+                Botón de emergencia
+              </h3>
               <p className="text-lg leading-relaxed text-[#2E3B47]">
-                Un único botón, pensado para que pedir ayuda sea simple y difícil de apretar sin querer. El
-                mismo pedido de ayuda también está en la plataforma, con un toque.
+                Un único botón, pensado para que pedir ayuda sea simple y
+                difícil de apretar sin querer. El mismo pedido de ayuda también
+                está en la plataforma, con un toque.
               </p>
               <p className="text-base leading-relaxed text-[#4A5866]">
-                En desarrollo: una pieza impresa en 3D con un pulsador y conexión Bluetooth.
+                En desarrollo: una pieza impresa en 3D con un pulsador y
+                conexión Bluetooth.
               </p>
             </div>
           </div>
@@ -228,32 +290,44 @@ export default function Landing() {
               En una emergencia, solo lo necesario
             </h2>
             <p className="max-w-xl text-lg leading-relaxed text-[#2E3B47]">
-              La pulsera tiene un QR. Al escanearlo, quien asiste a la persona ingresa un código temporal y ve su
-              perfil de emergencia, sin acceder al resto de la información ni poder modificar nada.
+              La pulsera tiene un QR. Al escanearlo, quien asiste a la persona
+              ingresa un código temporal y ve su perfil de emergencia, sin
+              acceder al resto de la información ni poder modificar nada.
             </p>
             <ol className="flex flex-col gap-3 text-lg">
               <li className="flex items-center gap-4">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0B5FFF] font-bold text-white">1</span>
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0B5FFF] font-bold text-white">
+                  1
+                </span>
                 Escanea el QR de la pulsera
               </li>
               <li className="flex items-center gap-4">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0B5FFF] font-bold text-white">2</span>
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0B5FFF] font-bold text-white">
+                  2
+                </span>
                 Ingresa el código temporal
               </li>
               <li className="flex items-center gap-4">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0B5FFF] font-bold text-white">3</span>
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0B5FFF] font-bold text-white">
+                  3
+                </span>
                 Ve el perfil de emergencia
               </li>
             </ol>
             <p className="max-w-xl text-base leading-relaxed text-[#4A5866]">
-              El código cambia cada 30 minutos y deja de servir apenas se usa. Lo pueden consultar la persona y su
-              familia o cuidadores.
+              El código cambia cada 30 minutos y deja de servir apenas se usa.
+              Lo pueden consultar la persona y su familia o cuidadores.
             </p>
           </div>
 
-          <div className="min-w-0 rounded-[2rem] border-2 border-[#0E1D28]/10 bg-white p-6 sm:p-10">
-            <p className="text-base font-semibold text-[#4A5866]">Código temporal</p>
-            <p className="mt-3 flex gap-1.5 sm:gap-2" aria-label="Ejemplo de código temporal de seis dígitos">
+          <div className="min-w-0 rounded-4xl border-2 border-[#0E1D28]/10 bg-white p-6 sm:p-10">
+            <p className="text-base font-semibold text-[#4A5866]">
+              Código temporal
+            </p>
+            <p
+              className="mt-3 flex gap-1.5 sm:gap-2"
+              aria-label="Ejemplo de código temporal de seis dígitos"
+            >
               {["4", "8", "2", "0", "1", "7"].map((digito, indice) => (
                 <span
                   key={indice}
@@ -263,11 +337,16 @@ export default function Landing() {
                 </span>
               ))}
             </p>
-            <h3 className="mt-8 text-xl font-bold">El perfil de emergencia muestra</h3>
+            <h3 className="mt-8 text-xl font-bold">
+              El perfil de emergencia muestra
+            </h3>
             <ul className="mt-4 flex flex-col gap-3 text-lg">
               {perfilEmergencia.map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <span aria-hidden="true" className="mt-2.5 size-2.5 shrink-0 rounded-full bg-[#006A61]" />
+                  <span
+                    aria-hidden="true"
+                    className="mt-2.5 size-2.5 shrink-0 rounded-full bg-[#006A61]"
+                  />
                   {item}
                 </li>
               ))}
@@ -283,8 +362,12 @@ export default function Landing() {
             <dl className="mt-12 grid gap-x-12 gap-y-10 md:grid-cols-2">
               {usuarios.map((usuario) => (
                 <div key={usuario.quien} className="flex flex-col gap-2">
-                  <dt className="text-2xl font-bold text-[#0049CC]">{usuario.quien}</dt>
-                  <dd className="max-w-md text-lg leading-relaxed text-[#2E3B47]">{usuario.texto}</dd>
+                  <dt className="text-2xl font-bold text-[#0049CC]">
+                    {usuario.quien}
+                  </dt>
+                  <dd className="max-w-md text-lg leading-relaxed text-[#2E3B47]">
+                    {usuario.texto}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -293,11 +376,14 @@ export default function Landing() {
 
         <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
           <div className="max-w-3xl">
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Investigación</h2>
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Investigación
+            </h2>
             <p className="mt-5 text-lg leading-relaxed text-[#2E3B47]">
-              Para relevar el problema y validar los cambios del proyecto trabajamos con la Dra. María Florencia
-              Tartaglini, investigadora del CONICET y coordinadora del programa “Acompañando al Cuidador” de la
-              Fundación INEBA.
+              Para relevar el problema y validar los cambios del proyecto
+              trabajamos con la Dra. María Florencia Tartaglini, investigadora
+              del CONICET y coordinadora del programa “Acompañando al Cuidador”
+              de la Fundación INEBA.
             </p>
           </div>
         </section>
@@ -305,7 +391,8 @@ export default function Landing() {
         <section className="bg-[#0B5FFF] text-white">
           <div className="mx-auto flex w-full max-w-6xl flex-col items-start gap-8 px-5 py-20 sm:px-8 lg:py-28">
             <p className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
-              NONOS no cuida en lugar de las personas. Hace que sea más fácil cuidar.
+              NONOS no cuida en lugar de las personas. Hace que sea más fácil
+              cuidar.
             </p>
             <Link
               to="/ingresar"
@@ -319,7 +406,10 @@ export default function Landing() {
 
       <footer className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8 text-base text-[#4A5866] sm:px-8">
         <span className="flex items-center gap-2 font-bold text-[#0E1D28]">
-          <MdOutlineHealthAndSafety aria-hidden="true" className="size-6 text-[#0B5FFF]" />
+          <MdOutlineHealthAndSafety
+            aria-hidden="true"
+            className="size-6 text-[#0B5FFF]"
+          />
           NONOS
         </span>
         <span>Proyecto en desarrollo, 2026.</span>

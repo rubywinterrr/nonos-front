@@ -11,34 +11,54 @@ export default function NavBar() {
   const { usuario } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname.toLowerCase();
-  const basePath = usuario?.rol === "FAMILIAR" ? "/familia" : usuario?.rol === "CUIDADOR" ? "/cuidador" : "/adulto";
+  const basePath =
+    usuario?.rol === "FAMILIAR"
+      ? "/familia"
+      : usuario?.rol === "CUIDADOR"
+      ? "/cuidador"
+      : "/adulto";
   const homePath = `${basePath}/home`;
-  const medicinasPath = usuario?.rol === "FAMILIAR" ? "/familia/signos" : `${basePath}/medicamentos`;
+  const medicinasPath =
+    usuario?.rol === "FAMILIAR"
+      ? "/familia/medicacion"
+      : `${basePath}/medicamentos`;
   const contactosPath = `${basePath}/contactos`;
-  const ajustesPath = usuario?.rol === "FAMILIAR" ? "/cuenta" : `${basePath}/configuracion`;
+  const ajustesPath =
+    usuario?.rol === "FAMILIAR"
+      ? "/familia/configuracion"
+      : `${basePath}/configuracion`;
 
   // Determina qué opción del footer está activa según la ruta actual.
   const isHome = currentPath === homePath || currentPath === basePath;
   const isMed =
     currentPath.startsWith(medicinasPath) ||
-    (usuario?.rol === "ADULTO_MAYOR" && currentPath.startsWith("/adulto/salud"));
+    (usuario?.rol === "ADULTO_MAYOR" &&
+      currentPath.startsWith("/adulto/salud"));
   const isContactos = currentPath.startsWith(contactosPath);
-  const isConfig = currentPath.startsWith(ajustesPath) || currentPath === "/cuenta";
+  const isConfig =
+    currentPath.startsWith(ajustesPath) || currentPath === "/cuenta";
 
   return (
-    <nav aria-label="Navegación principal" className="fixed bottom-4 left-1/2 z-50 flex h-17 w-95/100 max-w-lg -translate-x-1/2 items-center rounded-full border border-white/60 bg-[#4182FF]/60 px-2 py-1.5 shadow-lg shadow-[#0B5FFF]/15 backdrop-blur-md">
+    <nav
+      aria-label="Navegación principal"
+      className="fixed bottom-5 left-1/2 z-50 flex h-17 w-95/100 max-w-lg -translate-x-1/2 items-center rounded-full border border-white/60 bg-white/60 px-2 py-1.5 shadow-lg shadow-black/15 backdrop-blur-md"
+    >
       <div className="relative isolate flex h-full w-full">
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-y-0 left-0 w-1/4 rounded-full bg-[#0B5FFF]/95 transition-transform! duration-300! ease-in-out! motion-reduce:transition-none! ${
+          className={`pointer-events-none absolute inset-y-0 left-0 w-1/4 rounded-full bg-[#0B5FFF]/80 transition-transform! duration-300! ease-in-out! motion-reduce:transition-none! ${
             isMed
               ? "translate-x-full"
               : isContactos
-                ? "translate-x-200/100"
-                : isConfig
-                  ? "translate-x-300/100"
-                  : "translate-x-0"
-          } ${isHome || isMed || isContactos || isConfig ? "opacity-100" : "opacity-0"}`}
+              ? "translate-x-200/100"
+              : isConfig
+              ? "translate-x-300/100"
+              : "translate-x-0"
+          } ${
+            isHome || isMed || isContactos || isConfig
+              ? "opacity-100"
+              : "opacity-0"
+          }`}
         />
         <Link
           to={homePath}

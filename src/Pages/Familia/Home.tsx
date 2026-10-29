@@ -186,7 +186,7 @@ export default function HomeFamilia() {
           </h2>
           <p className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">Para guardia / SAME</p>
           <div className="flex flex-col gap-2">
-            <button type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            <Link to={"../info/adulto"} type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
               <span className="flex min-w-0 items-center gap-3">
                 <MdOutlineInfo aria-hidden="true" className="size-10 shrink-0 rounded-xl p-2.5 bg-[#D4E4F3] text-[#0B5FFF]" />
                 <span className="flex min-w-0 flex-col">
@@ -195,8 +195,8 @@ export default function HomeFamilia() {
                 </span>
               </span>
               <MdChevronRight aria-hidden="true" className="size-4 shrink-0 text-[#B9C6D5]" />
-            </button>
-            <button type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            </Link>
+            <Link to={"../historial/adulto"} type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
               <span className="flex min-w-0 items-center gap-3">
                 <MdOutlineVolunteerActivism aria-hidden="true" className="size-10 shrink-0 rounded-xl p-2.5 bg-[#D4E4F3] text-[#0B5FFF]" />
                 <span className="flex min-w-0 flex-col">
@@ -205,8 +205,8 @@ export default function HomeFamilia() {
                 </span>
               </span>
               <MdChevronRight aria-hidden="true" className="size-4 shrink-0 text-[#B9C6D5]" />
-            </button>
-            <button type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            </Link>
+            <Link to={"../codigo-emergencia"} type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
               <span className="flex min-w-0 items-center gap-3">
                 <MdQrCode2 aria-hidden="true" className="size-10 shrink-0 rounded-xl p-2.5 bg-[#FFDBD2] text-[#AD2B00]" />
                 <span className="flex min-w-0 flex-col">
@@ -215,8 +215,8 @@ export default function HomeFamilia() {
                 </span>
               </span>
               <MdChevronRight aria-hidden="true" className="size-4 shrink-0 text-[#B9C6D5]" />
-            </button>
-            <button type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            </Link>
+            <Link to={"../medidas-anticipadas"} type="button" className="flex w-full items-center justify-between gap-3 rounded-xl p-3.5 text-left bg-[#EBF5FF] cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
               <span className="flex min-w-0 items-center gap-3">
                 <MdOutlineMedicalInformation aria-hidden="true" className="size-10 shrink-0 rounded-xl p-2.5 bg-[#D4E4F3] text-[#0B5FFF]" />
                 <span className="flex min-w-0 flex-col">
@@ -225,7 +225,7 @@ export default function HomeFamilia() {
                 </span>
               </span>
               <MdChevronRight aria-hidden="true" className="size-4 shrink-0 text-[#B9C6D5]" />
-            </button>
+            </Link>
           </div>
         </section>
       </div>
