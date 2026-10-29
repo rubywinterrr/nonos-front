@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 
 export default function ConfigCuenta1() {
   return (
-    <main className="mainBody gap-0 bg-[#B7C8F0] px-4 pt-24 pb-12 text-[#16222C]">
+    <main className="mainBody gap-0">
       <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b border-[#D7DFE6] bg-[#B7C8F0] px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
           <MdOutlineHealthAndSafety
@@ -91,7 +91,10 @@ export default function ConfigCuenta1() {
                 htmlFor="fecha-nacimiento"
                 className="flex flex-wrap items-baseline gap-x-2 text-base font-bold"
               >
-                Fecha de nacimiento <span aria-hidden="true" className="text-red-600">*</span>{" "}
+                Fecha de nacimiento{" "}
+                <span aria-hidden="true" className="text-red-600">
+                  *
+                </span>{" "}
                 <span className="text-sm font-normal text-[#435059]">
                   (Día / Mes / Año)
                 </span>
@@ -113,7 +116,10 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="dni" className="text-base font-bold">
-                Número de Documento (DNI) <span aria-hidden="true" className="text-red-600">*</span>
+                Número de Documento (DNI){" "}
+                <span aria-hidden="true" className="text-red-600">
+                  *
+                </span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuCreditCard
@@ -132,7 +138,10 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="domicilio" className="text-base font-bold">
-                Domicilio particular <span aria-hidden="true" className="text-red-600">*</span>
+                Domicilio particular{" "}
+                <span aria-hidden="true" className="text-red-600">
+                  *
+                </span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuHouse
@@ -170,7 +179,10 @@ export default function ConfigCuenta1() {
                 htmlFor="grupo-sanguineo"
                 className="max-w-48 text-base font-bold leading-6"
               >
-                Grupo sanguíneo y factor <span aria-hidden="true" className="text-red-600">*</span>
+                Grupo sanguíneo y factor{" "}
+                <span aria-hidden="true" className="text-red-600">
+                  *
+                </span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuDroplet
@@ -189,7 +201,10 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5 pt-2">
               <label htmlFor="cobertura" className="text-base font-bold">
-                Obra Social o Prepaga <span aria-hidden="true" className="text-red-600">*</span>
+                Obra Social o Prepaga{" "}
+                <span aria-hidden="true" className="text-red-600">
+                  *
+                </span>
               </label>
               <input
                 id="cobertura"
@@ -202,7 +217,10 @@ export default function ConfigCuenta1() {
 
             <div className="flex flex-col gap-1.5 pt-2">
               <label htmlFor="credencial" className="text-base font-bold">
-                Número de carnet / credencial <span aria-hidden="true" className="text-red-600">*</span>
+                Número de carnet / credencial{" "}
+                <span aria-hidden="true" className="text-red-600">
+                  *
+                </span>
               </label>
               <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
                 <LuCreditCard
@@ -236,7 +254,7 @@ export default function ConfigCuenta1() {
 
           <div className="flex w-full flex-col gap-3 pt-2">
             <Link
-            to={"../configurar-cuenta/2"}
+              to={"../configurar-cuenta/2"}
               type="button"
               className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B]"
             >

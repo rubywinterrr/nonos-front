@@ -225,7 +225,7 @@ html::-webkit-scrollbar {
   ;
   padding-bottom: 15vh;
   /* pb-[15vh] */
-  padding-top: 9.5vh;
+  padding-top: 12vh;
   gap: 1.75rem;
   /* gap-7 */
 }
