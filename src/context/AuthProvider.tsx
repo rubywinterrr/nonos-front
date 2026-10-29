@@ -14,7 +14,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         authService.getProfile()
             .then((data) => setUsuario(data.user))
-            .catch(() => setUsuario(null))
+            .catch((err) => {
+                // muestra en la consola por qué falló al restaurar la sesión (sacar después)
+                console.error("Error en /auth/me:", err);
+                setUsuario(null);
+            })
             .finally(() => setLoading(false));
     }, []);
 

@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 // Deja pasar a las rutas de adentro solo si hay sesión.
@@ -11,8 +11,8 @@ export default function RutaProtegida() {
   }
 
   if (!usuario) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/ingresar" replace />;
   }
 
-  return <Navigate to="/ingresar" replace />;
+  return <Outlet />;
 }
