@@ -13,6 +13,7 @@ import {
   LuHouse,
   LuLockKeyhole,
 } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export default function ConfigCuenta1() {
   return (
@@ -228,13 +229,14 @@ export default function ConfigCuenta1() {
           </aside>
 
           <div className="flex w-full flex-col gap-3 pt-2">
-            <button
+            <Link
+            to={"../configurar-cuenta/2"}
               type="button"
               className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B]"
             >
               Siguiente: Alergias y salud
               <LuArrowRight aria-hidden="true" className="size-5 shrink-0" />
-            </button>
+            </Link>
             <p className="flex items-center justify-center gap-3 py-2 text-sm font-semibold text-[#435059]">
               <LuLockKeyhole
                 aria-hidden="true"

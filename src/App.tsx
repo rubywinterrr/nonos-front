@@ -29,6 +29,7 @@ import SignosVitales from "./Pages/Familia/signosVitales";
 import MedicacionActual from "./Pages/Adulto/MedicacionActual";
 import RutaPorRol from "./components/RutaPorRol";
 import ConfigCuenta1 from "./Pages/configCuenta1";
+import ConfigCuenta2 from "./Pages/configCuenta2";
 import Landing from "./Pages/Landing";
 
 function LayoutConFooter() {
@@ -36,7 +37,7 @@ function LayoutConFooter() {
   return (
     <>
       <Outlet />
-      {location.pathname !== "/adulto/configurar-cuenta" && <Navbar />}
+      {!location.pathname.startsWith("/adulto/configurar-cuenta") && <Navbar />}
     </>
   );
 }
@@ -62,6 +63,7 @@ function App() {
             <Route path="adulto" element={<RutaPorRol rol="ADULTO_MAYOR" />}>
               <Route index element={<Navigate to="home" replace />} />
               <Route path="configurar-cuenta" element={<ConfigCuenta1 />} />
+              <Route path="configurar-cuenta/2" element={<ConfigCuenta2 />} />
               <Route path="home" element={<HomeAdulto />} />
               <Route path="sos" element={<SOS />} />
               <Route path="salud" element={<Salud />} />

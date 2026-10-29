@@ -76,8 +76,6 @@ function IngresoContent() {
           ? "¿No tiene cuenta? Regístrese"
           : "¿Ya tiene cuenta? Inicie sesión"}
       </span>
-
-      <a href="/adulto/home">home</a>
     </main>
   );
 }
