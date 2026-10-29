@@ -1,54 +1,250 @@
-import { useEffect, useState } from "react";
+import {
+  MdBadge,
+  MdFavorite,
+  MdMedicalServices,
+  MdOutlineHealthAndSafety,
+  MdOutlineSecurity,
+} from "react-icons/md";
+import {
+  LuArrowRight,
+  LuCalendarDays,
+  LuCreditCard,
+  LuDroplet,
+  LuHouse,
+  LuLockKeyhole,
+} from "react-icons/lu";
+
 export default function ConfigCuenta1() {
-  const progresoObjetivo = 50;
-  const [progreso, setProgreso] = useState(0);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setProgreso(progresoObjetivo);
-    }, 150);
-    return () => clearTimeout(timer);
-  }, [progresoObjetivo]);
-  const [hasScrolled, setHasScrolled] = useState(() => window.scrollY > 0);
-
-  useEffect(() => {
-    const handleScroll = () => setHasScrolled(window.scrollY > 0);
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
   return (
-    <>
-      <main className="mainBody">
-        <header
-          className={`w-full min-h-17 fixed top-0 left-1/2 border-b-2 border-gray-200 z-50 -translate-x-1/2 flex items-center justify-center ${
-            hasScrolled ? "shadow-md" : "shadow-none"
-          }`}
+    <main className="mainBody gap-0 bg-[#B7C8F0] px-4 pt-24 pb-12 text-[#16222C]">
+      <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b border-[#D7DFE6] bg-[#B7C8F0] px-4">
+        <div className="mx-auto flex w-full max-w-lg items-center gap-2">
+          <MdOutlineHealthAndSafety
+            aria-hidden="true"
+            className="size-7 text-[#00A5B5]"
+          />
+          <span className="text-xl font-bold">NONOS</span>
+        </div>
+      </header>
+
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
+        <section
+          aria-label="Progreso de registro"
+          className="flex w-full flex-col gap-2 rounded-2xl bg-[#E7EDFB] p-4 shadow-xs"
         >
-          <h1 className="text-3xl font-bold">NONOS</h1>
-        </header>
-        <section className="flex w-full lg:w-35/100 flex-col shadow-lg rounded-3xl p-5 gap-5 items-start bg-blue-50 justify-start">
-          <span className="flex justify-between items-center w-full">
-            <h1 className="text-xl text-blue-700 font-bold">Paso 1 de 2:</h1>
-            <h2 className="text-gray-600 text-lg font-bold">50% completado</h2>
-          </span>
-          <div
-            className="h-4 w-full overflow-hidden rounded-full bg-blue-100"
-            role="progressbar"
-            aria-label="Progreso del tutorial"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={50}
-          >
-            <div
-              className="h-full rounded-full bg-blue-700"
-              style={{ width: `${progreso}%` }}
-            ></div>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+            <strong className="font-bold text-[#0D328B]">Paso 1 de 2</strong>
+            <span className="font-semibold text-[#435059]">50% completado</span>
           </div>
-          <h1 className="flex w-full text-gray-400 justify-between items-center font-semibold text-2xl">
+          <progress
+            value="50"
+            max="100"
+            aria-label="Progreso de registro"
+            className="h-2 w-full overflow-hidden rounded-full accent-[#144BD3] [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-[#D8E3FA] [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-[#144BD3] [&::-moz-progress-bar]:rounded-full [&::-moz-progress-bar]:bg-[#144BD3]"
+          />
+          <p className="text-base text-[#435059]">
             Tus datos básicos y cobertura médica
-          </h1>
+          </p>
         </section>
-      </main>
-    </>
+
+        <section
+          aria-labelledby="bienvenida-cuenta"
+          className="flex w-full items-start gap-4 rounded-3xl bg-white p-6 shadow-xs"
+        >
+          <MdFavorite
+            aria-hidden="true"
+            className="size-14 shrink-0 rounded-2xl bg-[#E7EDFB] p-4 text-[#144BD3]"
+          />
+          <div className="min-w-0">
+            <h1
+              id="bienvenida-cuenta"
+              className="text-lg font-semibold leading-7"
+            >
+              ¡Hola! Queremos cuidarte como te merecés
+            </h1>
+            <p className="mt-1 text-sm leading-6 text-[#435059]">
+              Completá estos primeros datos para que tu familia y médicos sepan
+              cómo asistirte si lo necesitás.
+            </p>
+          </div>
+        </section>
+
+        <div className="flex w-full flex-col gap-6 pt-1">
+          <section
+            aria-labelledby="datos-personales"
+            className="flex w-full flex-col gap-4 rounded-3xl bg-white p-6 shadow-xs"
+          >
+            <h2
+              id="datos-personales"
+              className="flex items-center gap-2 pb-1 text-xl font-semibold"
+            >
+              <MdBadge
+                aria-hidden="true"
+                className="size-6 shrink-0 text-[#144BD3]"
+              />
+              Datos Personales
+            </h2>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="fecha-nacimiento"
+                className="flex flex-wrap items-baseline gap-x-2 text-base font-bold"
+              >
+                Fecha de nacimiento{" "}
+                <span className="text-sm font-normal text-[#435059]">
+                  (Día / Mes / Año)
+                </span>
+              </label>
+              <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
+                <LuCalendarDays
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 size-5 text-[#144BD3]"
+                />
+                <input
+                  id="fecha-nacimiento"
+                  type="date"
+                  placeholder="Ej: 15 / 08 / 1948"
+                  className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="dni" className="text-base font-bold">
+                Número de Documento (DNI)
+              </label>
+              <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
+                <LuCreditCard
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 size-5 text-[#144BD3]"
+                />
+                <input
+                  id="dni"
+                  type="number"
+                  placeholder="Ej: 6.840.120"
+                  className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="domicilio" className="text-base font-bold">
+                Domicilio particular
+              </label>
+              <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
+                <LuHouse
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 size-5 text-[#144BD3]"
+                />
+                <input
+                  id="domicilio"
+                  type="text"
+                  placeholder="Calle, número y localidad..."
+                  className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="salud-cobertura"
+            className="flex w-full flex-col gap-4 rounded-3xl bg-white p-6 shadow-xs"
+          >
+            <h2
+              id="salud-cobertura"
+              className="flex items-center gap-2 pb-1 text-xl font-semibold"
+            >
+              <MdMedicalServices
+                aria-hidden="true"
+                className="size-6 shrink-0 text-[#144BD3]"
+              />
+              Salud y Cobertura
+            </h2>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="grupo-sanguineo"
+                className="max-w-48 text-base font-bold leading-6"
+              >
+                Grupo sanguíneo y factor
+              </label>
+              <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
+                <LuDroplet
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 size-5 text-[#144BD3]"
+                />
+                <input
+                  id="grupo-sanguineo"
+                  type="text"
+                  placeholder="Ej: O+"
+                  className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5 pt-2">
+              <label htmlFor="cobertura" className="text-base font-bold">
+                Obra Social o Prepaga
+              </label>
+              <input
+                id="cobertura"
+                type="text"
+                placeholder="Escribí tu cobertura médica..."
+                className="min-h-14 w-full rounded-2xl bg-[#E7EDFB] px-4 text-lg text-[#435059] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5 pt-2">
+              <label htmlFor="credencial" className="text-base font-bold">
+                Número de carnet / credencial
+              </label>
+              <div className="relative flex min-h-14 items-center rounded-2xl bg-[#E7EDFB] inset-shadow-sm">
+                <LuCreditCard
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 size-5 text-[#144BD3]"
+                />
+                <input
+                  id="credencial"
+                  type="number"
+                  placeholder="Número en tu credencial..."
+                  className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                />
+              </div>
+            </div>
+          </section>
+
+          <aside className="flex w-full items-center gap-4 rounded-3xl bg-[#E7EDFB] p-4 shadow-xs">
+            <MdOutlineSecurity
+              aria-hidden="true"
+              className="size-12 shrink-0 rounded-full bg-[#E8FAF1] p-3 text-[#007B46]"
+            />
+            <div className="min-w-0">
+              <h2 className="text-xl font-bold leading-6">100% Confidencial</h2>
+              <p className="text-sm leading-5 text-[#435059]">
+                Tus datos médicos se guardan de forma segura para emergencias y
+                consultas de confianza.
+              </p>
+            </div>
+          </aside>
+
+          <div className="flex w-full flex-col gap-3 pt-2">
+            <button
+              type="button"
+              className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B]"
+            >
+              Siguiente: Alergias y salud
+              <LuArrowRight aria-hidden="true" className="size-5 shrink-0" />
+            </button>
+            <p className="flex items-center justify-center gap-3 py-2 text-sm font-semibold text-[#435059]">
+              <LuLockKeyhole
+                aria-hidden="true"
+                className="size-4 shrink-0 text-[#144BD3]"
+              />
+              Tus datos están protegidos
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

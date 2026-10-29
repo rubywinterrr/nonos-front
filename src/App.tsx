@@ -32,10 +32,11 @@ import ConfigCuenta1 from "./Pages/configCuenta1";
 import Landing from "./Pages/Landing";
 
 function LayoutConFooter() {
+  const location = useLocation();
   return (
     <>
       <Outlet />
-      <Navbar />
+      {location.pathname !== "/adulto/configurar-cuenta" && <Navbar />}
     </>
   );
 }
