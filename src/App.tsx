@@ -34,7 +34,6 @@ const MedicacionActual = lazy(() => import("./Pages/Adulto/MedicacionActual"));
 import RutaPorRol from "./components/RutaPorRol";
 const ConfigCuenta1 = lazy(() => import("./Pages/configCuenta1"));
 const ConfigCuenta2 = lazy(() => import("./Pages/configCuenta2"));
-import Landing from "./Pages/Landing";
 const ConfigFam = lazy(() => import("./Pages/Familia/configuracion"));
 const MedFam = lazy(() => import("./Pages/Familia/med"));
 const InfoAdulto = lazy(() => import("./Pages/Familia/infoAdulto"));
@@ -85,7 +84,7 @@ function App() {
         }
       >
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<Navigate to="/ingresar" replace />} />
           <Route path="/ingresar" element={<Ingreso />} />
           <Route element={<RutaProtegida />}>
             <Route
