@@ -46,6 +46,11 @@ const CodigoEmergencia = lazy(() => import("./Pages/Familia/codigo"));
 const MedidasAnticipadas = lazy(
   () => import("./Pages/Familia/medidasAnticipadas"),
 );
+const SignosCuidador = lazy(() => import("./Pages/Cuidador/signosVitales"));
+const MedCuidador = lazy(() => import("./Pages/Cuidador/med"));
+const HistorialCuidador = lazy(() => import("./Pages/Cuidador/historial"));
+const CodigoCuidador = lazy(() => import("./Pages/Cuidador/codigo"));
+const AdultosACargo = lazy(() => import("./Pages/Cuidador/adultosACargo"));
 
 function LayoutConFooter() {
   const location = useLocation();
@@ -129,14 +134,15 @@ function App() {
               <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
                 <Route path="home" element={<HomeCuidador />} />
-                <Route
-                  path="medicamentos"
-                  element={<SeccionPendiente titulo="Medicinas" />}
-                />
-                <Route
-                  path="contactos"
-                  element={<SeccionPendiente titulo="Contactos" />}
-                />
+                <Route path="signos" element={<SignosCuidador />} />
+                <Route path="medicamentos" element={<MedCuidador />} />
+                <Route path="historial/adulto" element={<HistorialCuidador />} />
+                <Route path="codigo-emergencia" element={<CodigoCuidador />} />
+                <Route path="adultos-a-cargo" element={<AdultosACargo />} />
+                {/* todavía sin diseño propio del cuidador: usan las del familiar */}
+                <Route path="info/adulto" element={<InfoAdulto />} />
+                <Route path="medidas-anticipadas" element={<MedidasAnticipadas />} />
+                <Route path="contactos" element={<ContactosFamilia />} />
                 <Route
                   path="configuracion"
                   element={<SeccionPendiente titulo="Ajustes" />}
