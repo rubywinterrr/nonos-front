@@ -1,4 +1,5 @@
 import Header from "../../components/Header";
+import InvitacionesPendientes from "../../components/InvitacionesPendientes";
 import obtenerFechaActual, { obtenerDiaActual } from "../../utils/obtenerFechaActual";
 import { Link } from "react-router-dom";
 import { LuActivity, LuHeartPulse, LuWatch } from "react-icons/lu";
@@ -35,6 +36,8 @@ export default function HomeFamilia() {
           <p className="text-base leading-relaxed text-[#424656]">{obtenerFechaActual()}</p>
         </div>
 
+        <InvitacionesPendientes />
+
         <section className="flex w-full flex-col gap-3 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="persona-vinculada">
           <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-3">
             <div className="flex items-center gap-3">
@@ -65,14 +68,16 @@ export default function HomeFamilia() {
           </div>
 
           <div className="grid w-full grid-cols-2 gap-3.5">
-            <button type="button" className="flex min-h-14 items-center justify-center gap-2 rounded-lg bg-[#EBF5FF] px-1.5 py-2 text-sm font-semibold leading-5 text-[#0B5FFF] sm:px-2 sm:text-base cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            {/* HARDCODEADO: Figma no trae el teléfono de Papá */}
+            <a href="tel:" className="flex min-h-14 items-center justify-center gap-2 rounded-lg bg-[#EBF5FF] px-1.5 py-2 text-sm font-semibold leading-5 text-[#0B5FFF] sm:px-2 sm:text-base cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
               <MdOutlinePhone aria-hidden="true" className="size-4 shrink-0 text-[#0B5FFF]" />
               <span>Llamar a Papá</span>
-            </button>
-            <button type="button" className="flex min-h-14 items-center justify-center gap-2 rounded-lg bg-[#EBF5FF] px-1.5 py-2 text-sm font-semibold leading-5 text-[#0B5FFF] sm:px-2 sm:text-base cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            </a>
+            {/* HARDCODEADO: teléfono de María Rodríguez del Figma de contactos */}
+            <a href="tel:+541133445566" className="flex min-h-14 items-center justify-center gap-2 rounded-lg bg-[#EBF5FF] px-1.5 py-2 text-sm font-semibold leading-5 text-[#0B5FFF] sm:px-2 sm:text-base cursor-pointer hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
               <MdOutlinePhone aria-hidden="true" className="size-4 shrink-0 text-[#0B5FFF]" />
               <span>Llamar a María</span>
-            </button>
+            </a>
           </div>
         </section>
 

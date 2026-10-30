@@ -59,7 +59,12 @@ export default function RegisterForm() {
     try {
       await authService.register({ nombreCompleto, email, password, rol });
       const usuarioLogueado = await login({ email, password });
-      navigate(rutaSegunRol(usuarioLogueado.rol));
+      // el adulto mayor recién registrado completa su ficha antes de llegar al home
+      if (usuarioLogueado.rol === "ADULTO_MAYOR") {
+        navigate("/adulto/configurar-cuenta");
+      } else {
+        navigate(rutaSegunRol(usuarioLogueado.rol));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {

@@ -130,7 +130,7 @@ function App() {
                   path="medidas-anticipadas"
                   element={<MedidasAnticipadas />}
                 />
-                <Route path="info/adulto" element={<InfoAdultoCuidador />} />
+                <Route path="info/adulto" element={<InfoAdulto />} />
               </Route>
               <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
@@ -140,8 +140,8 @@ function App() {
                 <Route path="historial/adulto" element={<HistorialCuidador />} />
                 <Route path="codigo-emergencia" element={<CodigoCuidador />} />
                 <Route path="adultos-a-cargo" element={<AdultosACargo />} />
+                <Route path="info/adulto" element={<InfoAdultoCuidador />} />
                 {/* todavía sin diseño propio del cuidador: usan las del familiar */}
-                <Route path="info/adulto" element={<InfoAdulto />} />
                 <Route path="medidas-anticipadas" element={<MedidasAnticipadas />} />
                 <Route path="contactos" element={<ContactosFamilia />} />
                 <Route path="configuracion" element={<AjustesCuidador />} />

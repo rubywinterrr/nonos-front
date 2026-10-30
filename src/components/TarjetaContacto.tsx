@@ -92,25 +92,25 @@ export default function TarjetaContactos({
           </p>
         )}
         {esMedico ? (
-          <button
-            type="button"
+          <a
+            href={`tel:${telefono}`}
             className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent bg-[#E7EDFB] px-3 text-base font-semibold text-[#0D328B] hover:bg-[#D3E0F8] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
           >
             <LuPhone aria-hidden="true" className="size-4 shrink-0" />
             Llamar consultorio
-          </button>
+          </a>
         ) : (
           <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
+            <a
+              href={`tel:${telefono}`}
               aria-label={`Llamar a ${nombre}`}
               className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#B7C8F0] bg-[#1550E0] px-2 text-base font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
               <LuPhone aria-hidden="true" className="size-4 shrink-0" />
               Llamar
-            </button>
-            <button
-              type="button"
+            </a>
+            <a
+              href={`sms:${telefono}`}
               aria-label={`Mensaje a ${nombre}`}
               className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent bg-[#E7EDFB] px-2 text-base font-semibold text-[#0D328B] hover:bg-[#D3E0F8] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
@@ -119,7 +119,7 @@ export default function TarjetaContactos({
                 className="size-5 shrink-0 text-[#1550E0]"
               />
               Mensaje
-            </button>
+            </a>
           </div>
         )}
       </article>
