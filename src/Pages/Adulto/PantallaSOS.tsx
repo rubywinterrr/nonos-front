@@ -11,6 +11,8 @@ import VueltaAtras from "../../components/vueltaAtras";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type Vinculo } from "../../services/usuariosService";
+import { alertasService } from "../../services/alertasService";
+import { useNavigate } from "react-router-dom";
 
 //import Boton1 from "../components/boton1";
 
@@ -21,6 +23,9 @@ export default function SOS() {
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [cancelando, setCancelando] = useState<boolean>(false);
+  const [errorCancelar, setErrorCancelar] = useState<string | null>(null);
 
   useEffect(() => {
     if (!usuario) return;
@@ -43,6 +48,34 @@ export default function SOS() {
 
     fetchVinculos();
   }, [usuario]);
+
+  // "Fue una falsa alarma": cancela el SOS pendiente más reciente y vuelve al inicio
+  const cancelarSOS = async () => {
+    if (!usuario) return;
+    setCancelando(true);
+    setErrorCancelar(null);
+
+    try {
+      // las alertas vienen de la más reciente a la más vieja
+      const alertas = await alertasService.getAlertas(usuario.id);
+      const sosPendiente = alertas.find(
+        (alerta) => alerta.tipo === "SOS_DIRECTO" && alerta.estado === "PENDIENTE",
+      );
+
+      if (!sosPendiente) {
+        setErrorCancelar("No encontramos una alerta activa para cancelar.");
+        return;
+      }
+
+      await alertasService.cancelarAlerta(sosPendiente.id);
+      navigate("/adulto/home");
+    } catch (err) {
+      console.error(err);
+      setErrorCancelar("No se pudo cancelar la alerta. Probá de nuevo.");
+    } finally {
+      setCancelando(false);
+    }
+  };
 
   const nombresFormateados = new Intl.ListFormat("es", {
     style: "long",
@@ -121,11 +154,22 @@ export default function SOS() {
                 <MdOutlinePhone className="text-3xl" /> Llamar al 107
                 (Emergencias Médicas)
               </a>
-              <button className="bg-[#E9EEF6] rounded-2xl w-full  h-18 flex items-center justify-center text-lg p-5 gap-3 font-semibold cursor-pointer">
+              <button
+                type="button"
+                onClick={cancelarSOS}
+                disabled={cancelando}
+                aria-busy={cancelando}
+                className="bg-[#E9EEF6] rounded-2xl w-full  h-18 flex items-center justify-center text-lg p-5 gap-3 font-semibold cursor-pointer hover:bg-[#DCE3EE] active:bg-[#CBD5E3] disabled:cursor-wait disabled:opacity-60"
+              >
                 {" "}
-                <RxCross2 className="text-3xl" /> Fue una falsa alarma (Cancelar
-                alerta)
+                <RxCross2 className="text-3xl" />
+                {cancelando ? "Cancelando alerta..." : "Fue una falsa alarma (Cancelar alerta)"}
               </button>
+              {errorCancelar && (
+                <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">
+                  {errorCancelar}
+                </p>
+              )}
             </div>
           </section>
         </section>
