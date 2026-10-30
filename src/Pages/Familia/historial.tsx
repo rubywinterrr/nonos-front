@@ -112,7 +112,7 @@ export default function Historial() {
         aria-labelledby="titulo-nuevo-registro"
         className={`fixed inset-0 m-auto max-h-90/100 w-93/100 max-w-lg overflow-hidden rounded-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#16222C]/55 ${cerrandoDialogo ? "animate-[popup-bajar_200ms_ease-in_forwards]" : "animate-[popup-subir_250ms_ease-out]"}`}
       >
-        <section role="document" className="flex max-h-90/100 flex-col gap-4 overflow-y-auto rounded-3xl bg-white p-5">
+        <section role="document" className="flex max-h-90/100 flex-col gap-4 overflow-x-hidden overflow-y-auto rounded-3xl bg-white p-5">
           <div className="flex items-center justify-between gap-3"><h2 id="titulo-nuevo-registro" className="text-xl font-bold">Registrar acontecimiento</h2><button type="button" aria-label="Cerrar" onClick={cerrarDialogo} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"><LuX aria-hidden="true" className="size-5" /></button></div>
           <label htmlFor="tipo-nuevo-registro" className="text-sm font-semibold">Tipo de acontecimiento</label>
           <select id="tipo-nuevo-registro" value={nuevoTipo} onChange={(evento) => setNuevoTipo(evento.target.value as CategoriaHistorial)} className="-mt-3 h-12 rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-3 text-sm"><option value="episodios">Episodio</option><option value="medicacion">Cambio médico</option><option value="visitas">Visita / consulta</option></select>

@@ -248,7 +248,7 @@ export default function MedFam() {
               </button>
             </div>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-5 pt-4">
+          <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-5 pt-4">
             <div className="flex items-center gap-3 rounded-2xl border border-[#D7DFE6] bg-[#F6F8FA] p-4 shadow-xs">
               <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#E7EDFB] text-lg font-bold text-[#1550E0]">
                 JP

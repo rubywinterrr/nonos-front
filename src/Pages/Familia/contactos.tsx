@@ -272,7 +272,7 @@ export default function ContactosFamilia() {
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 pb-6">
+        <div className="min-h-0 flex-1 space-y-5 overflow-x-hidden overflow-y-auto px-4 pb-6">
           <div className="flex items-center gap-3 rounded-xl bg-[#EAF4FE] p-3">
             <img
               src="/jose-perez-contactos.jpeg"
