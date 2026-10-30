@@ -2,6 +2,9 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import Desplegable from "../../components/menuDesplegable";
 import { useAuth } from "../../hooks/useAuth";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { dispositivosService } from "../../services/dispositivosService";
 import calcularEdad from "../../utils/calcularEdad";
 import {
   LuChevronRight,
@@ -32,6 +35,23 @@ export default function PagCuenta() {
   const esAdulto = usuario?.rol === "ADULTO_MAYOR";
   const nombreDePila =
     usuario?.nombreCompleto?.trim().split(/\s+/)[0] || "José";
+
+    const [errorPulsera, setErrorPulsera] = useState<string | null>(null);
+  // el back vuelve a /cuenta?conectado=1 si se vinculó, o ?conectado=0 si se canceló o falló
+  const [params] = useSearchParams();
+  const conectado = params.get("conectado");
+
+  // pide al back el link de Google y lleva al usuario ahí para que autorice la pulsera
+  const conectarPulsera = async () => {
+    setErrorPulsera(null);
+    try {
+      const { authUrl } = await dispositivosService.getGoogleHealthAuthUrl();
+      window.location.href = authUrl;
+    } catch (err) {
+      console.error(err);
+      setErrorPulsera("No se pudo iniciar la conexión. Probá de nuevo.");
+    }
+  };
 
   return (
     <main className="mainBody">
@@ -178,11 +198,19 @@ export default function PagCuenta() {
               </p>
               <button
                 type="button"
+                onClick={conectarPulsera}
                 className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#0B6D3C] bg-white px-3 text-xs font-bold text-[#1550E0] hover:bg-[#E8FAF1] active:bg-[#BAEDD3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B6D3C]"
               >
                 <LuLink aria-hidden="true" className="size-4" /> Conectar con
                 Google Health / Fitbit
               </button>
+              {conectado === "1" && (
+                <p className="mt-2 text-sm font-semibold text-emerald-700">¡Pulsera conectada!</p>
+              )}
+              {conectado === "0" && (
+                <p className="mt-2 text-sm font-semibold text-red-700">No se conectó la pulsera. Probá de nuevo.</p>
+              )}
+              {errorPulsera && <p className="mt-2 text-sm font-semibold text-red-700">{errorPulsera}</p>}
             </article>
           </section>
         )}
