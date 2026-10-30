@@ -12,9 +12,62 @@ import {
   LuHouse,
   LuLockKeyhole,
 } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { usuarioService } from "../services/usuariosService";
+import type { GrupoSanguineo } from "../services/authService";
+import textoGrupoSanguineo from "../utils/textoGrupoSanguineo";
+
+const GRUPOS_SANGUINEOS: GrupoSanguineo[] = [
+  "A_POSITIVO",
+  "A_NEGATIVO",
+  "B_POSITIVO",
+  "B_NEGATIVO",
+  "AB_POSITIVO",
+  "AB_NEGATIVO",
+  "O_POSITIVO",
+  "O_NEGATIVO",
+];
 
 export default function ConfigCuenta1() {
+  const { usuario } = useAuth();
+  const navigate = useNavigate();
+  // arrancan con lo que ya tenga guardado el usuario, por si vuelve desde el paso 2
+  const [fechaNacimiento, setFechaNacimiento] = useState(usuario?.fechaNacimiento?.slice(0, 10) ?? "");
+  const [dni, setDni] = useState(usuario?.dni ? String(usuario.dni) : "");
+  const [domicilio, setDomicilio] = useState(usuario?.domicilio ?? "");
+  const [grupoSanguineo, setGrupoSanguineo] = useState(usuario?.grupoSanguineo ?? "");
+  const [obraSocial, setObraSocial] = useState(usuario?.obraSocial ?? "");
+  const [carnet, setCarnet] = useState(usuario?.carnetObraSocial ?? "");
+  const [guardando, setGuardando] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // guarda los datos personales y la cobertura, y pasa al paso 2
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault();
+    if (!usuario) return;
+    setGuardando(true);
+    setError(null);
+
+    try {
+      await usuarioService.actualizarPerfil(usuario.id, {
+        fechaNacimiento,
+        dni: Number(dni),
+        domicilio: domicilio.trim(),
+        grupoSanguineo: grupoSanguineo as GrupoSanguineo,
+        obraSocial: obraSocial.trim(),
+        carnetObraSocial: carnet.trim(),
+      });
+      navigate("/adulto/configurar-cuenta/2");
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "No se pudieron guardar tus datos");
+    } finally {
+      setGuardando(false);
+    }
+  };
+
   return (
     <main className="mainBody gap-0">
       <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
@@ -65,7 +118,7 @@ export default function ConfigCuenta1() {
           </div>
         </section>
 
-        <div className="flex w-full flex-col gap-6 pt-1">
+        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-6 pt-1">
           <section
             aria-labelledby="datos-personales"
             className="flex w-full flex-col gap-4 rounded-3xl bg-white p-6 shadow-xs"
@@ -103,6 +156,8 @@ export default function ConfigCuenta1() {
                   id="fecha-nacimiento"
                   required
                   type="date"
+                  value={fechaNacimiento}
+                  onChange={(e) => setFechaNacimiento(e.target.value)}
                   placeholder="Ej: 15 / 08 / 1948"
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
                 />
@@ -125,6 +180,8 @@ export default function ConfigCuenta1() {
                   id="dni"
                   required
                   type="number"
+                  value={dni}
+                  onChange={(e) => setDni(e.target.value)}
                   placeholder="Ej: 6.840.120"
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
                 />
@@ -147,6 +204,9 @@ export default function ConfigCuenta1() {
                   id="domicilio"
                   required
                   type="text"
+                  maxLength={200}
+                  value={domicilio}
+                  onChange={(e) => setDomicilio(e.target.value)}
                   placeholder="Calle, número y localidad..."
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
                 />
@@ -184,13 +244,23 @@ export default function ConfigCuenta1() {
                   aria-hidden="true"
                   className="pointer-events-none absolute left-4 size-5 text-[#144BD3]"
                 />
-                <input
+                {/* el back solo acepta estos 8 valores, por eso es una lista y no texto libre */}
+                <select
                   id="grupo-sanguineo"
                   required
-                  type="text"
-                  placeholder="Ej: O+"
-                  className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
-                />
+                  value={grupoSanguineo}
+                  onChange={(e) => setGrupoSanguineo(e.target.value)}
+                  className="min-h-14 w-full cursor-pointer rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                >
+                  <option value="" disabled>
+                    Elegí una opción
+                  </option>
+                  {GRUPOS_SANGUINEOS.map((grupo) => (
+                    <option key={grupo} value={grupo}>
+                      {textoGrupoSanguineo(grupo)}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -205,6 +275,9 @@ export default function ConfigCuenta1() {
                 id="cobertura"
                 required
                 type="text"
+                maxLength={100}
+                value={obraSocial}
+                onChange={(e) => setObraSocial(e.target.value)}
                 placeholder="Escribí tu cobertura médica..."
                 className="min-h-14 w-full rounded-2xl bg-[#E7EDFB] px-4 text-lg text-[#435059] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
               />
@@ -225,7 +298,11 @@ export default function ConfigCuenta1() {
                 <input
                   id="credencial"
                   required
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={50}
+                  value={carnet}
+                  onChange={(e) => setCarnet(e.target.value)}
                   placeholder="Número en tu credencial..."
                   className="min-h-14 w-full rounded-2xl bg-transparent pr-4 pl-14 text-lg text-[#435059] placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
                 />
@@ -248,14 +325,19 @@ export default function ConfigCuenta1() {
           </aside>
 
           <div className="flex w-full flex-col gap-3 pt-2">
-            <Link
-              to={"../configurar-cuenta/2"}
-              type="button"
-              className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B]"
+            <button
+              type="submit"
+              disabled={guardando}
+              className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B] disabled:cursor-wait disabled:opacity-60"
             >
-              Siguiente: Alergias y salud
+              {guardando ? "Guardando..." : "Siguiente: Alergias y salud"}
               <LuArrowRight aria-hidden="true" className="size-5 shrink-0" />
-            </Link>
+            </button>
+            {error && (
+              <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">
+                {error}
+              </p>
+            )}
             <p className="flex items-center justify-center gap-3 py-2 text-sm font-semibold text-[#435059]">
               <LuLockKeyhole
                 aria-hidden="true"
@@ -264,7 +346,7 @@ export default function ConfigCuenta1() {
               Tus datos están protegidos
             </p>
           </div>
-        </div>
+        </form>
       </div>
     </main>
   );

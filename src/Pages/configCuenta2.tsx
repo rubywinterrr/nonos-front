@@ -1,5 +1,7 @@
-import { useState, type FormEvent, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { useState, type ReactNode } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { condicionesService } from "../services/condicionesService";
 import {
   LuActivity,
   LuArrowLeft,
@@ -17,20 +19,20 @@ import {
   LuAccessibility,
 } from "react-icons/lu";
 
-function CondicionMedica({
-  icono,
-  children,
-}: {
+interface Props {
   icono: ReactNode;
   children: ReactNode;
-}) {
-  const [seleccionada, setSeleccionada] = useState(false);
+  seleccionada: boolean;
+  onClick: () => void;
+}
 
+// botón de una condición médica que se marca o desmarca
+function CondicionMedica({ icono, children, seleccionada, onClick }: Props) {
   return (
     <button
       type="button"
       aria-pressed={seleccionada}
-      onClick={() => setSeleccionada((actual) => !actual)}
+      onClick={onClick}
       className={`flex min-h-15 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left text-[#16222C] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
         seleccionada
           ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
@@ -57,6 +59,13 @@ function CondicionMedica({
 }
 
 export default function ConfigCuenta2() {
+  const { usuario } = useAuth();
+  const navigate = useNavigate();
+  // nombres de las condiciones marcadas (se guardan tal cual en el back)
+  const [seleccionadas, setSeleccionadas] = useState<string[]>([]);
+  const [alergias, setAlergias] = useState("");
+  const [guardando, setGuardando] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [mostrarCampo, setMostrarCampo] = useState(false);
   const [nuevaCondicion, setNuevaCondicion] = useState("");
   const [condicionesAgregadas, setCondicionesAgregadas] = useState<string[]>(
@@ -72,14 +81,60 @@ export default function ConfigCuenta2() {
     number[]
   >([]);
 
-  function agregarCondicion(evento: FormEvent<HTMLFormElement>) {
+  // marca la condición si no estaba marcada, o la desmarca si ya lo estaba
+  function alternarCondicion(nombre: string) {
+    if (seleccionadas.includes(nombre)) {
+      setSeleccionadas(seleccionadas.filter((actual) => actual !== nombre));
+    } else {
+      setSeleccionadas([...seleccionadas, nombre]);
+    }
+  }
+
+  // agrega una condición escrita a mano y la deja marcada
+  function agregarCondicion(evento: React.SubmitEvent) {
     evento.preventDefault();
     const nombre = nuevaCondicion.trim();
     if (!nombre) return;
     setCondicionesAgregadas((actuales) => [...actuales, nombre]);
+    if (!seleccionadas.includes(nombre)) setSeleccionadas([...seleccionadas, nombre]);
     setNuevaCondicion("");
     setMostrarCampo(false);
   }
+
+  // guarda las condiciones marcadas y las alergias (como una condición más) y va al home
+  const guardarFicha = async () => {
+    if (!usuario) return;
+    setError(null);
+
+    if (respuestaAlergias === null) {
+      setError("Contanos si tenés alguna alergia antes de guardar.");
+      return;
+    }
+    if (respuestaAlergias === "si" && !alergias.trim()) {
+      setError("Escribí tus alergias antes de guardar.");
+      return;
+    }
+
+    setGuardando(true);
+    try {
+      for (const nombre of seleccionadas) {
+        await condicionesService.crearCondicion({ nombre, usuarioId: usuario.id });
+      }
+      if (respuestaAlergias === "si") {
+        await condicionesService.crearCondicion({
+          nombre: "Alergias",
+          descripcion: alergias.trim(),
+          usuarioId: usuario.id,
+        });
+      }
+      navigate("/adulto/home");
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : "No se pudo guardar tu ficha médica");
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   return (
     <main className="mainBody">
@@ -194,6 +249,8 @@ export default function ConfigCuenta2() {
                 id="alergias"
                 required
                 rows={3}
+                value={alergias}
+                onChange={(e) => setAlergias(e.target.value)}
                 placeholder="Ej: Alergia a la penicilina, aspirinas, mariscos, frutos secos..."
                 className="min-h-24 w-full resize-y rounded-2xl bg-[#E7EDFB] p-4 text-base leading-6 text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
               />
@@ -219,25 +276,47 @@ export default function ConfigCuenta2() {
             Selecciona si tenés alguna de estas condiciones:
           </p>
           <div className="flex w-full flex-col gap-2.5 pb-2">
-            <CondicionMedica icono={<LuActivity className="size-6" />}>
+            <CondicionMedica
+              icono={<LuActivity className="size-6" />}
+              seleccionada={seleccionadas.includes("Presión alta / Hipertensión")}
+              onClick={() => alternarCondicion("Presión alta / Hipertensión")}
+            >
               Presión alta / Hipertensión
             </CondicionMedica>
-            <CondicionMedica icono={<LuDroplet className="size-6" />}>
+            <CondicionMedica
+              icono={<LuDroplet className="size-6" />}
+              seleccionada={seleccionadas.includes("Diabetes")}
+              onClick={() => alternarCondicion("Diabetes")}
+            >
               Diabetes
             </CondicionMedica>
-            <CondicionMedica icono={<LuHeart className="size-6" />}>
+            <CondicionMedica
+              icono={<LuHeart className="size-6" />}
+              seleccionada={seleccionadas.includes("Problemas cardíacos")}
+              onClick={() => alternarCondicion("Problemas cardíacos")}
+            >
               Problemas cardíacos
             </CondicionMedica>
-            <CondicionMedica icono={<LuAccessibility className="size-6" />}>
+            <CondicionMedica
+              icono={<LuAccessibility className="size-6" />}
+              seleccionada={seleccionadas.includes("Dificultad al caminar / Bastón")}
+              onClick={() => alternarCondicion("Dificultad al caminar / Bastón")}
+            >
               Dificultad al caminar / Bastón
             </CondicionMedica>
-            <CondicionMedica icono={<LuEye className="size-6" />}>
+            <CondicionMedica
+              icono={<LuEye className="size-6" />}
+              seleccionada={seleccionadas.includes("Problemas de memoria o visión")}
+              onClick={() => alternarCondicion("Problemas de memoria o visión")}
+            >
               Problemas de memoria o visión
             </CondicionMedica>
             {condicionesAgregadas.map((condicion, indice) => (
               <CondicionMedica
                 key={indice}
                 icono={<LuPlus className="size-6" />}
+                seleccionada={seleccionadas.includes(condicion)}
+                onClick={() => alternarCondicion(condicion)}
               >
                 {condicion}
               </CondicionMedica>
@@ -388,11 +467,18 @@ export default function ConfigCuenta2() {
         <div className="flex w-full flex-col gap-3">
           <button
             type="button"
-            className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B]"
+            onClick={guardarFicha}
+            disabled={guardando}
+            className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#B7C8F0] bg-[#144BD3] px-3 text-lg font-bold text-white shadow-md hover:bg-[#0D3EBA] active:bg-[#0A328F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D328B] disabled:cursor-wait disabled:opacity-60"
           >
-            Guardar mi ficha médica
+            {guardando ? "Guardando..." : "Guardar mi ficha médica"}
             <LuCheck aria-hidden="true" className="size-5 shrink-0" />
           </button>
+          {error && (
+            <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">
+              {error}
+            </p>
+          )}
           <Link
             to="/adulto/configurar-cuenta"
             className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#E7EDFB] px-3 text-lg font-semibold text-[#16222C] hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]"

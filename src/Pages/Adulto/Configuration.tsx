@@ -247,6 +247,7 @@ export default function Config() {
                   key={vinculo.id}
                   nombre={vinculo.familiar.nombreCompleto}
                   ocupacion={textoVinculo(vinculo)}
+                  familiarId={vinculo.familiarId}
                 />
               ))}
             </div>
