@@ -28,6 +28,4 @@ dist-ssr
 .env
 .vercel
 .env*
-GUIA_ESTILO_NONOS.md
-CONTEXTO_PROYECTO_NONOS.md
 output
