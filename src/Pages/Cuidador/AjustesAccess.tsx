@@ -108,9 +108,8 @@ export default function AjustesCuidador() {
                 type="button"
                 aria-pressed={modalidad === "fisico"}
                 onClick={() => setModalidad("fisico")}
-                className={`flex cursor-pointer flex-col items-center rounded-lg py-2 ${
-                  modalidad === "fisico" ? "bg-[#1550E0] text-white" : "text-[#0E1D28] hover:bg-white/60"
-                }`}
+                className={`flex cursor-pointer flex-col items-center rounded-lg py-2 ${modalidad === "fisico" ? "bg-[#1550E0] text-white" : "text-[#0E1D28] hover:bg-white/60"
+                  }`}
               >
                 <span className="font-bold">Físico</span>
                 <span className="text-xs">Presencial</span>
@@ -119,25 +118,29 @@ export default function AjustesCuidador() {
                 type="button"
                 aria-pressed={modalidad === "digital"}
                 onClick={() => setModalidad("digital")}
-                className={`flex cursor-pointer flex-col items-center rounded-lg py-2 ${
-                  modalidad === "digital" ? "bg-[#1550E0] text-white" : "text-[#0E1D28] hover:bg-white/60"
-                }`}
+                className={`flex cursor-pointer flex-col items-center rounded-lg py-2 ${modalidad === "digital" ? "bg-[#1550E0] text-white" : "text-[#0E1D28] hover:bg-white/60"
+                  }`}
               >
                 <span className="font-bold">Digital</span>
                 <span className="text-xs">A distancia</span>
               </button>
             </div>
 
-            {/* PENDIENTE: falta el texto del modo Digital en Figma */}
-            {modalidad === "fisico" && (
-              <p className="flex items-start gap-2 rounded-xl border border-[#1550E0]/30 bg-[#EBF5FF] p-3 text-sm">
-                <LuInfo aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[#1550E0]" />
+            {/* explicación de la modalidad elegida (textos de Figma) */}
+            <p className="flex items-start gap-2 rounded-xl border border-[#1550E0]/30 bg-[#EBF5FF] p-3 text-sm">
+              <LuInfo aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[#1550E0]" />
+              {modalidad === "fisico" ? (
                 <span>
                   <span className="font-bold">Modo Físico:</span> Activa solo alertas críticas e inmediatas para evitar
                   saturación durante la guardia presencial.
                 </span>
-              </p>
-            )}
+              ) : (
+                <span>
+                  <span className="font-bold">Modo Digital:</span> Recibe notificaciones sobre registro de medicación, control
+                  de tomas en NONOS y alertas familiares a distancia sin interferir en la asistencia física.
+                </span>
+              )}
+            </p>
           </section>
 
           {secciones.map((seccion) => (
