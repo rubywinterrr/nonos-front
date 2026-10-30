@@ -26,7 +26,7 @@ export default function Tutorial1_2() {
       <main className="mainBody">
         <Header />
         <VueltaAtras titulo="Ayuda y soporte" />
-        <section className="flex w-full lg:w-35/100 flex-col shadow-lg rounded-3xl p-5 gap-5 items-center justify-start">
+        <section className="flex w-full bg-white lg:w-35/100 flex-col shadow-lg rounded-3xl p-5 gap-5 items-center justify-start">
           <div className="w-full flex justify-between items-center">
             <p className="rounded-lg bg-[#DBE1FF] p-2">TUTORIAL PARA EMPEZAR</p>
             <p className="bg-[#EBF5FF] rounded-lg flex items-center p-2 text-blue-600 justify-center gap-1">
@@ -56,7 +56,7 @@ export default function Tutorial1_2() {
             <p>4. Batería</p>
           </div>
         </section>
-        <section className="rounded-3xl w-full flex flex-col items-start justify-start shadow-lg gap-5 p-5">
+        <section className="rounded-3xl bg-white w-full flex flex-col items-start justify-start shadow-lg gap-5 p-5">
           <div
             className="rounded-2xl w-full h-75 relative"
             style={{

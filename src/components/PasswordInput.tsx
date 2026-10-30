@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
+import { useState } from "react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 interface PasswordInputProps {
@@ -14,77 +13,23 @@ export default function PasswordInput({
   placeholder,
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
-  const [revealedCharacter, setRevealedCharacter] = useState<{
-    index: number;
-    character: string;
-  } | null>(null);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (revealTimer.current) clearTimeout(revealTimer.current);
-    };
-  }, []);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const input = event.currentTarget;
-    const nextValue = input.value;
-    onChange(nextValue);
-
-    if (revealTimer.current) clearTimeout(revealTimer.current);
-    const inputType = (event.nativeEvent as InputEvent).inputType;
-    const characterIndex = (input.selectionStart ?? 0) - 1;
-
-    if (inputType.startsWith("insert") && characterIndex >= 0) {
-      setRevealedCharacter({
-        index: characterIndex,
-        character: nextValue[characterIndex],
-      });
-      revealTimer.current = setTimeout(() => setRevealedCharacter(null), 900);
-    } else {
-      setRevealedCharacter(null);
-    }
-  };
 
   const toggleVisibility = () => {
-    if (revealTimer.current) clearTimeout(revealTimer.current);
-    setRevealedCharacter(null);
     setVisible((current) => !current);
   };
-
-  const showLatestCharacter = !visible && revealedCharacter !== null;
-  const displayValue = showLatestCharacter
-    ? Array.from(value, (_, index) =>
-        index === revealedCharacter.index ? revealedCharacter.character : "•",
-      ).join("")
-    : "";
 
   return (
     <div className="relative w-full">
       <input
-        ref={inputRef}
         type={visible ? "text" : "password"}
         value={value}
         required
-        onChange={handleChange}
-        onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
-        className={`w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1 pr-10  ${showLatestCharacter ? "text-transparent caret-black" : ""}`}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1 pr-10"
         placeholder={placeholder}
         aria-label="Contraseña"
         autoComplete="current-password"
       />
-      {showLatestCharacter && (
-        <span
-          aria-hidden="true"
-          className="absolute inset-y-0 left-1 right-10 flex items-center overflow-hidden whitespace-nowrap  text-base text-black pointer-events-none"
-        >
-          <span style={{ transform: `translateX(-${scrollLeft}px)` }}>
-            {displayValue}
-          </span>
-        </span>
-      )}
       <button
         type="button"
         onMouseDown={(event) => event.preventDefault()}
