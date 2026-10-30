@@ -18,6 +18,42 @@ import {
   LuX,
 } from "react-icons/lu";
 
+interface AlternativaDictado {
+  transcript: string;
+}
+
+interface ResultadoDictado {
+  isFinal: boolean;
+  0: AlternativaDictado;
+}
+
+interface EventoDictado {
+  resultIndex: number;
+  results: ArrayLike<ResultadoDictado>;
+}
+
+interface ReconocimientoVoz {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((evento: EventoDictado) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type VentanaConDictado = Window & {
+  SpeechRecognition?: new () => ReconocimientoVoz;
+  webkitSpeechRecognition?: new () => ReconocimientoVoz;
+};
+
+const obtenerFechaHoraLocalParaInput = () => {
+  const fecha = new Date();
+  fecha.setMinutes(fecha.getMinutes() - fecha.getTimezoneOffset());
+  return fecha.toISOString().slice(0, 16);
+};
+
 type Filtro = "todos" | CategoriaHistorial;
 interface RegistroHistorial {
   fecha: string;
@@ -31,6 +67,7 @@ interface RegistroHistorial {
 export default function Historial() {
   const { usuario } = useAuth();
   const dialogoRef = useRef<HTMLDialogElement>(null);
+  const reconocimientoRef = useRef<ReconocimientoVoz | null>(null);
   const nombreUsuario = usuario?.nombreCompleto || "Sofía Gómez";
   const [filtro, setFiltro] = useState<Filtro>("todos");
   const [dialogoAbierto, setDialogoAbierto] = useState(false);
@@ -38,6 +75,9 @@ export default function Historial() {
   const [nuevoTipo, setNuevoTipo] = useState<CategoriaHistorial>("episodios");
   const [tipoSeleccionado, setTipoSeleccionado] = useState("Observación cotidiana");
   const [nuevoDetalle, setNuevoDetalle] = useState("");
+  const [momentoSuceso, setMomentoSuceso] = useState(obtenerFechaHoraLocalParaInput);
+  const [dictando, setDictando] = useState(false);
+  const [errorDictado, setErrorDictado] = useState("");
   const [prioritaria, setPrioritaria] = useState(false);
   const [registros, setRegistros] = useState<RegistroHistorial[]>([
     { fecha: "Hoy, 24 de Octubre", hora: "14:15 hs", tipo: "Episodio resuelto", detalle: "Pulsación de botón de emergencia. Atendido de inmediato en domicilio por cuidadora María. Presión controlada: normal.", autor: "Sistema NONOS", categoria: "episodios" },
@@ -54,6 +94,7 @@ export default function Historial() {
 
   const cerrarDialogo = () => {
     if (!dialogoRef.current?.open || cerrandoDialogo) return;
+    reconocimientoRef.current?.stop();
     setCerrandoDialogo(true);
   };
 
@@ -70,11 +111,64 @@ export default function Historial() {
     return () => { document.body.style.overflow = overflowOriginal; };
   }, [dialogoAbierto]);
 
+  useEffect(() => () => reconocimientoRef.current?.stop(), []);
+
+  const alternarDictado = () => {
+    if (dictando) {
+      reconocimientoRef.current?.stop();
+      return;
+    }
+
+    const ventana = window as VentanaConDictado;
+    const SpeechRecognition = ventana.SpeechRecognition || ventana.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setErrorDictado("Este navegador no permite dictado por voz.");
+      return;
+    }
+
+    const reconocimiento = new SpeechRecognition();
+    reconocimiento.lang = "es-AR";
+    reconocimiento.continuous = true;
+    reconocimiento.interimResults = false;
+    reconocimiento.onresult = (evento) => {
+      const texto = Array.from({ length: evento.results.length - evento.resultIndex }, (_, indice) => evento.results[evento.resultIndex + indice])
+        .filter((resultado) => resultado.isFinal)
+        .map((resultado) => resultado[0].transcript.trim())
+        .filter(Boolean)
+        .join(" ");
+      if (!texto) return;
+
+      setNuevoDetalle((actual) => `${actual}${actual && !actual.endsWith(" ") ? " " : ""}${texto}`.slice(0, 400));
+      setErrorDictado("");
+    };
+    reconocimiento.onerror = () => {
+      setDictando(false);
+      setErrorDictado("No se pudo acceder al micrófono.");
+    };
+    reconocimiento.onend = () => {
+      reconocimientoRef.current = null;
+      setDictando(false);
+    };
+
+    try {
+      reconocimientoRef.current = reconocimiento;
+      reconocimiento.start();
+      setErrorDictado("");
+      setDictando(true);
+    } catch {
+      reconocimientoRef.current = null;
+      setErrorDictado("No se pudo iniciar el dictado por voz.");
+    }
+  };
+
   const registrarCambio = () => {
     if (!nuevoDetalle.trim()) return;
+    const fechaSuceso = new Date(momentoSuceso);
+    if (Number.isNaN(fechaSuceso.getTime())) return;
     const ahora = new Date();
-    const fecha = ahora.toLocaleDateString("es-AR", { day: "numeric", month: "long" });
-    const hora = `${ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`;
+    const mismoDia = fechaSuceso.toDateString() === ahora.toDateString();
+    const fecha = fechaSuceso.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: fechaSuceso.getFullYear() === ahora.getFullYear() ? undefined : "numeric" });
+    const hora = `${fechaSuceso.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`;
     const categoria: CategoriaHistorial = tipoSeleccionado === "Episodio/Incidente"
       ? "episodios"
       : tipoSeleccionado === "Cambio medicación"
@@ -83,14 +177,18 @@ export default function Historial() {
           ? "visitas"
           : nuevoTipo;
     const tipo = prioritaria && tipoSeleccionado === "Observación cotidiana" ? "Observación prioritaria" : tipoSeleccionado;
-    setRegistros((actuales) => [{ fecha: `Hoy, ${fecha}`, hora, tipo, detalle: nuevoDetalle.trim(), autor: nombreUsuario, categoria }, ...actuales]);
+    setRegistros((actuales) => [{ fecha: `${mismoDia ? "Hoy, " : ""}${fecha}`, hora, tipo, detalle: nuevoDetalle.trim(), autor: nombreUsuario, categoria }, ...actuales]);
     setNuevoDetalle("");
+    setMomentoSuceso(obtenerFechaHoraLocalParaInput());
     setPrioritaria(false);
+    reconocimientoRef.current?.stop();
     cerrarDialogo();
   };
 
-  const fechaHoraActual = new Date();
-  const fechaHoraTexto = `Hoy, ${fechaHoraActual.toLocaleDateString("es-AR", { day: "numeric", month: "long" })} - ${fechaHoraActual.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`;
+  const fechaHoraSeleccionada = new Date(momentoSuceso);
+  const fechaHoraTexto = Number.isNaN(fechaHoraSeleccionada.getTime())
+    ? "Seleccioná la fecha y hora"
+    : `${fechaHoraSeleccionada.toLocaleDateString("es-AR", { day: "numeric", month: "long" })} · ${fechaHoraSeleccionada.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`;
 
   const filtros: { valor: Filtro; texto: string }[] = [
     { valor: "todos", texto: "Todos" },
@@ -188,20 +286,20 @@ export default function Historial() {
                 </div>
                 <div className="relative">
                   <textarea id="detalle-nuevo-registro" maxLength={400} rows={5} value={nuevoDetalle} onChange={(evento) => setNuevoDetalle(evento.target.value)} placeholder="Describí brevemente el estado de ánimo, molestias, alimentación o novedades de la jornada..." className="w-full resize-y rounded-xl border border-[#7E8C97] bg-[#F6F8FA] p-3 pr-12 text-sm leading-5 placeholder:text-[#435059] focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]" />
-                  <button type="button" aria-label="Dictar por voz" className="absolute bottom-3 right-3 flex size-8 cursor-pointer items-center justify-center rounded-full border border-[#B7C8F0] bg-white text-[#1550E0] hover:bg-[#E7EDFB] active:bg-[#D3E0F8]"><LuMic aria-hidden="true" className="size-4" /></button>
+                  <button type="button" aria-label={dictando ? "Detener dictado" : "Dictar por voz"} aria-pressed={dictando} onClick={alternarDictado} className={`absolute bottom-3 right-3 flex size-8 cursor-pointer items-center justify-center rounded-full border border-[#B7C8F0] hover:bg-[#E7EDFB] active:bg-[#D3E0F8] ${dictando ? "bg-[#1550E0] text-white" : "bg-white text-[#1550E0]"}`}><LuMic aria-hidden="true" className="size-4" /></button>
                 </div>
+                {dictando && <p role="status" className="text-xs font-semibold text-[#1550E0]">Escuchando… Tocá el micrófono para detener.</p>}
+                {errorDictado && <p role="status" className="text-xs text-red-700">{errorDictado}</p>}
               </div>
             </div>
 
             <section aria-label="Momento del suceso" className="space-y-2">
               <h3 className="text-xs font-bold uppercase tracking-wide">Momento del suceso</h3>
-              <div className="flex items-center justify-between gap-3 rounded-xl border border-[#7E8C97] bg-[#F6F8FA] p-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#E7EDFB] text-[#1550E0]"><LuCalendarDays aria-hidden="true" className="size-4" /></span>
-                  <div className="min-w-0"><p className="truncate text-xs font-bold">{fechaHoraTexto}</p><p className="text-xs text-[#1550E0]">Zona horaria local</p></div>
-                </div>
-                <button type="button" className="shrink-0 cursor-pointer rounded-lg bg-[#E7EDFB] px-3 py-1 text-xs font-bold text-[#0D328B] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]">Editar</button>
-              </div>
+              <label htmlFor="momento-suceso" className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#7E8C97] bg-[#F6F8FA] p-3 focus-within:border-[#1550E0] focus-within:ring-2 focus-within:ring-[#B7C8F0]">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#E7EDFB] text-[#1550E0]"><LuCalendarDays aria-hidden="true" className="size-4" /></span>
+                <span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold">{fechaHoraTexto}</span><span className="block text-xs text-[#1550E0]">Zona horaria local</span></span>
+                <input id="momento-suceso" type="datetime-local" required value={momentoSuceso} onChange={(evento) => setMomentoSuceso(evento.target.value)} aria-label="Seleccionar fecha y hora del suceso" className="min-w-0 max-w-40 cursor-pointer rounded-lg border border-[#B7C8F0] bg-[#E7EDFB] px-2 py-2 text-xs font-bold text-[#0D328B] focus:outline-none" />
+              </label>
             </section>
 
             <section aria-label="Registrado por" className="space-y-2">
