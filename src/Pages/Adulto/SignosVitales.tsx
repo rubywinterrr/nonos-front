@@ -6,7 +6,9 @@ import { medicionesService, type Medicion } from "../../services/medicionesServi
 import { dispositivosService } from "../../services/dispositivosService";
 import { alertasService, type Alerta } from "../../services/alertasService";
 import tiempoDesde from "../../utils/tiempoDesde";
-import { LuMoon, LuShieldCheck, LuTriangleAlert } from "react-icons/lu";
+import { idDelAdultoQueSeMira } from "../../utils/adultoQueSeMira";
+import { Link } from "react-router-dom";
+import { LuArrowRight, LuMoon, LuShieldCheck, LuTriangleAlert } from "react-icons/lu";
 import { TbLungs } from "react-icons/tb";
 import { MdCheck, MdDirectionsWalk, MdFavorite } from "react-icons/md";
 
@@ -75,15 +77,17 @@ export default function SignosVitales() {
   const [error, setError] = useState<string | null>(null);
   // momento de la última carga: se usa para el rango del gráfico (no se puede leer la hora durante el render)
   const [cargadoEn, setCargadoEn] = useState(0);
+  // true si es un familiar o cuidador que todavía no tiene ningún adulto vinculado
+  const [sinAdulto, setSinAdulto] = useState(false);
 
   const dias = periodos.find((p) => p.valor === periodo)?.dias ?? 1;
 
   useEffect(() => {
     if (!usuario) return;
-    const id = usuario.id;
+    const actual = usuario;
 
     // pide al back lo nuevo de la pulsera (si falla, se muestra igual lo que ya hay guardado)
-    const sincronizar = async () => {
+    const sincronizar = async (id: string) => {
       try {
         const dispositivos = await dispositivosService.getDispositivos(id);
         const fitbit = dispositivos.find((d) => d.tipo === "FITBIT_AIR");
@@ -96,7 +100,7 @@ export default function SignosVitales() {
     };
 
     // trae las mediciones del período elegido
-    const cargar = async () => {
+    const cargar = async (id: string) => {
       setError(null);
       const ahora = Date.now();
       const desde = new Date(ahora - dias * DIA_MS).toISOString();
@@ -123,10 +127,21 @@ export default function SignosVitales() {
       }
     };
 
-    // primero sincroniza y después lee
+    // busca de quién son los datos, sincroniza (solo si entró el adulto, que es el dueño de la pulsera) y lee
     const sincronizarYCargar = async () => {
-      await sincronizar();
-      await cargar();
+      let id: string | null = null;
+      try {
+        id = await idDelAdultoQueSeMira(actual);
+      } catch (err) {
+        console.error(err);
+      }
+      if (!id) {
+        setSinAdulto(true);
+        setCargando(false);
+        return;
+      }
+      if (actual.rol === "ADULTO_MAYOR") await sincronizar(id);
+      await cargar(id);
     };
 
     sincronizarYCargar();
@@ -196,11 +211,10 @@ export default function SignosVitales() {
               type="button"
               aria-pressed={periodo === opcion.valor}
               onClick={() => setPeriodo(opcion.valor)}
-              className={`min-h-11 min-w-0 cursor-pointer rounded-xl px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF] ${
-                periodo === opcion.valor
-                  ? "bg-white font-bold text-[#0049CC] shadow-xs"
-                  : "font-semibold text-[#424656] hover:bg-white/50 active:bg-white/70"
-              }`}
+              className={`min-h-11 min-w-0 cursor-pointer rounded-xl px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF] ${periodo === opcion.valor
+                ? "bg-white font-bold text-[#0049CC] shadow-xs"
+                : "font-semibold text-[#424656] hover:bg-white/50 active:bg-white/70"
+                }`}
             >
               {opcion.texto}
             </button>
@@ -208,6 +222,11 @@ export default function SignosVitales() {
         </div>
 
         {cargando && <p className="text-center text-[#424656]">Cargando datos de la pulsera…</p>}
+        {sinAdulto && (
+          <p className="rounded-2xl bg-white p-5 text-base">
+            Todavía no estás vinculado a ningún adulto mayor. Cuando aceptes una invitación, vas a ver sus signos acá.
+          </p>
+        )}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
 
         <section className="flex w-full min-w-0 flex-col gap-3 rounded-3xl bg-white p-5 shadow-xs" aria-label="Estado general de salud">
@@ -227,8 +246,8 @@ export default function SignosVitales() {
           </div>
           <p className="text-base leading-snug">
             {hayAlertas
-              ? "Hay valores fuera de tus rangos habituales. Revisá los avisos en el inicio."
-              : "Tus valores están dentro de los rangos habituales. Sincronizado con tu pulsera."}
+              ? "Hay valores fuera de los rangos habituales. Revisá los avisos en el inicio."
+              : "Los valores están dentro de los rangos habituales. Sincronizado con la pulsera."}
           </p>
         </section>
 
@@ -280,6 +299,13 @@ export default function SignosVitales() {
               {maximo && <dd className="text-xs text-[#424656]">{diaYHora(maximo.timestamp)}</dd>}
             </div>
           </dl>
+          <Link
+            to="pulso"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#EBF5FF] text-sm font-bold text-[#0049CC] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
+          >
+            Ver detalle
+            <LuArrowRight aria-hidden="true" className="size-4" />
+          </Link>
         </section>
 
         <section className="flex w-full min-w-0 flex-col gap-4 rounded-3xl bg-white p-5 shadow-xs" aria-labelledby="oxigeno-sangre">
@@ -323,6 +349,13 @@ export default function SignosVitales() {
               </ul>
             </div>
           )}
+          <Link
+            to="oxigeno"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#EBF5FF] text-sm font-bold text-[#0049CC] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
+          >
+            Ver detalle
+            <LuArrowRight aria-hidden="true" className="size-4" />
+          </Link>
         </section>
 
         <section className="flex w-full min-w-0 flex-col gap-3 rounded-3xl bg-white p-5 shadow-xs" aria-labelledby="movilidad-actividad">
@@ -346,6 +379,13 @@ export default function SignosVitales() {
             aria-label="Progreso de pasos hacia la meta"
             className="block h-3 w-full appearance-none overflow-hidden rounded-full border-0 bg-[#E0F0FF] [&::-moz-progress-bar]:rounded-full [&::-moz-progress-bar]:bg-[#0B5FFF] [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-[#E0F0FF] [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-[#0B5FFF]"
           />
+          <Link
+            to="pasos"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#EBF5FF] text-sm font-bold text-[#0049CC] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
+          >
+            Ver detalle
+            <LuArrowRight aria-hidden="true" className="size-4" />
+          </Link>
         </section>
 
         <section className="flex w-full min-w-0 flex-col gap-3 rounded-3xl bg-white p-5 shadow-xs" aria-labelledby="descanso-sueno">
@@ -387,6 +427,13 @@ export default function SignosVitales() {
           ) : (
             <p className="text-sm text-[#424656]">Todavía no hay registros de sueño. Dormí con la pulsera puesta para verlos acá.</p>
           )}
+          <Link
+            to="sueno"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#EBF5FF] text-sm font-bold text-[#0049CC] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
+          >
+            Ver detalle
+            <LuArrowRight aria-hidden="true" className="size-4" />
+          </Link>
         </section>
       </div>
     </main>

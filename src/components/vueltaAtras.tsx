@@ -4,9 +4,11 @@ import { LuArrowLeft } from "react-icons/lu";
 interface Prop {
   titulo?: string;
   compacto?: boolean;
+  // texto chico de arriba del título (por defecto "Ficha de consulta")
+  seccion?: string;
 }
 
-export default function VueltaAtras({ titulo = "NONOS", compacto = false }: Prop) {
+export default function VueltaAtras({ titulo = "NONOS", compacto = false, seccion = "Ficha de consulta" }: Prop) {
   const navigate = useNavigate();
   if (compacto) {
     return (
@@ -20,7 +22,7 @@ export default function VueltaAtras({ titulo = "NONOS", compacto = false }: Prop
           <LuArrowLeft aria-hidden="true" className="size-5" />
         </button>
         <div>
-          <p className="text-sm font-semibold uppercase leading-5 tracking-wide text-[#435059]">Ficha de consulta</p>
+          <p className="text-sm font-semibold uppercase leading-5 tracking-wide text-[#435059]">{seccion}</p>
           <h1 className="w-fit border-b-2 border-[#D7DFE6] text-2xl font-bold leading-7 text-[#16222C]">{titulo}</h1>
         </div>
       </div>
