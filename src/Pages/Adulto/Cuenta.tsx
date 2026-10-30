@@ -2,9 +2,7 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import Desplegable from "../../components/menuDesplegable";
 import { useAuth } from "../../hooks/useAuth";
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { dispositivosService } from "../../services/dispositivosService";
+import PulseraConexion from "../../components/PulseraConexion";
 import calcularEdad from "../../utils/calcularEdad";
 import {
   LuChevronRight,
@@ -35,23 +33,6 @@ export default function PagCuenta() {
   const esAdulto = usuario?.rol === "ADULTO_MAYOR";
   const nombreDePila =
     usuario?.nombreCompleto?.trim().split(/\s+/)[0] || "José";
-
-    const [errorPulsera, setErrorPulsera] = useState<string | null>(null);
-  // el back vuelve a /cuenta?conectado=1 si se vinculó, o ?conectado=0 si se canceló o falló
-  const [params] = useSearchParams();
-  const conectado = params.get("conectado");
-
-  // pide al back el link de Google y lleva al usuario ahí para que autorice la pulsera
-  const conectarPulsera = async () => {
-    setErrorPulsera(null);
-    try {
-      const { authUrl } = await dispositivosService.getGoogleHealthAuthUrl();
-      window.location.href = authUrl;
-    } catch (err) {
-      console.error(err);
-      setErrorPulsera("No se pudo iniciar la conexión. Probá de nuevo.");
-    }
-  };
 
   return (
     <main className="mainBody">
@@ -185,33 +166,8 @@ export default function PagCuenta() {
                 <LuPlus aria-hidden="true" className="size-5" /> Registrar botón
               </button>
             </article>
-            <article className="rounded-2xl border border-[#D7DFE6] bg-white p-3.5">
-              <h3 className="flex items-center gap-2 text-sm font-bold leading-5">
-                <span className="flex size-7 items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0]">
-                  <LuWatch aria-hidden="true" className="size-4" />
-                </span>
-                Pulsera inteligente (Salud y caídas)
-              </h3>
-              <p className="mt-1 text-xs leading-5 text-[#435059]">
-                Compartís solo los datos que autorices. Se usan para detectar
-                caídas, frecuencia cardíaca anormal y avisar a la red.
-              </p>
-              <button
-                type="button"
-                onClick={conectarPulsera}
-                className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#0B6D3C] bg-white px-3 text-xs font-bold text-[#1550E0] hover:bg-[#E8FAF1] active:bg-[#BAEDD3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B6D3C]"
-              >
-                <LuLink aria-hidden="true" className="size-4" /> Conectar con
-                Google Health / Fitbit
-              </button>
-              {conectado === "1" && (
-                <p className="mt-2 text-sm font-semibold text-emerald-700">¡Pulsera conectada!</p>
-              )}
-              {conectado === "0" && (
-                <p className="mt-2 text-sm font-semibold text-red-700">No se conectó la pulsera. Probá de nuevo.</p>
-              )}
-              {errorPulsera && <p className="mt-2 text-sm font-semibold text-red-700">{errorPulsera}</p>}
-            </article>
+               {/* conectar, sincronizar y recuperar datos de la pulsera */}
+               <PulseraConexion />
           </section>
         )}
 
