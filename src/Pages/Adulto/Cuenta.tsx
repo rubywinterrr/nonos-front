@@ -9,7 +9,6 @@ import {
   LuCircleDot,
   LuFingerprint,
   LuGlobe,
-  LuLink,
   LuLockKeyhole,
   LuLogOut,
   LuMail,
@@ -19,7 +18,6 @@ import {
   LuRadio,
   LuShieldCheck,
   LuSmartphone,
-  LuWatch,
 } from "react-icons/lu";
 
 function textoRol(rol: string) {
