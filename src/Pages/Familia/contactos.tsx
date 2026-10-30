@@ -133,13 +133,14 @@ export default function ContactosFamilia() {
                 </p>
               </div>
             </div>
-            <button
-              type="button"
+            {/* HARDCODEADO: número fijo de Figma */}
+            <a
+              href="tel:107"
               className="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#C92A2A] px-4 text-xl font-bold text-white hover:bg-[#AF2424] active:bg-[#8C1D1D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C92A2A]"
             >
               <LuPhone aria-hidden="true" className="size-5 shrink-0" />
               Llamar al 107
-            </button>
+            </a>
             <div className="flex flex-col gap-1 pt-2">
               <p className="text-sm font-semibold leading-5">
                 Guardia San Cayetano
@@ -148,8 +149,9 @@ export default function ContactosFamilia() {
                 <p className="min-w-0 text-sm leading-5 text-[#435059]">
                   +54 11 4788-9900
                 </p>
-                <button
-                  type="button"
+                {/* HARDCODEADO: número fijo de Figma (Guardia San Cayetano) */}
+                <a
+                  href="tel:+541147889900"
                   className="flex min-h-12 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-transparent bg-[#E7EDFB] px-3 text-sm font-semibold text-[#0D328B] hover:bg-[#D3E0F8] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
                 >
                   <LuPhone
@@ -157,7 +159,7 @@ export default function ContactosFamilia() {
                     className="size-4 text-[#AD4A00]"
                   />
                   Llamar
-                </button>
+                </a>
               </div>
             </div>
           </article>
