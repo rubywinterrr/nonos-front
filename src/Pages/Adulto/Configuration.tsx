@@ -5,7 +5,9 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
 import AjustesTexto from "../../components/AjusteTamanios";
-import { MdOutlineNotifications, MdCheck } from "react-icons/md";
+import { MdOutlineNotifications, MdCheck, MdOutlineSchedule } from "react-icons/md";
+import { invitacionesService, type Invitacion } from "../../services/invitacionesService";
+import Desplegable from "../../components/menuDesplegable";
 import { Link } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { GoShieldLock } from "react-icons/go";
@@ -20,6 +22,14 @@ function textoVinculo(vinculo: Vinculo) {
   if (vinculo.tipoVinculo === "FAMILIAR") return "Familiar";
   if (vinculo.tipoCuidador === "FISICO") return "Cuidador físico";
   if (vinculo.tipoCuidador === "DIGITAL") return "Cuidador digital";
+  return "Cuidador";
+}
+
+// mismo texto que textoVinculo, pero para una invitación todavía no aceptada
+function textoInvitacion(invitacion: Invitacion) {
+  if (invitacion.tipoVinculo === "FAMILIAR") return "Familiar";
+  if (invitacion.tipoCuidador === "FISICO") return "Cuidador físico";
+  if (invitacion.tipoCuidador === "DIGITAL") return "Cuidador digital";
   return "Cuidador";
 }
 
@@ -50,7 +60,35 @@ export default function Config() {
 
     fetchVinculos();
   }, [usuario]);
-  
+
+  // invitaciones que mandó el adulto y todavía nadie aceptó
+  const [invitacionesPendientes, setInvitacionesPendientes] = useState<Invitacion[]>([]);
+  // se suma 1 cada vez que se manda una invitación, para que se vuelvan a pedir
+  const [recargarEnviadas, setRecargarEnviadas] = useState<number>(0);
+  const [mostrarInvitacion, setMostrarInvitacion] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!usuario) return;
+
+    // trae las invitaciones enviadas y deja solo las pendientes
+    const fetchEnviadas = async () => {
+      try {
+        const data = await invitacionesService.getEnviadas();
+        setInvitacionesPendientes(data.filter((invitacion) => invitacion.estado === "PENDIENTE"));
+      } catch (err) {
+        // si falla no se muestra nada: es información extra, no bloquea la pantalla
+        console.error(err);
+      }
+    };
+
+    fetchEnviadas();
+  }, [usuario, recargarEnviadas]);
+
+  // después de mandar una invitación, la lista de pendientes se vuelve a cargar
+  const cargarEnviadas = () => {
+    setRecargarEnviadas(recargarEnviadas + 1);
+  };
+
   // interruptores de notificaciones: arrancan prendidos (como en el back) hasta que llegan los guardados
   const [configNotificaciones, setConfigNotificaciones] = useState<PreferenciasNotificacion>({
     notifActividad: true,
@@ -126,7 +164,9 @@ export default function Config() {
         <Header />
         <VueltaAtras titulo="Ajustes de accesibilidad" />
 
-        <form onSubmit={handleSubmit} className="contents">
+        {/* el form solo envuelve las preferencias: la invitación de abajo tiene su propio form
+            y no puede quedar adentro de este; "Guardar cambios" se une con form="form-ajustes" */}
+        <form id="form-ajustes" onSubmit={handleSubmit} className="contents">
           <div className="rounded-2xl bg-white w-full p-5 gap-3 flex justify-start pr-0 items-start">
             <VscGear className="bg-blue-600 rounded-full text-white p-3 size-12" />
             <div className="flex flex-col items-start justify-start max-w-80/100">
@@ -225,50 +265,78 @@ export default function Config() {
               />
             </div>
           </div>
-          <div className="bg-white rounded-2xl w-full p-5 flex flex-col gap-7">
-            <div className="flex w-full gap-5">
-              <LuUserRoundCheck className="size-14 bg-blue-50 border border-blue-200 p-3 text-blue-600 rounded-xl" />
-              <div className="flex flex-col max-w-75/100 gap-2">
-                <h1 className="font-semibold text-xl">Personas vinculadas</h1>
-                <p className="text-gray-500">
-                  Personas que pueden acompañarte y acceder a la información
-                  autorizada.
-                </p>
-              </div>
+        </form>
+
+        <div className="bg-white rounded-2xl w-full p-5 flex flex-col gap-7">
+          <div className="flex w-full gap-5">
+            <LuUserRoundCheck className="size-14 bg-blue-50 border border-blue-200 p-3 text-blue-600 rounded-xl" />
+            <div className="flex flex-col max-w-75/100 gap-2">
+              <h1 className="font-semibold text-xl">Personas vinculadas</h1>
+              <p className="text-gray-500">
+                Personas que pueden acompañarte y acceder a la información
+                autorizada.
+              </p>
             </div>
-            <div className="flex flex-col w-full gap-5">
-              {loadingVinculos && <p>Cargando personas vinculadas...</p>}
-              {errorVinculos && <p className="text-red-600">{errorVinculos}</p>}
-              {!loadingVinculos && !errorVinculos && vinculos.length === 0 && (
-                <p className="text-gray-500">Todavía no tenés personas vinculadas.</p>
-              )}
-              {vinculos.map((vinculo) => (
-                <PersonaVinculada
-                  key={vinculo.id}
-                  nombre={vinculo.familiar.nombreCompleto}
-                  ocupacion={textoVinculo(vinculo)}
-                  familiarId={vinculo.familiarId}
-                />
+          </div>
+          <div className="flex flex-col w-full gap-5">
+            {loadingVinculos && <p>Cargando personas vinculadas...</p>}
+            {errorVinculos && <p className="text-red-600">{errorVinculos}</p>}
+            {!loadingVinculos && !errorVinculos && vinculos.length === 0 && (
+              <p className="text-gray-500">Todavía no tenés personas vinculadas.</p>
+            )}
+            {vinculos.map((vinculo) => (
+              <PersonaVinculada
+                key={vinculo.id}
+                nombre={vinculo.familiar.nombreCompleto}
+                ocupacion={textoVinculo(vinculo)}
+                familiarId={vinculo.familiarId}
+              />
+            ))}
+          </div>
+
+          {invitacionesPendientes.length > 0 && (
+            <div className="flex flex-col w-full gap-3">
+              {invitacionesPendientes.map((invitacion) => (
+                <div
+                  key={invitacion.id}
+                  className="w-full p-3 rounded-2xl border border-dashed border-slate-300 bg-white flex items-center gap-3"
+                >
+                  <MdOutlineSchedule aria-hidden="true" className="size-10 shrink-0 rounded-full bg-gray-100 p-2 text-gray-500" />
+                  <div className="flex min-w-0 flex-col gap-1">
+                    <p className="font-semibold text-lg wrap-anywhere">{invitacion.emailDestino}</p>
+                    <p className="text-gray-600">{textoInvitacion(invitacion)} · Vence el {new Date(invitacion.expiraEn).toLocaleDateString("es-AR")}</p>
+                    <p className="text-sm font-semibold text-blue-600">Esperando que acepte</p>
+                  </div>
+                </div>
               ))}
             </div>
+          )}
 
-            <h1 className="font-semibold text-blue-600 flex items-center justify-center gap-2 bg-blue-100/70 border-4 border-dashed hover:bg-blue-100 cursor-pointer active:bg-blue-200 border-blue-700 w-full p-5 pt-4 pb-4 rounded-2xl text-xl select-none">
-              <GoPlus className="size-8" /> Agregar personas
-            </h1>
-          </div>
-          <AjustesTexto />
+          {mostrarInvitacion ? (
+            <Desplegable abiertoAlInicio onInvitacionCreada={cargarEnviadas} />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setMostrarInvitacion(true)}
+              className="font-semibold text-blue-600 flex items-center justify-center gap-2 bg-blue-100/70 border-4 border-dashed hover:bg-blue-100 cursor-pointer active:bg-blue-200 border-blue-700 w-full p-5 pt-4 pb-4 rounded-2xl text-xl select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+            >
+              <GoPlus className="size-8" /> Agregar persona
+            </button>
+          )}
+        </div>
+        <AjustesTexto />
 
-          <button
-            type="submit"
-            disabled={cargando}
-            className="w-full bg-[#1a62ff] text-xl cursor-pointer hover:bg-blue-700 active:scale-[0.99] text-white font-medium py-3.5 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm mt-2 border-0 disabled:opacity-50"
-          >
-            <HiCheck className="text-2xl stroke-2" />{" "}
-            {cargando ? "Guardando..." : "Guardar cambios"}
-          </button>
-          {errorGuardar && <p className="text-red-600">{errorGuardar}</p>}
-          {mensajeGuardar && <p className="text-green-700">{mensajeGuardar}</p>}
-        </form>
+        <button
+          type="submit"
+          form="form-ajustes"
+          disabled={cargando}
+          className="w-full bg-[#1a62ff] text-xl cursor-pointer hover:bg-blue-700 active:scale-[0.99] text-white font-medium py-3.5 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm mt-2 border-0 disabled:opacity-50"
+        >
+          <HiCheck className="text-2xl stroke-2" />{" "}
+          {cargando ? "Guardando..." : "Guardar cambios"}
+        </button>
+        {errorGuardar && <p className="text-red-600">{errorGuardar}</p>}
+        {mensajeGuardar && <p className="text-green-700">{mensajeGuardar}</p>}
 
         <div className="border-t w-full border-gray-500" />
 

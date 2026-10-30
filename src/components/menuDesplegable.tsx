@@ -1,10 +1,17 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { LuCheck, LuChevronDown, LuMonitor, LuShieldCheck, LuUserRoundPlus, LuUsersRound } from "react-icons/lu";
 import { useAuth } from "../hooks/useAuth";
 import { invitacionesService, type NuevaInvitacion } from "../services/invitacionesService";
 
-export default function Desplegable() {
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  // en Ajustes se abre ya desplegado al tocar "Agregar persona"
+  abiertoAlInicio?: boolean;
+  // avisa a la pantalla que se creó una invitación (por ejemplo, para recargar las pendientes)
+  onInvitacionCreada?: () => void;
+}
+
+export default function Desplegable({ abiertoAlInicio = false, onInvitacionCreada }: Props) {
+  const [isOpen, setIsOpen] = useState(abiertoAlInicio);
   const [rolSeleccionado, setRolSeleccionado] = useState("familiar");
   const [nivelAcceso, setNivelAcceso] = useState("predeterminado");
   const [error, setError] = useState("");
@@ -14,7 +21,7 @@ export default function Desplegable() {
   const [mensaje, setMensaje] = useState("");
 
   // Conserva el envío de invitaciones que ya usa el backend.
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError("");
     setMensaje("");
@@ -41,6 +48,7 @@ export default function Desplegable() {
       setMensaje(`Invitación creada para ${email.trim()}. Vence en 7 días.`);
       setEmail("");
       setRolSeleccionado("");
+      onInvitacionCreada?.();
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "No se pudo crear la invitación");
