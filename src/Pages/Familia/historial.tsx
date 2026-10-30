@@ -80,7 +80,7 @@ export default function Historial() {
   const [errorDictado, setErrorDictado] = useState("");
   const [prioritaria, setPrioritaria] = useState(false);
   const [registros, setRegistros] = useState<RegistroHistorial[]>([
-    { fecha: "Hoy, 24 de Octubre", hora: "14:15 hs", tipo: "Episodio resuelto", detalle: "Pulsación de botón de emergencia. Atendido de inmediato en domicilio por cuidadora María. Presión controlada: normal.", autor: "Sistema NONOS", categoria: "episodios" },
+    { fecha: "Hoy, 24 de Octubre", hora: "14:15 hs", tipo: "Episodio resuelto", detalle: "Pulsación de botón de emergencia. Atendido de inmediato en domicilio por cuidadora María. Oxígeno en sangre: 97 %, dentro de parámetros habituales.", autor: "Sistema NONOS", categoria: "episodios" },
     { fecha: "Ayer, 23 de Octubre", hora: "18:30 hs", tipo: "Cambio médico", detalle: "Ajuste de dosis en Losartán: pasa de 25mg a 50mg por la mañana tras control mensual.", autor: "José Perez", categoria: "medicacion" },
     { fecha: "20 de Octubre", hora: "10:00 hs", tipo: "Consulta médica", detalle: "Acompañamiento a consulta en consultorio de cabecera con Dr. Esteban Martínez. Laboratorio de rutina solicitado para noviembre.", autor: "Sofía Gómez (Hija)", categoria: "visitas" },
     { fecha: "18 de Octubre", hora: "13:00 hs", tipo: "Observación", detalle: "Refirió molestia leve en rodilla derecha al caminar. Se le colocó rodillera elástica recomendada por traumatólogo.", autor: "María Rodríguez (Cuidadora)", categoria: "visitas" },

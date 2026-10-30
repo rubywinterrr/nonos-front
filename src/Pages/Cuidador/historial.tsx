@@ -26,7 +26,7 @@ const eventos = [
     dia: "Hoy, 24 de Octubre",
     hora: "14:15 hs",
     descripcion:
-      "Pulsación de botón de emergencia. Atendido de inmediato en domicilio por cuidadora María. Presión controlada: normal.",
+      "Pulsación de botón de emergencia. Atendido de inmediato en domicilio por cuidadora María. Oxígeno en sangre: 97 %, dentro de parámetros habituales.",
     registradoPor: "Sistema NONOS",
   },
   {

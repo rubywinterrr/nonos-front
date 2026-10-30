@@ -1,4 +1,5 @@
-import { LuHeartPulse, LuMoon, LuShieldCheck, LuSmile } from "react-icons/lu";
+import { LuMoon, LuShieldCheck, LuSmile } from "react-icons/lu";
+import { TbLungs } from "react-icons/tb";
 import { MdCheck, MdDirectionsWalk, MdFavorite } from "react-icons/md";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
@@ -65,31 +66,31 @@ export default function SignosVitales() {
         <section className="flex w-full min-w-0 flex-col rounded-3xl bg-white p-5 shadow-xs gap-4" aria-labelledby="oxigeno-sangre">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 id="oxigeno-sangre" className="flex items-center gap-2 text-base font-bold leading-normal sm:text-lg">
-              <LuHeartPulse aria-hidden="true" className="size-8 shrink-0 rounded-xl bg-[#E0F0FF] p-2 text-[#0B5FFF]" />
-              Presión arterial
+              <TbLungs aria-hidden="true" className="size-8 shrink-0 rounded-xl bg-[#E0F0FF] p-2 text-[#0B5FFF]" />
+              Oxígeno en sangre
             </h2>
             <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-[#84F6E6]/30 px-2.5 py-1 text-xs font-bold leading-normal text-[#006A61]">Normal</span>
           </div>
           <div className="flex flex-wrap items-end justify-between gap-2">
             <p className="flex min-w-0 flex-wrap items-baseline gap-2">
-              <span className="text-3xl font-bold leading-none tracking-tight">120/80</span>
-              <span className="text-base font-semibold text-[#424656]">mmHg</span>
+              <span className="text-3xl font-bold leading-none tracking-tight">97</span>
+              <span className="text-base font-semibold text-[#424656]">%</span>
             </p>
-            <p className="text-xs font-semibold text-[#424656]">Control 14:00 hs</p>
+            <p className="text-xs font-semibold text-[#424656]">Medido 14:00 hs</p>
           </div>
           <div className="flex flex-col gap-2">
             <h3 className="text-xs font-bold uppercase leading-normal tracking-wider text-[#424656]">Mediciones previas</h3>
-            <ul aria-label="Mediciones previas de presión arterial" className="flex flex-col gap-2">
+            <ul aria-label="Mediciones previas de oxígeno en sangre" className="flex flex-col gap-2">
               <li className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#EBF5FF]/60 px-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="text-sm">125/82 mmHg</p>
+                  <p className="text-sm">96 %</p>
                   <p className="text-xs leading-normal text-[#424656]">Ayer, 23 Oct · 19:30 hs</p>
                 </div>
                 <span className="inline-flex max-w-full items-center rounded-full px-2.5 py-1 text-xs font-bold leading-normal bg-[#E0F0FF] text-[#0049CC]">Normal</span>
               </li>
               <li className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#EBF5FF]/60 px-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="text-sm">118/78 mmHg</p>
+                  <p className="text-sm">98 %</p>
                   <p className="text-xs leading-normal text-[#424656]">Miér, 22 Oct · 14:00 hs</p>
                 </div>
                 <span className="inline-flex max-w-full items-center rounded-full px-2.5 py-1 text-xs font-bold leading-normal bg-[#84F6E6]/30 text-[#006A61]">Óptima</span>

@@ -2,7 +2,8 @@ import Header from "../../components/Header";
 import InvitacionesPendientes from "../../components/InvitacionesPendientes";
 import obtenerFechaActual, { obtenerDiaActual } from "../../utils/obtenerFechaActual";
 import { Link } from "react-router-dom";
-import { LuActivity, LuHeartPulse, LuWatch } from "react-icons/lu";
+import { LuActivity, LuWatch } from "react-icons/lu";
+import { TbLungs } from "react-icons/tb";
 import {
   MdArrowForward,
   MdCheck,
@@ -109,14 +110,14 @@ export default function HomeFamilia() {
             </div>
             <div className="flex min-w-0 flex-col gap-1.5 rounded-xl bg-[#EBF5FF] p-3.5">
               <dt className="flex items-center justify-between gap-1">
-                <span className="text-xs leading-relaxed text-[#424656]">Presión</span>
-                <LuHeartPulse aria-hidden="true" className="size-8 shrink-0 rounded-full p-2 bg-[#DAEAF9] text-[#0B5FFF]" />
+                <span className="text-xs leading-relaxed text-[#424656]">Oxígeno</span>
+                <TbLungs aria-hidden="true" className="size-8 shrink-0 rounded-full p-2 bg-[#DAEAF9] text-[#0B5FFF]" />
               </dt>
-              <dd className="flex flex-wrap items-baseline gap-x-1 text-2xl font-bold leading-relaxed">120/80
+              <dd className="flex flex-wrap items-baseline gap-x-1 text-2xl font-bold leading-relaxed">97%
               </dd>
               <dd className="flex items-center gap-1 text-xs leading-normal text-[#424656]">
                 <MdOutlineSchedule aria-hidden="true" className="size-3 shrink-0" />
-                <span>Control 14:00 hs</span>
+                <span>Medido 14:00 hs</span>
               </dd>
             </div>
             <div className="flex min-w-0 flex-col gap-1.5 rounded-xl bg-[#EBF5FF] p-3.5">
