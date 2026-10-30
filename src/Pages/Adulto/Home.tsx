@@ -384,10 +384,10 @@ export default function Home() {
               </dd>
             </div>
           </dl>
-          <button type="button" className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl px-4 py-2.5 text-lg font-bold leading-6 text-[#0049CC] bg-[#EBF5FF] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
+            <Link to="../signos" className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl px-4 py-2.5 text-lg font-bold leading-6 text-[#0049CC] bg-[#EBF5FF] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]">
             Ver signos específicos
             <MdArrowForward aria-hidden="true" className="size-4 shrink-0" />
-          </button>
+          </Link>
         </section>
 
         <section className="flex w-full min-w-0 flex-col gap-3 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="rutina-hoy">

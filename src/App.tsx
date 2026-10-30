@@ -50,6 +50,7 @@ const CodigoCuidador = lazy(() => import("./Pages/Cuidador/codigo"));
 const AdultosACargo = lazy(() => import("./Pages/Cuidador/adultosACargo"));
 const InfoAdultoCuidador = lazy(() => import("./Pages/Cuidador/infoAdulto"));
 const AjustesCuidador = lazy(() => import("./Pages/Cuidador/AjustesAccess"));
+const SignosAdulto = lazy(() => import("./Pages/Adulto/SignosVitales"));
 
 function LayoutConFooter() {
   const location = useLocation();
@@ -97,6 +98,7 @@ function App() {
                 <Route path="configurar-cuenta" element={<ConfigCuenta1 />} />
                 <Route path="configurar-cuenta/2" element={<ConfigCuenta2 />} />
                 <Route path="home" element={<HomeAdulto />} />
+                <Route path="signos" element={<SignosAdulto />} />
                 <Route path="sos" element={<SOS />} />
                 <Route path="salud" element={<Salud />} />
                 <Route path="medicamentos" element={<MedicacionActual />} />
