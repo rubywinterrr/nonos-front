@@ -70,7 +70,7 @@ export default function PasswordInput({
         required
         onChange={handleChange}
         onScroll={(event) => setScrollLeft(event.currentTarget.scrollLeft)}
-        className={`w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1 pr-10 font-mono ${showLatestCharacter ? "text-transparent caret-black" : ""}`}
+        className={`w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1 pr-10  ${showLatestCharacter ? "text-transparent caret-black" : ""}`}
         placeholder={placeholder}
         aria-label="Contraseña"
         autoComplete="current-password"
@@ -78,7 +78,7 @@ export default function PasswordInput({
       {showLatestCharacter && (
         <span
           aria-hidden="true"
-          className="absolute inset-y-0 left-1 right-10 flex items-center overflow-hidden whitespace-nowrap font-mono text-base text-black pointer-events-none"
+          className="absolute inset-y-0 left-1 right-10 flex items-center overflow-hidden whitespace-nowrap  text-base text-black pointer-events-none"
         >
           <span style={{ transform: `translateX(-${scrollLeft}px)` }}>
             {displayValue}

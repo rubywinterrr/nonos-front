@@ -62,9 +62,9 @@ export default function SignosVitales() {
           </dl>
         </section>
 
-        <section className="flex w-full min-w-0 flex-col rounded-3xl bg-white p-5 shadow-xs gap-4" aria-labelledby="presion-arterial">
+        <section className="flex w-full min-w-0 flex-col rounded-3xl bg-white p-5 shadow-xs gap-4" aria-labelledby="oxigeno-sangre">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 id="presion-arterial" className="flex items-center gap-2 text-base font-bold leading-normal sm:text-lg">
+            <h2 id="oxigeno-sangre" className="flex items-center gap-2 text-base font-bold leading-normal sm:text-lg">
               <LuHeartPulse aria-hidden="true" className="size-8 shrink-0 rounded-xl bg-[#E0F0FF] p-2 text-[#0B5FFF]" />
               Presión arterial
             </h2>
