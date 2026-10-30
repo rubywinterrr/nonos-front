@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth";
-import { usuarioService, type Vinculo, type PreferenciasNotificacion } from "../services/usuariosService";
-import Header from "../components/Header";
-import VueltaAtras from "../components/vueltaAtras";
+import { useAuth } from "../../hooks/useAuth";
+import { usuarioService, type Vinculo, type PreferenciasNotificacion } from "../../services/usuariosService";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
 import { VscGear } from "react-icons/vsc";
-import AjustesTexto from "../components/AjusteTamanios";
+import AjustesTexto from "../../components/AjusteTamanios";
 import { MdOutlineNotifications, MdCheck } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { GoShieldLock } from "react-icons/go";
 import { HiCheck } from "react-icons/hi2";
-import PersonaVinculada from "../components/tarjetaPersonaVinculada";
+import PersonaVinculada from "../../components/tarjetaPersonaVinculada";
 import { LuUserRoundCheck } from "react-icons/lu";
 import { GoPlus } from "react-icons/go";
-import Switch from "../components/switch";
+import Switch from "../../components/switch";
 
 // texto que se muestra debajo del nombre de cada persona vinculada
 function textoVinculo(vinculo: Vinculo) {

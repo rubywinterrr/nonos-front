@@ -18,7 +18,7 @@ import { useAuth } from "./hooks/useAuth";
 import SOS from "./Pages/Adulto/PantallaSOS";
 import Salud from "./Pages/Adulto/Salud";
 import Contactos from "./Pages/Adulto/Contactos";
-import Config from "./Pages/Configuration";
+import Config from "./Pages/Adulto/Configuration";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Navbar from "./components/NavBar";
 import Codigo from "./Pages/Adulto/CodigoDeEmergencia";
