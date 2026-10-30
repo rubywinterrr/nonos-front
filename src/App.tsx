@@ -29,7 +29,6 @@ import SinRuta from "./Pages/SinRuta";
 const Cuidados = lazy(() => import("./Pages/Adulto/Cuidados"));
 import RutaProtegida from "./components/RutaProtegida";
 const AdmVinculo = lazy(() => import("./Pages/Adulto/administrarVinculo"));
-const SignosVitales = lazy(() => import("./Pages/Familia/signosVitales"));
 const MedicacionActual = lazy(() => import("./Pages/Adulto/MedicacionActual"));
 import RutaPorRol from "./components/RutaPorRol";
 const ConfigCuenta1 = lazy(() => import("./Pages/configCuenta1"));
@@ -42,14 +41,18 @@ const CodigoEmergencia = lazy(() => import("./Pages/Familia/codigo"));
 const MedidasAnticipadas = lazy(
   () => import("./Pages/Familia/medidasAnticipadas"),
 );
-const SignosCuidador = lazy(() => import("./Pages/Cuidador/signosVitales"));
 const MedCuidador = lazy(() => import("./Pages/Cuidador/med"));
 const HistorialCuidador = lazy(() => import("./Pages/Cuidador/historial"));
 const CodigoCuidador = lazy(() => import("./Pages/Cuidador/codigo"));
 const AdultosACargo = lazy(() => import("./Pages/Cuidador/adultosACargo"));
 const InfoAdultoCuidador = lazy(() => import("./Pages/Cuidador/infoAdulto"));
 const AjustesCuidador = lazy(() => import("./Pages/Cuidador/AjustesAccess"));
+// Signos vitales: la misma pantalla para los 3 roles (muestra al adulto que se está mirando)
 const SignosAdulto = lazy(() => import("./Pages/Adulto/SignosVitales"));
+const DetallePulso = lazy(() => import("./Pages/Signos/DetallePulso"));
+const DetalleOxigeno = lazy(() => import("./Pages/Signos/DetalleOxigeno"));
+const DetallePasos = lazy(() => import("./Pages/Signos/DetallePasos"));
+const DetalleSueno = lazy(() => import("./Pages/Signos/DetalleSueno"));
 
 function LayoutConFooter() {
   const location = useLocation();
@@ -84,7 +87,6 @@ function App() {
         }
       >
         <Routes>
-          <Route path="/" element={<Navigate to="/ingresar" replace />} />
           <Route path="/ingresar" element={<Ingreso />} />
           <Route element={<RutaProtegida />}>
             <Route
@@ -98,6 +100,10 @@ function App() {
                 <Route path="configurar-cuenta/2" element={<ConfigCuenta2 />} />
                 <Route path="home" element={<HomeAdulto />} />
                 <Route path="signos" element={<SignosAdulto />} />
+                <Route path="signos/pulso" element={<DetallePulso />} />
+                <Route path="signos/oxigeno" element={<DetalleOxigeno />} />
+                <Route path="signos/pasos" element={<DetallePasos />} />
+                <Route path="signos/sueno" element={<DetalleSueno />} />
                 <Route path="sos" element={<SOS />} />
                 <Route path="salud" element={<Salud />} />
                 <Route path="medicamentos" element={<MedicacionActual />} />
@@ -116,7 +122,11 @@ function App() {
               <Route path="familia" element={<RutaPorRol rol="FAMILIAR" />}>
                 <Route index element={<Navigate to="home" replace />} />
                 <Route path="home" element={<HomeFamilia />} />
-                <Route path="signos" element={<SignosVitales />} />
+                <Route path="signos" element={<SignosAdulto />} />
+                <Route path="signos/pulso" element={<DetallePulso />} />
+                <Route path="signos/oxigeno" element={<DetalleOxigeno />} />
+                <Route path="signos/pasos" element={<DetallePasos />} />
+                <Route path="signos/sueno" element={<DetalleSueno />} />
                 <Route path="contactos" element={<ContactosFamilia />} />
                 <Route path="configuracion" element={<ConfigFam />} />
                 <Route path="medicacion" element={<MedFam />} />
@@ -134,7 +144,11 @@ function App() {
               <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
                 <Route path="home" element={<HomeCuidador />} />
-                <Route path="signos" element={<SignosCuidador />} />
+                <Route path="signos" element={<SignosAdulto />} />
+                <Route path="signos/pulso" element={<DetallePulso />} />
+                <Route path="signos/oxigeno" element={<DetalleOxigeno />} />
+                <Route path="signos/pasos" element={<DetallePasos />} />
+                <Route path="signos/sueno" element={<DetalleSueno />} />
                 <Route path="medicamentos" element={<MedCuidador />} />
                 <Route path="historial/adulto" element={<HistorialCuidador />} />
                 <Route path="codigo-emergencia" element={<CodigoCuidador />} />
