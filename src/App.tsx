@@ -51,6 +51,8 @@ const MedCuidador = lazy(() => import("./Pages/Cuidador/med"));
 const HistorialCuidador = lazy(() => import("./Pages/Cuidador/historial"));
 const CodigoCuidador = lazy(() => import("./Pages/Cuidador/codigo"));
 const AdultosACargo = lazy(() => import("./Pages/Cuidador/adultosACargo"));
+const InfoAdultoCuidador = lazy(() => import("./Pages/Cuidador/infoAdulto"));
+const AjustesCuidador = lazy(() => import("./Pages/Cuidador/AjustesAccess"));
 
 function LayoutConFooter() {
   const location = useLocation();
@@ -129,7 +131,7 @@ function App() {
                   path="medidas-anticipadas"
                   element={<MedidasAnticipadas />}
                 />
-                <Route path="info/adulto" element={<InfoAdulto />} />
+                <Route path="info/adulto" element={<InfoAdultoCuidador />} />
               </Route>
               <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
@@ -143,10 +145,7 @@ function App() {
                 <Route path="info/adulto" element={<InfoAdulto />} />
                 <Route path="medidas-anticipadas" element={<MedidasAnticipadas />} />
                 <Route path="contactos" element={<ContactosFamilia />} />
-                <Route
-                  path="configuracion"
-                  element={<SeccionPendiente titulo="Ajustes" />}
-                />
+                <Route path="configuracion" element={<AjustesCuidador />} />
               </Route>
               <Route path="cuenta" element={<CuentaSegunRol />} />
             </Route>
