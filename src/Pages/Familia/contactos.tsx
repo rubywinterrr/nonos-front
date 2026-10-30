@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../../components/Header";
 import TarjetaContactos from "../../components/TarjetaContacto";
 import {
@@ -23,11 +23,13 @@ import {
 export default function ContactosFamilia() {
   const dialogoInvitacion = useRef<HTMLDialogElement>(null);
   const [cerrandoInvitacion, setCerrandoInvitacion] = useState(false);
+  const [invitacionAbierta, setInvitacionAbierta] = useState(false);
   const [rol, setRol] = useState<"familiar" | "cuidador" | "profesional">("familiar");
   const [alertasInmediatas, setAlertasInmediatas] = useState(true);
 
   const abrirInvitacion = () => {
     setCerrandoInvitacion(false);
+    setInvitacionAbierta(true);
     dialogoInvitacion.current?.showModal();
   };
 
@@ -39,7 +41,19 @@ export default function ContactosFamilia() {
   const finalizarCierreInvitacion = () => {
     dialogoInvitacion.current?.close();
     setCerrandoInvitacion(false);
+    setInvitacionAbierta(false);
   };
+
+  useEffect(() => {
+    if (!invitacionAbierta) return;
+
+    const overflowOriginal = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = overflowOriginal;
+    };
+  }, [invitacionAbierta]);
 
   return (
     <>
