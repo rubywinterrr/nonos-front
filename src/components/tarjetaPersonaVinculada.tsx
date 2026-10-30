@@ -2,8 +2,10 @@ import { Link } from "react-router-dom";
 interface Props {
   nombre: string;
   ocupacion: string;
+  // id del familiar/cuidador: la pantalla de administrar lo usa para saber a quién administra
+  familiarId: string;
 }
-export default function PersonaVinculada({ nombre, ocupacion }: Props) {
+export default function PersonaVinculada({ nombre, ocupacion, familiarId }: Props) {
     // inicial del nombre para el círculo; "Dr" si el nombre empieza con "Dr"
   function PrimeraLetra() {
     if (!nombre) return "?";
@@ -22,7 +24,7 @@ export default function PersonaVinculada({ nombre, ocupacion }: Props) {
           <p className="text-gray-600">{ocupacion}</p>
         </div>
       </div>
-      <Link to={"./administrar-vinculo"} className="text-blue-600 font-semibold text-lg bg-white rounded-xl p-2 border border-slate-300 cursor-pointer hover:bg-gray-100 active:bg-gray-200">
+      <Link to={`/adulto/Administrar-Vinculo?familiar=${familiarId}`} className="text-blue-600 font-semibold text-lg bg-white rounded-xl p-2 border border-slate-300 cursor-pointer hover:bg-gray-100 active:bg-gray-200">
         Administrar
       </Link>
     </div>
