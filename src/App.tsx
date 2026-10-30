@@ -9,9 +9,6 @@ import {
 } from "react-router-dom";
 const HomeAdulto = lazy(() => import("./Pages/Adulto/Home"));
 const HomeCuidador = lazy(() => import("./Pages/Cuidador/Home"));
-const SeccionPendiente = lazy(
-  () => import("./Pages/Cuidador/SeccionPendiente"),
-);
 const HomeFamilia = lazy(() => import("./Pages/Familia/Home"));
 const ContactosFamilia = lazy(() => import("./Pages/Familia/contactos"));
 const Ingreso = lazy(() => import("./Pages/LogIn"));
