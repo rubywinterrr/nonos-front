@@ -25,19 +25,11 @@ export default function MedFam() {
   const nombreUsuario = usuario?.nombreCompleto || "Sofía Gómez";
   const [dialogoAbierto, setDialogoAbierto] = useState(false);
   const [cerrandoDialogo, setCerrandoDialogo] = useState(false);
-  const [tipoCambio, setTipoCambio] = useState("Modificar dosis o frecuencia");
-  const [medicamento, setMedicamento] = useState(
-    "Losartán 50mg — Presión arterial",
-  );
-  const [detalle, setDetalle] = useState(
-    "Tomar 1 comprimido por la mañana y 1/2 por la noche (21:00 hs).",
-  );
-  const [profesional, setProfesional] = useState(
-    "Dra. Valenzuela (cardióloga)",
-  );
-  const [fechaInicio, setFechaInicio] = useState(
-    new Date().toISOString().slice(0, 10),
-  );
+  const [tipoCambio, setTipoCambio] = useState("");
+  const [medicamento, setMedicamento] = useState("");
+  const [detalle, setDetalle] = useState("");
+  const [profesional, setProfesional] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
   const [registros, setRegistros] = useState<Registro[]>([
     {
       fecha: "23 de Octubre de 2026 · 18:30 hs",
@@ -59,6 +51,11 @@ export default function MedFam() {
 
   const abrirDialogo = () => {
     setCerrandoDialogo(false);
+    setTipoCambio("");
+    setMedicamento("");
+    setDetalle("");
+    setProfesional("");
+    setFechaInicio("");
     setDialogoAbierto(true);
     dialogoCambio.current?.showModal();
   };
@@ -84,6 +81,7 @@ export default function MedFam() {
   }, [dialogoAbierto]);
 
   const registrarCambio = () => {
+    if (!tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio) return;
     const nuevaFecha = new Date(`${fechaInicio}T12:00:00`).toLocaleDateString(
       "es-AR",
       {
@@ -92,7 +90,7 @@ export default function MedFam() {
         year: "numeric",
       },
     );
-    const cambioDescrito = detalle.trim() || tipoCambio;
+    const cambioDescrito = detalle.trim();
     setRegistros((actuales) => [
       {
         fecha: `${nuevaFecha} · ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`,
@@ -273,6 +271,7 @@ export default function MedFam() {
                 <input
                   type="radio"
                   name="tipo-cambio"
+                  required
                   checked={tipoCambio === "Modificar dosis o frecuencia"}
                   onChange={() => setTipoCambio("Modificar dosis o frecuencia")}
                   className="mt-1 size-5 accent-[#1550E0]"
@@ -291,6 +290,7 @@ export default function MedFam() {
                 <input
                   type="radio"
                   name="tipo-cambio"
+                  required
                   checked={tipoCambio === "Nuevo medicamento recetado"}
                   onChange={() => setTipoCambio("Nuevo medicamento recetado")}
                   className="mt-1 size-5 accent-[#1550E0]"
@@ -308,6 +308,7 @@ export default function MedFam() {
                 <input
                   type="radio"
                   name="tipo-cambio"
+                  required
                   checked={tipoCambio === "Suspender o finalizar toma"}
                   onChange={() => setTipoCambio("Suspender o finalizar toma")}
                   className="mt-1 size-5 accent-[#1550E0]"
@@ -338,14 +339,16 @@ export default function MedFam() {
                 </label>
                 <select
                   id="medicamento-cambio"
+                  required
                   value={medicamento}
                   onChange={(event) => setMedicamento(event.target.value)}
                   className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
                 >
-                  <option>Losartán 50mg — Presión arterial</option>
-                  <option>Omeprazol 20mg — Protector gástrico</option>
-                  <option>Atorvastatina 10mg — Control de lípidos</option>
-                  <option>Nuevo medicamento</option>
+                  <option value="" disabled>Seleccioná un medicamento</option>
+                  <option value="Losartán 50mg — Presión arterial">Losartán 50mg — Presión arterial</option>
+                  <option value="Omeprazol 20mg — Protector gástrico">Omeprazol 20mg — Protector gástrico</option>
+                  <option value="Atorvastatina 10mg — Control de lípidos">Atorvastatina 10mg — Control de lípidos</option>
+                  <option value="Nuevo medicamento">Nuevo medicamento</option>
                 </select>
               </div>
               <div className="space-y-2">
@@ -357,6 +360,8 @@ export default function MedFam() {
                 </label>
                 <textarea
                   id="detalle-cambio"
+                  placeholder="Ej.: Tomar 1 comprimido por la mañana y 1/2 por la noche (21:00 hs)."
+                  required
                   rows={3}
                   value={detalle}
                   onChange={(event) => setDetalle(event.target.value)}
@@ -372,6 +377,8 @@ export default function MedFam() {
                 </label>
                 <input
                   id="profesional-cambio"
+                  placeholder="Ej.: Dra. Valenzuela (cardióloga)"
+                  required
                   value={profesional}
                   onChange={(event) => setProfesional(event.target.value)}
                   className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
@@ -387,6 +394,7 @@ export default function MedFam() {
                 <input
                   id="fecha-cambio"
                   type="date"
+                  required
                   value={fechaInicio}
                   onChange={(event) => setFechaInicio(event.target.value)}
                   className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
@@ -406,7 +414,8 @@ export default function MedFam() {
               <button
                 type="button"
                 onClick={registrarCambio}
-                className="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D]"
+                disabled={!tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio}
+                className="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <LuCheck className="size-5" />
                 Guardar cambios en la medicación
