@@ -22,8 +22,24 @@ import {
 
 export default function ContactosFamilia() {
   const dialogoInvitacion = useRef<HTMLDialogElement>(null);
+  const [cerrandoInvitacion, setCerrandoInvitacion] = useState(false);
   const [rol, setRol] = useState<"familiar" | "cuidador" | "profesional">("familiar");
   const [alertasInmediatas, setAlertasInmediatas] = useState(true);
+
+  const abrirInvitacion = () => {
+    setCerrandoInvitacion(false);
+    dialogoInvitacion.current?.showModal();
+  };
+
+  const cerrarInvitacion = () => {
+    if (!dialogoInvitacion.current?.open || cerrandoInvitacion) return;
+    setCerrandoInvitacion(true);
+  };
+
+  const finalizarCierreInvitacion = () => {
+    dialogoInvitacion.current?.close();
+    setCerrandoInvitacion(false);
+  };
 
   return (
     <>
@@ -189,7 +205,7 @@ export default function ContactosFamilia() {
         <div className="flex w-full flex-col gap-2">
           <button
             type="button"
-            onClick={() => dialogoInvitacion.current?.showModal()}
+            onClick={abrirInvitacion}
             className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#B7C8F0] bg-[#1550E0] px-4 font-semibold text-white shadow-md hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
           >
             <LuCirclePlus aria-hidden="true" className="size-5 shrink-0" />
@@ -204,12 +220,29 @@ export default function ContactosFamilia() {
     </main>
     <dialog
       ref={dialogoInvitacion}
+      onCancel={(event) => {
+        event.preventDefault();
+        cerrarInvitacion();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) cerrarInvitacion();
+      }}
+      onAnimationEnd={(event) => {
+        if (cerrandoInvitacion && event.animationName === "popup-bajar") {
+          finalizarCierreInvitacion();
+        }
+      }}
       aria-labelledby="titulo-invitar-miembro"
-      className="fixed top-auto bottom-0 left-1/2 z-70 m-0 h-90/100 max-h-dvh w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70"
+      className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 h-90/100 max-h-dvh w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoInvitacion ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
     >
       <div className="flex h-full flex-col">
         <div className="shrink-0 px-4 pt-3 pb-4">
-          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-[#D7DFE6]" />
+          <button
+            type="button"
+            aria-label="Cerrar invitación"
+            onClick={cerrarInvitacion}
+            className="mx-auto mb-4 block h-1.5 w-12 cursor-pointer rounded-full bg-[#D7DFE6] hover:bg-[#B7C8F0] active:bg-[#8EA9D4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+          />
           <div className="flex items-center justify-between gap-3">
             <h2 id="titulo-invitar-miembro" className="text-xl font-bold leading-7">
               Invitar miembro a la red
@@ -217,7 +250,7 @@ export default function ContactosFamilia() {
             <button
               type="button"
               aria-label="Cerrar invitación"
-              onClick={() => dialogoInvitacion.current?.close()}
+              onClick={cerrarInvitacion}
               className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
               <LuX aria-hidden="true" className="size-5" />
@@ -363,7 +396,7 @@ export default function ContactosFamilia() {
             </button>
             <button
               type="button"
-              onClick={() => dialogoInvitacion.current?.close()}
+              onClick={cerrarInvitacion}
               className="min-h-12 w-full cursor-pointer rounded-xl bg-[#E7EDFB] px-4 font-semibold text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
               Descartar y volver

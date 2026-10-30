@@ -183,6 +183,28 @@ html::-webkit-scrollbar {
   }
 }
 
+@keyframes popup-subir {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 100%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes popup-bajar {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 100%);
+  }
+}
+
 .landing-ecg {
   stroke-dasharray: 140;
   animation: landing-ecg 1.5s ease-out infinite;
