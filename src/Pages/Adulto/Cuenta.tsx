@@ -3,6 +3,7 @@ import VueltaAtras from "../../components/vueltaAtras";
 import Desplegable from "../../components/menuDesplegable";
 import { useAuth } from "../../hooks/useAuth";
 import PulseraConexion from "../../components/PulseraConexion";
+import AdultosVinculados from "../../components/AdultosVinculados";
 import calcularEdad from "../../utils/calcularEdad";
 import {
   LuChevronRight,
@@ -99,6 +100,9 @@ export default function PagCuenta() {
           </div>
         </section>
 
+        {/* el cuidador también usa esta pantalla: ve a los adultos que tiene a cargo */}
+        {!esAdulto && <AdultosVinculados />}
+
         {esAdulto && (
           <section
             aria-labelledby="titulo-dispositivos"
@@ -164,8 +168,8 @@ export default function PagCuenta() {
                 <LuPlus aria-hidden="true" className="size-5" /> Registrar botón
               </button>
             </article>
-               {/* conectar, sincronizar y recuperar datos de la pulsera */}
-               <PulseraConexion />
+            {/* conectar, sincronizar y recuperar datos de la pulsera */}
+            <PulseraConexion />
           </section>
         )}
 
