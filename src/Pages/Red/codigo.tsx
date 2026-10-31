@@ -113,6 +113,11 @@ export default function CodigoEmergencia() {
   const segundos = segundosRestantes % 60;
   const progreso = (segundosRestantes / DURACION_CODIGO) * 100;
 
+  // lo que se ve en el recuadro del código
+  let textoCodigo = "— — —";
+  if (cargando) textoCodigo = "…";
+  if (vigente) textoCodigo = codigoConGuion(qr.codigo);
+
   return (
     <main className="mainBody gap-4">
       <Header />
@@ -159,7 +164,7 @@ export default function CodigoEmergencia() {
             Se debe scanear el QR de la pulsera e ingresá este código:
           </p>
           <p className="mt-5 rounded-lg bg-[#E7EDFB] px-4 py-5 text-center text-3xl font-bold tracking-widest text-[#143C94]">
-            {cargando ? "…" : vigente ? codigoConGuion(qr.codigo) : "— — —"}
+            {textoCodigo}
           </p>
           {!cargando && !qr && (
             <p className="mt-3 text-center text-xs leading-4 text-[#E7EDFB]">

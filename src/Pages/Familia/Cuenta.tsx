@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
@@ -11,11 +12,42 @@ import {
   LuMail,
   LuPencil,
   LuPhone,
+  LuUserRound,
   LuUsersRound,
 } from "react-icons/lu";
+import { usuarioService, type AdultoMayorVinculado } from "../../services/usuariosService";
+import { leerAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 
+// cuenta del familiar: sus datos, los adultos mayores con los que está vinculado y la sesión
 export default function CuentaFamilia() {
   const { usuario, logout } = useAuth();
+  const [adultos, setAdultos] = useState<AdultoMayorVinculado[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!usuario) return;
+    const miId = usuario.id;
+
+    // trae los adultos mayores vinculados a este familiar
+    const cargar = async () => {
+      try {
+        setAdultos(await usuarioService.getAdultosMayoresVinculados(miId));
+      } catch (err) {
+        console.error(err);
+        setError("No se pudieron cargar los adultos vinculados.");
+      } finally {
+        setCargando(false);
+      }
+    };
+    cargar();
+  }, [usuario]);
+
+  // "Titular" va en el adulto que se está mirando: el elegido en "Adultos a cargo" o, si no eligió, el primero
+  const elegido = leerAdultoSeleccionado();
+  let idTitular: string | null = null;
+  if (adultos.length > 0) idTitular = adultos[0].id;
+  if (adultos.some((a) => a.id === elegido)) idTitular = elegido;
 
   return (
     <main className="mainBody">
@@ -28,25 +60,28 @@ export default function CuentaFamilia() {
           className="w-full rounded-2xl border border-[#D7DFE6] bg-white p-4 shadow-xs"
         >
           <div className="flex items-center gap-3 border-b border-[#D7DFE6] pb-4">
-            <img
-              src={usuario?.fotoUrl || "/sofia-gomez-cuenta.png"}
-              alt="Foto de perfil de Sofía"
-              className="size-12 shrink-0 rounded-full bg-[#E7EDFB] object-cover"
-            />
+            {usuario?.fotoUrl ? (
+              <img
+                src={usuario.fotoUrl}
+                alt={`Foto de perfil de ${usuario.nombreCompleto}`}
+                className="size-12 shrink-0 rounded-full bg-[#E7EDFB] object-cover"
+              />
+            ) : (
+              <LuUserRound aria-hidden="true" className="size-12 shrink-0 rounded-full bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
+            )}
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg font-bold leading-6">
-                  {usuario?.nombreCompleto || "Sofía Gómez"}
+                  {usuario?.nombreCompleto}
                 </h2>
                 <span className="rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-0.5 text-xs font-bold text-[#0B4C2B]">
                   Titular
                 </span>
               </div>
+              {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Hija" queda fijo */}
               <p className="text-xs font-semibold leading-4 text-[#1550E0]">
-                {usuario?.fechaNacimiento
-                  ? `${calcularEdad(usuario.fechaNacimiento)} años`
-                  : "42 años"}{" "}
-                · Hija
+                {usuario?.fechaNacimiento && `${calcularEdad(usuario.fechaNacimiento)} años · `}
+                Hija
               </p>
             </div>
           </div>
@@ -61,7 +96,7 @@ export default function CuentaFamilia() {
                   Correo electrónico
                 </p>
                 <p className="break-all text-sm font-semibold leading-5">
-                  {usuario?.email || "sofia.gomez1972@gmail.com"}
+                  {usuario?.email}
                 </p>
               </div>
             </div>
@@ -75,7 +110,7 @@ export default function CuentaFamilia() {
                   Teléfono vinculado
                 </p>
                 <p className="text-sm font-semibold leading-5">
-                  {usuario?.telefono || "+54 11 4455-8899"}
+                  {usuario?.telefono || "Sin dato"}
                 </p>
               </div>
             </div>
@@ -102,59 +137,72 @@ export default function CuentaFamilia() {
               </span>
             </h2>
             <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-semibold text-[#435059]">
-              1 asignado
+              {adultos.length} {adultos.length === 1 ? "asignado" : "asignados"}
             </span>
           </div>
-          <article className="w-full rounded-2xl border border-[#D7DFE6] bg-white p-4 shadow-xs">
-            <div className="flex items-center gap-3 border-b border-[#D7DFE6] pb-4">
-              <img
-                src="/jose-perez-cuenta.png"
-                alt="Foto de José Pérez"
-                className="size-12 shrink-0 rounded-full bg-[#E7EDFB] object-cover"
-              />
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-bold leading-6">José Pérez</h3>
-                  <span className="rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-0.5 text-xs font-bold text-[#0B4C2B]">
-                    Titular
-                  </span>
-                </div>
-                <p className="text-xs font-semibold leading-4 text-[#1550E0]">
-                  78 años · Adulto Mayor
-                </p>
-              </div>
-            </div>
-            <div className="space-y-2.5 pt-3">
-              <div className="flex items-start gap-2.5">
-                <LuMail
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0 text-[#1550E0]"
-                />
+          {cargando && <p className="text-center text-sm text-[#435059]">Cargando…</p>}
+          {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+          {!cargando && !error && adultos.length === 0 && (
+            <p className="rounded-2xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>
+          )}
+          {adultos.map((adulto) => (
+            <article key={adulto.id} className="w-full rounded-2xl border border-[#D7DFE6] bg-white p-4 shadow-xs">
+              <div className="flex items-center gap-3 border-b border-[#D7DFE6] pb-4">
+                {adulto.fotoUrl ? (
+                  <img
+                    src={adulto.fotoUrl}
+                    alt={`Foto de ${adulto.nombreCompleto}`}
+                    className="size-12 shrink-0 rounded-full bg-[#E7EDFB] object-cover"
+                  />
+                ) : (
+                  <LuUserRound aria-hidden="true" className="size-12 shrink-0 rounded-full bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
+                )}
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase leading-4 text-[#435059]">
-                    Correo electrónico
-                  </p>
-                  <p className="break-all text-sm font-semibold leading-5">
-                    jose.perez1946@gmail.com
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <LuPhone
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0 text-[#1550E0]"
-                />
-                <div>
-                  <p className="text-xs font-semibold uppercase leading-4 text-[#435059]">
-                    Teléfono vinculado
-                  </p>
-                  <p className="text-sm font-semibold leading-5">
-                    +54 11 4455-8899
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-lg font-bold leading-6">{adulto.nombreCompleto}</h3>
+                    {adulto.id === idTitular && (
+                      <span className="rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-0.5 text-xs font-bold text-[#0B4C2B]">
+                        Titular
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs font-semibold leading-4 text-[#1550E0]">
+                    {adulto.fechaNacimiento && `${calcularEdad(adulto.fechaNacimiento)} años · `}Adulto Mayor
                   </p>
                 </div>
               </div>
-            </div>
-          </article>
+              <div className="space-y-2.5 pt-3">
+                <div className="flex items-start gap-2.5">
+                  <LuMail
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-[#1550E0]"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase leading-4 text-[#435059]">
+                      Correo electrónico
+                    </p>
+                    <p className="break-all text-sm font-semibold leading-5">
+                      {adulto.email}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <LuPhone
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-[#1550E0]"
+                  />
+                  <div>
+                    <p className="text-xs font-semibold uppercase leading-4 text-[#435059]">
+                      Teléfono vinculado
+                    </p>
+                    <p className="text-sm font-semibold leading-5">
+                      {adulto.telefono || "Sin dato"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
         </section>
 
         <section
@@ -174,6 +222,7 @@ export default function CuentaFamilia() {
           <article className="rounded-xl bg-[#E9EEF2] p-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-xs font-semibold">Contraseña de acceso</h3>
+              {/* PENDIENTE BACK: no hay dato de cuándo se cambió la contraseña */}
               <span className="rounded border border-[#D7DFE6] bg-white px-2 py-0.5 text-xs text-[#435059]">
                 Hace 3 meses
               </span>
@@ -182,6 +231,7 @@ export default function CuentaFamilia() {
               Puedes cambiar tu contraseña o solicitar asistencia si no la
               recuerdas con claridad.
             </p>
+            {/* PENDIENTE BACK: no hay endpoint para cambiar o restablecer la contraseña */}
             <button
               type="button"
               className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#9DAFBE] bg-white px-3 text-xs font-bold text-[#1550E0] hover:bg-[#E7EDFB] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
@@ -190,6 +240,7 @@ export default function CuentaFamilia() {
               contraseña
             </button>
           </article>
+          {/* PENDIENTE BACK: no existe el acceso con huella o PIN */}
           <div className="flex items-center gap-3 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-3">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#1550E0]">
               <LuFingerprint aria-hidden="true" className="size-6" />
