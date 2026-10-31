@@ -14,7 +14,12 @@ function textoRolInvitacion(invitacion: Invitacion) {
 
 // bloque para el home del familiar y del cuidador: invitaciones pendientes con Aceptar y Rechazar,
 // o un aviso si todavía no tiene ningún adulto mayor vinculado
-export default function InvitacionesPendientes() {
+interface Props {
+  // se llama cuando se acepta una invitación, para que la pantalla recargue los datos del adulto
+  onAceptada?: () => void;
+}
+
+export default function InvitacionesPendientes({ onAceptada }: Props) {
   const { usuario } = useAuth();
   const [invitaciones, setInvitaciones] = useState<Invitacion[]>([]);
   const [tieneAdultos, setTieneAdultos] = useState<boolean>(true);
@@ -64,6 +69,7 @@ export default function InvitacionesPendientes() {
       await invitacionesService.aceptarInvitacion(id);
       setInvitaciones(invitaciones.filter((invitacion) => invitacion.id !== id));
       setTieneAdultos(true);
+      if (onAceptada) onAceptada();
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : "No se pudo aceptar la invitación");
