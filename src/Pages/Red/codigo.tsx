@@ -12,23 +12,103 @@ import {
   LuShieldCheck,
   LuTimer,
 } from "react-icons/lu";
+import { useAuth } from "../../hooks/useAuth";
+import { usuarioService, type AdultoMayorVinculado, type CodigoQR } from "../../services/usuariosService";
+import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 
 const DURACION_CODIGO = 30 * 60;
-const TIEMPO_INICIAL = 30 * 60;
 
+// "987212" → "987 - 212", como en el diseño
+function codigoConGuion(codigo: string) {
+  return `${codigo.slice(0, 3)} - ${codigo.slice(3)}`;
+}
+
+// pantalla del familiar/cuidador: el código de emergencia del adulto vinculado que mira
 export default function CodigoEmergencia() {
-  const [segundosRestantes, setSegundosRestantes] = useState(TIEMPO_INICIAL);
+  const { usuario } = useAuth();
+  const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
+  const [qr, setQr] = useState<CodigoQR | null>(null);
+  const [cargando, setCargando] = useState(true);
+  const [mensaje, setMensaje] = useState<string | null>(null);
+  const [segundosRestantes, setSegundosRestantes] = useState(0);
 
   useEffect(() => {
-    const temporizador = window.setInterval(() => {
-      setSegundosRestantes((segundos) =>
-        segundos > 0 ? segundos - 1 : DURACION_CODIGO,
-      );
-    }, 1000);
+    if (!usuario) return;
+    const miId = usuario.id;
 
+    // trae el adulto y su código.
+    // PENDIENTE BACK: GET /usuarios/:id/qr solo deja entrar al propio adulto (requireSelf),
+    // así que a un familiar o cuidador hoy le responde error y el código no se puede mostrar
+    const cargar = async () => {
+      try {
+        const elegido = await buscarAdultoSeleccionado(miId);
+        setAdulto(elegido);
+        if (!elegido) return;
+        setQr(await usuarioService.getQR(elegido.id));
+      } catch (err) {
+        console.error(err);
+        setQr(null);
+      } finally {
+        setCargando(false);
+      }
+    };
+    cargar();
+  }, [usuario]);
+
+  useEffect(() => {
+    if (!qr) return;
+    const vence = new Date(qr.expiraEn).getTime();
+
+    // cada segundo recalcula cuánto falta para que venza el código
+    const actualizar = () => {
+      const faltan = Math.round((vence - Date.now()) / 1000);
+      setSegundosRestantes(faltan > 0 ? faltan : 0);
+    };
+    actualizar();
+    const temporizador = window.setInterval(actualizar, 1000);
     return () => window.clearInterval(temporizador);
-  }, []);
+  }, [qr]);
 
+  // pide un código nuevo (invalida el anterior)
+  const generarNuevo = async () => {
+    if (!adulto) return;
+    setMensaje(null);
+    try {
+      setQr(await usuarioService.regenerarQR(adulto.id));
+    } catch (err) {
+      console.error(err);
+      setMensaje(`Por ahora el código nuevo solo lo puede generar ${primerNombre} desde su app.`);
+    }
+  };
+
+  // copia el código al portapapeles
+  const copiar = async () => {
+    if (!qr) return;
+    try {
+      await navigator.clipboard.writeText(qr.codigo);
+      setMensaje("Código copiado.");
+    } catch {
+      setMensaje("No se pudo copiar el código.");
+    }
+  };
+
+  // abre el menú de compartir del celular; si no hay, lo copia
+  const compartir = async () => {
+    if (!qr) return;
+    if (!navigator.share) {
+      copiar();
+      return;
+    }
+    try {
+      await navigator.share({ text: `Código de emergencia de ${adulto?.nombreCompleto}: ${qr.codigo}` });
+    } catch {
+      // si la persona cierra el menú de compartir no pasa nada
+    }
+  };
+
+  const nombreAdulto = adulto ? adulto.nombreCompleto : "";
+  const primerNombre = nombreAdulto.split(" ")[0];
+  const vigente = qr !== null && qr.isActivo && segundosRestantes > 0;
   const minutos = Math.floor(segundosRestantes / 60);
   const segundos = segundosRestantes % 60;
   const progreso = (segundosRestantes / DURACION_CODIGO) * 100;
@@ -48,7 +128,7 @@ export default function CodigoEmergencia() {
             Acceso Temporal Encriptado
           </span>
           <p className="text-sm leading-5 text-[#435059]">
-            Código temporal vinculado a la pulsera física de Roberto Gómez.
+            Código temporal vinculado a la pulsera física de {nombreAdulto}.
           </p>
         </section>
 
@@ -64,17 +144,28 @@ export default function CodigoEmergencia() {
               <LuFileKey2 aria-hidden="true" className="size-5" />
               Código de acceso médico
             </h2>
-            <span className="flex items-center gap-1 rounded-full bg-[#E8FAF1] px-2 py-1 text-xs font-bold text-[#0B4C2B]">
-              <span className="size-1.5 rounded-full bg-[#0B6D3C]" /> Activo
-            </span>
+            {vigente ? (
+              <span className="flex items-center gap-1 rounded-full bg-[#E8FAF1] px-2 py-1 text-xs font-bold text-[#0B4C2B]">
+                <span className="size-1.5 rounded-full bg-[#0B6D3C]" /> Activo
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 rounded-full bg-[#E9EEF2] px-2 py-1 text-xs font-bold text-[#435059]">
+                <span className="size-1.5 rounded-full bg-[#435059]" /> Inactivo
+              </span>
+            )}
           </div>
 
           <p className="mt-5 text-center text-sm font-semibold leading-5">
             Se debe scanear el QR de la pulsera e ingresá este código:
           </p>
           <p className="mt-5 rounded-lg bg-[#E7EDFB] px-4 py-5 text-center text-3xl font-bold tracking-widest text-[#143C94]">
-            9 8 7 - 212
+            {cargando ? "…" : vigente ? codigoConGuion(qr.codigo) : "— — —"}
           </p>
+          {!cargando && !qr && (
+            <p className="mt-3 text-center text-xs leading-4 text-[#E7EDFB]">
+              Por ahora el código solo se ve en la app de {primerNombre}.
+            </p>
+          )}
 
           <div className="mt-5 rounded-lg border border-[#C8D8E9] p-3">
             <div className="flex items-center justify-between gap-2 text-xs font-semibold">
@@ -107,13 +198,17 @@ export default function CodigoEmergencia() {
           <div className="mt-4 grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-3 text-sm font-semibold text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              onClick={copiar}
+              disabled={!vigente}
+              className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-3 text-sm font-semibold text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuClipboard aria-hidden="true" className="size-4" /> Copiar
             </button>
             <button
               type="button"
-              className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-3 text-sm font-semibold text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              onClick={compartir}
+              disabled={!vigente}
+              className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#E7EDFB] px-3 text-sm font-semibold text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <LuShare2 aria-hidden="true" className="size-4" /> Compartir
             </button>
@@ -142,7 +237,7 @@ export default function CodigoEmergencia() {
               <div>
                 <h3 className="text-sm font-semibold">Escaneo de pulsera</h3>
                 <p className="text-xs leading-4 text-[#435059]">
-                  Escanea el código QR de la pulsera de José.
+                  Escanea el código QR de la pulsera de {primerNombre}.
                 </p>
               </div>
             </li>
@@ -153,7 +248,7 @@ export default function CodigoEmergencia() {
               <div>
                 <h3 className="text-sm font-semibold">Ingreso del código</h3>
                 <p className="text-xs leading-4 text-[#435059]">
-                  Ingresá el código de 5 dígitos en la pantalla de validación.
+                  Ingresá el código de 6 dígitos en la pantalla de validación.
                 </p>
               </div>
             </li>
@@ -194,6 +289,7 @@ export default function CodigoEmergencia() {
               <h3 className="text-xs font-semibold">
                 Último acceso registrado
               </h3>
+              {/* PENDIENTE BACK: el back no registra los accesos al código, queda el texto del diseño */}
               <p className="text-xs leading-4 text-[#435059]">
                 12 de Oct a las 17:40 hs por Personal de ambulancia SAME.
               </p>
@@ -202,8 +298,11 @@ export default function CodigoEmergencia() {
         </section>
 
         <div className="flex flex-col items-center gap-2 pb-4">
+          {mensaje && <p role="status" className="w-full rounded-xl bg-white p-3 text-center text-sm font-semibold text-[#435059]">{mensaje}</p>}
           <button
             type="button"
+            onClick={generarNuevo}
+            disabled={!adulto}
             className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 text-base font-bold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
           >
             <LuRefreshCw aria-hidden="true" className="size-5" /> Generar nuevo
