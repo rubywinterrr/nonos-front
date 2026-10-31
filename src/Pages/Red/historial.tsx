@@ -3,6 +3,10 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import TarjetaHistorial, { type CategoriaHistorial } from "../../components/TarjetaHistorial";
 import { useAuth } from "../../hooks/useAuth";
+import { eventosHistorialService, type EventoHistorial } from "../../services/eventosHistorialService";
+import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
+import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import calcularEdad from "../../utils/calcularEdad";
 import {
   LuActivity,
   LuCalendarDays,
@@ -55,36 +59,115 @@ const obtenerFechaHoraLocalParaInput = () => {
 };
 
 type Filtro = "todos" | CategoriaHistorial;
-interface RegistroHistorial {
-  fecha: string;
-  hora: string;
-  tipo: string;
-  detalle: string;
-  autor: string;
-  categoria: CategoriaHistorial;
+
+// tipos que se pueden elegir al registrar (más "Observación prioritaria", que es la cotidiana con el interruptor prendido).
+// PENDIENTE BACK: el evento no tiene campo tipo, así que se guarda al principio de la descripción ("Visita familiar: ...")
+const TIPOS = ["Observación cotidiana", "Observación prioritaria", "Episodio/Incidente", "Visita familiar", "Cambio medicación"];
+
+// a qué filtro pertenece cada tipo
+function categoriaDelTipo(tipo: string): CategoriaHistorial {
+  if (tipo === "Episodio/Incidente") return "episodios";
+  if (tipo === "Cambio medicación") return "medicacion";
+  return "visitas";
+}
+
+// separa "Visita familiar: vino a almorzar" en tipo y texto; si no empieza con un tipo conocido es una observación
+function leerDescripcion(descripcion: string) {
+  for (const tipo of TIPOS) {
+    if (descripcion.startsWith(`${tipo}: `)) {
+      return { tipo, texto: descripcion.slice(tipo.length + 2) };
+    }
+  }
+  return { tipo: "Observación cotidiana", texto: descripcion };
+}
+
+// día del registro: "Hoy, 24 de octubre", "Ayer, 23 de octubre" o "20 de octubre"
+function diaDelRegistro(fecha: string) {
+  const dia = new Date(fecha);
+  const texto = dia.toLocaleDateString("es-AR", { day: "numeric", month: "long" });
+  const hoy = new Date();
+  const ayer = new Date();
+  ayer.setDate(hoy.getDate() - 1);
+  if (dia.toDateString() === hoy.toDateString()) return `Hoy, ${texto}`;
+  if (dia.toDateString() === ayer.toDateString()) return `Ayer, ${texto}`;
+  return texto;
+}
+
+// hora del registro: "14:15 hs"
+function horaDelRegistro(fecha: string) {
+  return `${new Date(fecha).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`;
 }
 
 export default function Historial() {
   const { usuario } = useAuth();
   const dialogoRef = useRef<HTMLDialogElement>(null);
   const reconocimientoRef = useRef<ReconocimientoVoz | null>(null);
-  const nombreUsuario = usuario?.nombreCompleto || "Sofía Gómez";
+  const nombreUsuario = usuario ? usuario.nombreCompleto : "";
   const [filtro, setFiltro] = useState<Filtro>("todos");
   const [dialogoAbierto, setDialogoAbierto] = useState(false);
   const [cerrandoDialogo, setCerrandoDialogo] = useState(false);
-  const [nuevoTipo, setNuevoTipo] = useState<CategoriaHistorial>("episodios");
   const [tipoSeleccionado, setTipoSeleccionado] = useState("Observación cotidiana");
   const [nuevoDetalle, setNuevoDetalle] = useState("");
   const [momentoSuceso, setMomentoSuceso] = useState(obtenerFechaHoraLocalParaInput);
   const [dictando, setDictando] = useState(false);
   const [errorDictado, setErrorDictado] = useState("");
   const [prioritaria, setPrioritaria] = useState(false);
-  const [registros, setRegistros] = useState<RegistroHistorial[]>([
-    { fecha: "Hoy, 24 de Octubre", hora: "14:15 hs", tipo: "Episodio resuelto", detalle: "Pulsación de botón de emergencia. Atendido de inmediato en domicilio por cuidadora María. Oxígeno en sangre: 97 %, dentro de parámetros habituales.", autor: "Sistema NONOS", categoria: "episodios" },
-    { fecha: "Ayer, 23 de Octubre", hora: "18:30 hs", tipo: "Cambio médico", detalle: "Ajuste de dosis en Losartán: pasa de 25mg a 50mg por la mañana tras control mensual.", autor: "José Perez", categoria: "medicacion" },
-    { fecha: "20 de Octubre", hora: "10:00 hs", tipo: "Consulta médica", detalle: "Acompañamiento a consulta en consultorio de cabecera con Dr. Esteban Martínez. Laboratorio de rutina solicitado para noviembre.", autor: "Sofía Gómez (Hija)", categoria: "visitas" },
-    { fecha: "18 de Octubre", hora: "13:00 hs", tipo: "Observación", detalle: "Refirió molestia leve en rodilla derecha al caminar. Se le colocó rodillera elástica recomendada por traumatólogo.", autor: "María Rodríguez (Cuidadora)", categoria: "visitas" },
-  ]);
+  const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
+  const [eventos, setEventos] = useState<EventoHistorial[]>([]);
+  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [errorGuardar, setErrorGuardar] = useState<string | null>(null);
+  // se suma 1 después de guardar, para volver a traer el historial
+  const [recargar, setRecargar] = useState(0);
+
+  useEffect(() => {
+    if (!usuario) return;
+    const miId = usuario.id;
+
+    // trae el adulto que se mira, su historial y su red (para saber quién registró cada cosa)
+    const cargar = async () => {
+      setError(null);
+      try {
+        const elegido = await buscarAdultoSeleccionado(miId);
+        setAdulto(elegido);
+        if (!elegido) return;
+        setEventos(await eventosHistorialService.getHistorial(elegido.id));
+        setVinculos(await usuarioService.getVinculos(elegido.id));
+      } catch (err) {
+        console.error(err);
+        setError("No se pudo cargar el historial.");
+      } finally {
+        setCargando(false);
+      }
+    };
+    cargar();
+  }, [usuario, recargar]);
+
+  // nombre de quien registró: yo, el adulto o alguien de su red
+  const nombreDelAutor = (autorId: string) => {
+    if (usuario && autorId === usuario.id) return usuario.nombreCompleto;
+    if (adulto && autorId === adulto.id) return adulto.nombreCompleto;
+    const deLaRed = vinculos.find((v) => v.familiarId === autorId);
+    if (deLaRed) return deLaRed.familiar.nombreCompleto;
+    return "Otra persona de su red";
+  };
+
+  // los eventos del back pasados al formato de la tarjeta
+  const registros = eventos.map((evento) => {
+    const { tipo, texto } = leerDescripcion(evento.descripcion);
+    return {
+      id: evento.id,
+      fecha: diaDelRegistro(evento.fecha),
+      hora: horaDelRegistro(evento.fecha),
+      tipo,
+      detalle: texto,
+      autor: nombreDelAutor(evento.authorId),
+      categoria: categoriaDelTipo(tipo),
+    };
+  });
+
 
   const abrirDialogo = () => {
     setCerrandoDialogo(false);
@@ -161,28 +244,33 @@ export default function Historial() {
     }
   };
 
-  const registrarCambio = () => {
-    if (!nuevoDetalle.trim()) return;
+  // guarda la observación en el historial del adulto
+  const registrarCambio = async () => {
+    if (!nuevoDetalle.trim() || !adulto) return;
     const fechaSuceso = new Date(momentoSuceso);
     if (Number.isNaN(fechaSuceso.getTime())) return;
-    const ahora = new Date();
-    const mismoDia = fechaSuceso.toDateString() === ahora.toDateString();
-    const fecha = fechaSuceso.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: fechaSuceso.getFullYear() === ahora.getFullYear() ? undefined : "numeric" });
-    const hora = `${fechaSuceso.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`;
-    const categoria: CategoriaHistorial = tipoSeleccionado === "Episodio/Incidente"
-      ? "episodios"
-      : tipoSeleccionado === "Cambio medicación"
-        ? "medicacion"
-        : tipoSeleccionado === "Visita familiar" || tipoSeleccionado === "Observación cotidiana"
-          ? "visitas"
-          : nuevoTipo;
     const tipo = prioritaria && tipoSeleccionado === "Observación cotidiana" ? "Observación prioritaria" : tipoSeleccionado;
-    setRegistros((actuales) => [{ fecha: `${mismoDia ? "Hoy, " : ""}${fecha}`, hora, tipo, detalle: nuevoDetalle.trim(), autor: nombreUsuario, categoria }, ...actuales]);
-    setNuevoDetalle("");
-    setMomentoSuceso(obtenerFechaHoraLocalParaInput());
-    setPrioritaria(false);
-    reconocimientoRef.current?.stop();
-    cerrarDialogo();
+    setGuardando(true);
+    setErrorGuardar(null);
+    try {
+      // PENDIENTE BACK: "prioritaria" queda guardada en el texto, pero el back todavía no avisa a nadie
+      await eventosHistorialService.crearEvento({
+        usuarioId: adulto.id,
+        descripcion: `${tipo}: ${nuevoDetalle.trim()}`,
+        fecha: fechaSuceso.toISOString(),
+      });
+      setNuevoDetalle("");
+      setMomentoSuceso(obtenerFechaHoraLocalParaInput());
+      setPrioritaria(false);
+      reconocimientoRef.current?.stop();
+      cerrarDialogo();
+      setRecargar(recargar + 1);
+    } catch (err) {
+      console.error(err);
+      setErrorGuardar("No se pudo guardar la observación. Probá de nuevo.");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const fechaHoraSeleccionada = new Date(momentoSuceso);
@@ -208,7 +296,7 @@ export default function Historial() {
             <p className="text-sm font-semibold leading-5 text-[#435059]">Registro de acontecimientos relevantes</p>
             <div className="flex items-start gap-4 rounded-xl bg-white p-4">
               <LuInfo aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-[#435059]" />
-              <p className="text-sm leading-5 text-[#435059]">Bitácora cronológica con episodios importantes, cambios médicos, visitas y situaciones que hayan afectado el cuidado de José Perez.</p>
+              <p className="text-sm leading-5 text-[#435059]">Bitácora cronológica con episodios importantes, cambios médicos, visitas y situaciones que hayan afectado el cuidado de {adulto ? adulto.nombreCompleto : "el adulto"}.</p>
             </div>
           </section>
 
@@ -219,11 +307,14 @@ export default function Historial() {
           </div>
 
           <section aria-label="Acontecimientos registrados" className="flex flex-col gap-4">
-            {registrosVisibles.map((registro, indice) => <TarjetaHistorial key={`${registro.fecha}-${registro.hora}-${indice}`} {...registro} />)}
-            {registrosVisibles.length === 0 && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">No hay registros en esta categoría.</p>}
+            {cargando && <p className="text-center text-sm text-[#435059]">Cargando historial…</p>}
+            {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+            {!cargando && !adulto && !error && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">Todavía no estás vinculado a ningún adulto mayor.</p>}
+            {registrosVisibles.map((registro) => <TarjetaHistorial key={registro.id} fecha={registro.fecha} hora={registro.hora} tipo={registro.tipo} detalle={registro.detalle} autor={registro.autor} categoria={registro.categoria} />)}
+            {!cargando && adulto && registrosVisibles.length === 0 && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">No hay registros en esta categoría.</p>}
           </section>
 
-          <button type="button" onClick={abrirDialogo} className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#B7C8F0] bg-[#1550E0] px-4 text-base font-semibold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"><LuPlus aria-hidden="true" className="size-5" />Registrar cambio</button>
+          <button type="button" onClick={abrirDialogo} disabled={!adulto} className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#B7C8F0] bg-[#1550E0] px-4 text-base font-semibold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"><LuPlus aria-hidden="true" className="size-5" />Registrar cambio</button>
         </div>
       </main>
 
@@ -252,11 +343,16 @@ export default function Historial() {
 
           <div className="min-h-0 flex-1 space-y-4 overflow-x-hidden overflow-y-auto px-4 pb-6">
             <div className="flex items-center gap-3 rounded-2xl border border-[#D7DFE6] bg-[#F6F8FA] p-4 shadow-xs">
-              <img src="/jose-perez-contactos.jpeg" alt="" className="size-12 shrink-0 rounded-full object-cover" />
+              {adulto?.fotoUrl ? (
+                <img src={adulto.fotoUrl} alt="" className="size-12 shrink-0 rounded-full object-cover" />
+              ) : (
+                <LuUserRound aria-hidden="true" className="size-12 shrink-0 rounded-full bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
+              )}
               <div className="min-w-0">
                 <span className="mb-1 inline-flex rounded-full bg-[#E7EDFB] px-2 py-0.5 text-xs font-bold uppercase text-[#0D328B]">Paciente asignado</span>
-                <h3 className="font-bold leading-5">José Pérez</h3>
-                <p className="text-sm font-semibold leading-5 text-[#435059]">Papá · 78 años</p>
+                <h3 className="font-bold leading-5">{adulto?.nombreCompleto}</h3>
+                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
+                <p className="text-sm font-semibold leading-5 text-[#435059]">Papá{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}</p>
               </div>
             </div>
 
@@ -264,16 +360,16 @@ export default function Historial() {
               <fieldset>
                 <legend className="mb-2 text-xs font-bold uppercase tracking-wide">Tipo de evento <span className="text-amber-700">*</span></legend>
                 <div className="grid grid-cols-2 gap-2">
-                  <button type="button" aria-pressed={tipoSeleccionado === "Observación cotidiana"} onClick={() => { setTipoSeleccionado("Observación cotidiana"); setNuevoTipo("visitas"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Observación cotidiana" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
+                  <button type="button" aria-pressed={tipoSeleccionado === "Observación cotidiana"} onClick={() => { setTipoSeleccionado("Observación cotidiana"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Observación cotidiana" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
                     <LuClipboardList aria-hidden="true" className="size-4 shrink-0" />Observación cotidiana
                   </button>
-                  <button type="button" aria-pressed={tipoSeleccionado === "Episodio/Incidente"} onClick={() => { setTipoSeleccionado("Episodio/Incidente"); setNuevoTipo("episodios"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Episodio/Incidente" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
+                  <button type="button" aria-pressed={tipoSeleccionado === "Episodio/Incidente"} onClick={() => { setTipoSeleccionado("Episodio/Incidente"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Episodio/Incidente" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
                     <LuActivity aria-hidden="true" className="size-4 shrink-0" />Episodio/Incidente
                   </button>
-                  <button type="button" aria-pressed={tipoSeleccionado === "Visita familiar"} onClick={() => { setTipoSeleccionado("Visita familiar"); setNuevoTipo("visitas"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Visita familiar" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
+                  <button type="button" aria-pressed={tipoSeleccionado === "Visita familiar"} onClick={() => { setTipoSeleccionado("Visita familiar"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Visita familiar" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
                     <LuUsersRound aria-hidden="true" className="size-4 shrink-0" />Visita familiar
                   </button>
-                  <button type="button" aria-pressed={tipoSeleccionado === "Cambio medicación"} onClick={() => { setTipoSeleccionado("Cambio medicación"); setNuevoTipo("medicacion"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Cambio medicación" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
+                  <button type="button" aria-pressed={tipoSeleccionado === "Cambio medicación"} onClick={() => { setTipoSeleccionado("Cambio medicación"); }} className={`flex min-h-12 cursor-pointer items-center justify-center gap-1 rounded-xl border p-2 text-xs font-semibold transition-colors hover:bg-[#D3E0F8] active:bg-[#B7C8F0] ${tipoSeleccionado === "Cambio medicación" ? "border-[#1550E0] bg-[#1550E0] text-white hover:bg-[#1245BF]" : "border-[#7E8C97] bg-[#E9EEF2] text-[#16222C]"}`}>
                     <LuPill aria-hidden="true" className="size-4 shrink-0" />Cambio medicación
                   </button>
                 </div>
@@ -317,8 +413,10 @@ export default function Historial() {
               </span>
             </button>
 
+            {errorGuardar && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{errorGuardar}</p>}
+
             <div className="flex flex-col gap-3 pt-1">
-              <button type="button" disabled={!nuevoDetalle.trim()} onClick={registrarCambio} className="flex min-h-13 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 text-base font-semibold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-not-allowed disabled:opacity-50"><LuCheck aria-hidden="true" className="size-4" />Guardar observación</button>
+              <button type="button" disabled={!nuevoDetalle.trim() || guardando} onClick={registrarCambio} className="flex min-h-13 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 text-base font-semibold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-not-allowed disabled:opacity-50"><LuCheck aria-hidden="true" className="size-4" />{guardando ? "Guardando…" : "Guardar observación"}</button>
               <button type="button" onClick={cerrarDialogo} className="flex min-h-13 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] px-4 text-base font-semibold text-[#0D328B] hover:bg-[#D3E0F8] active:border-[#1550E0] active:bg-[#B7C8F0]"><LuX aria-hidden="true" className="size-4" />Descartar</button>
             </div>
           </div>
