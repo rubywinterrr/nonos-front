@@ -34,18 +34,12 @@ import RutaPorRol from "./components/RutaPorRol";
 const ConfigCuenta1 = lazy(() => import("./Pages/configCuenta1"));
 const ConfigCuenta2 = lazy(() => import("./Pages/configCuenta2"));
 const ConfigFam = lazy(() => import("./Pages/Familia/configuracion"));
-const MedFam = lazy(() => import("./Pages/Familia/med"));
-const InfoAdulto = lazy(() => import("./Pages/Familia/infoAdulto"));
-const Historial = lazy(() => import("./Pages/Familia/historial"));
-const CodigoEmergencia = lazy(() => import("./Pages/Familia/codigo"));
-const MedidasAnticipadas = lazy(
-  () => import("./Pages/Familia/medidasAnticipadas"),
-);
-const MedCuidador = lazy(() => import("./Pages/Cuidador/med"));
-const HistorialCuidador = lazy(() => import("./Pages/Cuidador/historial"));
-const CodigoCuidador = lazy(() => import("./Pages/Cuidador/codigo"));
+const MedFam = lazy(() => import("./Pages/Red/med"));
+const InfoAdulto = lazy(() => import("./Pages/Red/infoAdulto"));
+const Historial = lazy(() => import("./Pages/Red/historial"));
+const CodigoEmergencia = lazy(() => import("./Pages/Red/codigo"));
+const MedidasAnticipadas = lazy(() => import("./Pages/Red/medidasAnticipadas"));
 const AdultosACargo = lazy(() => import("./Pages/Cuidador/adultosACargo"));
-const InfoAdultoCuidador = lazy(() => import("./Pages/Cuidador/infoAdulto"));
 const AjustesCuidador = lazy(() => import("./Pages/Cuidador/AjustesAccess"));
 // Signos vitales: la misma pantalla para los 3 roles (muestra al adulto que se está mirando)
 const SignosAdulto = lazy(() => import("./Pages/Adulto/SignosVitales"));
@@ -149,11 +143,11 @@ function App() {
                 <Route path="signos/oxigeno" element={<DetalleOxigeno />} />
                 <Route path="signos/pasos" element={<DetallePasos />} />
                 <Route path="signos/sueno" element={<DetalleSueno />} />
-                <Route path="medicamentos" element={<MedCuidador />} />
-                <Route path="historial/adulto" element={<HistorialCuidador />} />
-                <Route path="codigo-emergencia" element={<CodigoCuidador />} />
+                <Route path="medicamentos" element={<MedFam />} />
+                <Route path="historial/adulto" element={<Historial />} />
+                <Route path="codigo-emergencia" element={<CodigoEmergencia />} />
                 <Route path="adultos-a-cargo" element={<AdultosACargo />} />
-                <Route path="info/adulto" element={<InfoAdultoCuidador />} />
+                <Route path="info/adulto" element={<InfoAdulto />} />
                 {/* todavía sin diseño propio del cuidador: usan las del familiar */}
                 <Route path="medidas-anticipadas" element={<MedidasAnticipadas />} />
                 <Route path="contactos" element={<ContactosFamilia />} />
