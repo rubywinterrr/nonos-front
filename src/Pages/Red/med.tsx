@@ -4,6 +4,10 @@ import VueltaAtras from "../../components/vueltaAtras";
 import MedicamentoHabitual from "../../components/MedicamentoHabitual";
 import RegistroMedicacion from "../../components/RegistroMedicacion";
 import { useAuth } from "../../hooks/useAuth";
+import { medicamentosService, type CambioMedicacion, type Medicamento } from "../../services/medicamentosService";
+import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
+import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import calcularEdad from "../../utils/calcularEdad";
 import {
   LuCalendarDays,
   LuCheck,
@@ -13,51 +17,158 @@ import {
   LuX,
 } from "react-icons/lu";
 
-interface Registro {
-  fecha: string;
-  detalle: string;
-  autor: string;
+// un cambio del historial junto con el nombre del remedio al que pertenece
+interface CambioConRemedio {
+  cambio: CambioMedicacion;
+  remedio: string;
 }
 
+// fecha larga: "23 de octubre de 2026 · 18:30 hs"
+function fechaLarga(fecha: string) {
+  const d = new Date(fecha);
+  const dia = d.toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" });
+  const hora = d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${dia} · ${hora} hs`;
+}
+
+// fecha sin hora: "20 de octubre de 2026"
+function fechaSinHora(fecha: string) {
+  return new Date(fecha).toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" });
+}
+
+// el back guarda el cambio como texto JSON ({"dosis":"50 mg","horariosDelDia":["08:00"]}): se pasa a una frase
+function textoDelCambio(remedio: string, cambio: string) {
+  try {
+    const datos = JSON.parse(cambio);
+    const partes: string[] = [];
+    if (datos.dosis) partes.push(`dosis ${datos.dosis}`);
+    if (datos.horariosDelDia) partes.push(`horarios ${datos.horariosDelDia.join(", ")} hs`);
+    if (datos.nombre) partes.push(`nombre ${datos.nombre}`);
+    if (partes.length === 0) return `${remedio}: se actualizó.`;
+    return `${remedio}: ${partes.join(" · ")}.`;
+  } catch {
+    return `${remedio}: ${cambio}`;
+  }
+}
+
+// pauta para la tarjeta: "2 tomas por día · 08:00 · 21:00 hs"
+function pautaDelRemedio(medicamento: Medicamento) {
+  const cantidad = medicamento.horariosDelDia.length;
+  if (cantidad === 0) return "Sin horario fijo";
+  const tomas = cantidad === 1 ? "1 toma por día" : `${cantidad} tomas por día`;
+  return `${tomas} · ${medicamento.horariosDelDia.join(" · ")} hs`;
+}
+
+// iniciales del nombre para el círculo del paciente ("José Pérez" → "JP")
+function iniciales(nombre: string) {
+  const partes = nombre.trim().split(" ");
+  let resultado = "";
+  for (const parte of partes) {
+    if (parte.length > 0) resultado = resultado + parte[0];
+  }
+  return resultado.slice(0, 2).toUpperCase();
+}
+
+// pantalla del familiar/cuidador: medicación activa del adulto que mira, su historial de cambios
+// y el diálogo para registrar un cambio
 export default function MedFam() {
   const { usuario } = useAuth();
   const dialogoCambio = useRef<HTMLDialogElement>(null);
-  const nombreUsuario = usuario?.nombreCompleto || "Sofía Gómez";
+  const nombreUsuario = usuario ? usuario.nombreCompleto : "";
   const [dialogoAbierto, setDialogoAbierto] = useState(false);
   const [cerrandoDialogo, setCerrandoDialogo] = useState(false);
   const [tipoCambio, setTipoCambio] = useState("");
+  // id del remedio elegido, o "nuevo"
   const [medicamento, setMedicamento] = useState("");
+  const [nombreNuevo, setNombreNuevo] = useState("");
   const [detalle, setDetalle] = useState("");
+  const [horarios, setHorarios] = useState<string[]>(["08:00"]);
   const [profesional, setProfesional] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
-  const [registros, setRegistros] = useState<Registro[]>([
-    {
-      fecha: "23 de Octubre de 2026 · 18:30 hs",
-      detalle: "Losartán: incremento de dosis de 25mg a 50mg.",
-      autor: "Sofía Gómez según indicación de Dra. Valenzuela",
-    },
-    {
-      fecha: "15 de Septiembre de 2026 · 11:00 hs",
-      detalle:
-        "Suspensión de Ibuprofeno 400mg ocasional por sugerencia gastroenterológica.",
-      autor: "Sofía Gómez",
-    },
-    {
-      fecha: "01 de Julio de 2026 · 09:00 hs",
-      detalle: "Inicio de Atorvastatina 10mg noche.",
-      autor: "José Perez",
-    },
-  ]);
+  const [guardando, setGuardando] = useState(false);
+  const [errorDialogo, setErrorDialogo] = useState<string | null>(null);
+
+  const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+  const [registros, setRegistros] = useState<CambioConRemedio[]>([]);
+  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // se suma 1 cada vez que hay que volver a cargar (después de guardar un cambio)
+  const [recargar, setRecargar] = useState(0);
+
+  useEffect(() => {
+    if (!usuario) return;
+    const miId = usuario.id;
+
+    // trae el adulto, sus medicamentos, los cambios de cada uno y su red
+    const cargar = async () => {
+      setError(null);
+      try {
+        const elegido = await buscarAdultoSeleccionado(miId);
+        setAdulto(elegido);
+        if (!elegido) return;
+
+        const lista = await medicamentosService.getMedicamentos(elegido.id);
+        setMedicamentos(lista);
+
+        const cambios: CambioConRemedio[] = [];
+        for (const remedio of lista) {
+          const delRemedio = await medicamentosService.getCambiosMedicamento(remedio.id);
+          for (const cambio of delRemedio) cambios.push({ cambio, remedio: remedio.nombre });
+        }
+        // del más nuevo al más viejo
+        cambios.sort((a, b) => new Date(b.cambio.fechaCambio).getTime() - new Date(a.cambio.fechaCambio).getTime());
+        setRegistros(cambios);
+
+        setVinculos(await usuarioService.getVinculos(elegido.id));
+      } catch (err) {
+        console.error(err);
+        setError("No se pudo cargar la medicación.");
+      } finally {
+        setCargando(false);
+      }
+    };
+    cargar();
+  }, [usuario, recargar]);
+
+  // quién hizo el cambio: el back guarda el id, acá se busca el nombre
+  const autorDelCambio = (autorId: string) => {
+    if (usuario && autorId === usuario.id) return usuario.nombreCompleto;
+    if (adulto && autorId === adulto.id) return adulto.nombreCompleto;
+    const deLaRed = vinculos.find((v) => v.familiarId === autorId);
+    if (deLaRed) return deLaRed.familiar.nombreCompleto;
+    return "Otra persona de su red";
+  };
+
+  // los nombres de la red (sin mí) para el aviso de "Registro clínico auditado"
+  const otrosDeLaRed = vinculos.filter((v) => v.familiarId !== usuario?.id).map((v) => v.familiar.nombreCompleto);
 
   const abrirDialogo = () => {
     setCerrandoDialogo(false);
     setTipoCambio("");
     setMedicamento("");
+    setNombreNuevo("");
     setDetalle("");
+    setHorarios(["08:00"]);
     setProfesional("");
     setFechaInicio("");
+    setErrorDialogo(null);
     setDialogoAbierto(true);
     dialogoCambio.current?.showModal();
+  };
+
+  // al elegir un remedio, los horarios arrancan con los que ya tiene
+  const elegirMedicamento = (valor: string) => {
+    setMedicamento(valor);
+    const elegido = medicamentos.find((m) => m.id === valor);
+    if (elegido && elegido.horariosDelDia.length > 0) setHorarios(elegido.horariosDelDia);
+    else setHorarios(["08:00"]);
+  };
+
+  // cambia un horario de la lista (posición i)
+  const cambiarHorario = (i: number, valor: string) => {
+    setHorarios(horarios.map((h, j) => (j === i ? valor : h)));
   };
 
   const cerrarDialogo = () => {
@@ -80,26 +191,45 @@ export default function MedFam() {
     };
   }, [dialogoAbierto]);
 
-  const registrarCambio = () => {
-    if (!tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio) return;
-    const nuevaFecha = new Date(`${fechaInicio}T12:00:00`).toLocaleDateString(
-      "es-AR",
-      {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      },
-    );
-    const cambioDescrito = detalle.trim();
-    setRegistros((actuales) => [
-      {
-        fecha: `${nuevaFecha} · ${new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs`,
-        detalle: `${medicamento.split(" — ")[0]}: ${cambioDescrito}`,
-        autor: `${nombreUsuario} según indicación de ${profesional}`,
-      },
-      ...actuales,
-    ]);
-    cerrarDialogo();
+  const suspende = tipoCambio === "Suspender o finalizar toma";
+  const esNuevo = medicamento === "nuevo";
+  const faltanDatos = !tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio || (esNuevo && !nombreNuevo.trim());
+
+  // guarda el cambio en el back según el tipo elegido
+  // PENDIENTE BACK: el profesional y la fecha de comienzo se piden pero el back no los guarda
+  const registrarCambio = async () => {
+    if (faltanDatos || !adulto) return;
+    if (!suspende && horarios.length === 0) {
+      setErrorDialogo("Agregá al menos un horario.");
+      return;
+    }
+    setGuardando(true);
+    setErrorDialogo(null);
+    try {
+      if (esNuevo) {
+        await medicamentosService.crearMedicamento({
+          nombre: nombreNuevo.trim(),
+          dosis: detalle.trim(),
+          horariosDelDia: horarios,
+          usuarioId: adulto.id,
+        });
+      } else if (suspende) {
+        await medicamentosService.eliminarMedicamento(medicamento);
+      } else {
+        // este endpoint además guarda el cambio en el historial, con quién lo hizo y cuándo
+        await medicamentosService.actualizarMedicamentoConHistorial(medicamento, adulto.id, {
+          dosis: detalle.trim(),
+          horariosDelDia: horarios,
+        });
+      }
+      cerrarDialogo();
+      setRecargar(recargar + 1);
+    } catch (err) {
+      console.error(err);
+      setErrorDialogo(err instanceof Error ? err.message : "No se pudo guardar el cambio. Probá de nuevo.");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
@@ -120,13 +250,21 @@ export default function MedFam() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5">
-            <LuCalendarDays
-              aria-hidden="true"
-              className="size-4 shrink-0 text-[#435059]"
-            />
-            <p>Actualizado el 20 de Octubre de 2026 por {nombreUsuario}.</p>
-          </div>
+          {cargando && <p className="text-center text-[#435059]">Cargando medicación…</p>}
+          {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+          {!cargando && !adulto && !error && (
+            <p className="rounded-xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>
+          )}
+
+          {registros.length > 0 && (
+            <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5">
+              <LuCalendarDays
+                aria-hidden="true"
+                className="size-4 shrink-0 text-[#435059]"
+              />
+              <p>Actualizado el {fechaSinHora(registros[0].cambio.fechaCambio)} por {autorDelCambio(registros[0].cambio.usuarioId)}.</p>
+            </div>
+          )}
 
           <section
             aria-labelledby="medicacion-habitual"
@@ -140,28 +278,23 @@ export default function MedFam() {
                 Medicación habitual activa
               </h2>
               <span className="shrink-0 rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-1 text-sm font-semibold leading-5 text-[#0B4C2B]">
-                3 activos
+                {medicamentos.length} {medicamentos.length === 1 ? "activo" : "activos"}
               </span>
             </div>
             <div className="flex flex-col gap-4">
-              <MedicamentoHabitual
-                nombre="Losartán"
-                dosis="50 mg"
-                categoria="Presión arterial"
-                pauta="1 comprimido por día · Mañana 08:00 hs con desayuno"
-              />
-              <MedicamentoHabitual
-                nombre="Omeprazol"
-                dosis="20 mg"
-                categoria="Protector gástrico"
-                pauta="1 comprimido diario · En ayunas matutino"
-              />
-              <MedicamentoHabitual
-                nombre="Atorvastatina"
-                dosis="10 mg"
-                categoria="Control de lípidos"
-                pauta="1 comprimido diario · Noche 21:00 hs"
-              />
+              {!cargando && medicamentos.length === 0 && (
+                <p className="rounded-xl bg-white p-4 text-sm">Todavía no tiene medicación cargada.</p>
+              )}
+              {medicamentos.map((remedio) => (
+                <MedicamentoHabitual
+                  key={remedio.id}
+                  nombre={remedio.nombre}
+                  dosis={remedio.dosis}
+                  // PENDIENTE BACK: el medicamento no tiene categoría ("Presión arterial")
+                  categoria=""
+                  pauta={pautaDelRemedio(remedio)}
+                />
+              ))}
             </div>
           </section>
 
@@ -180,12 +313,16 @@ export default function MedFam() {
               Historial de modificaciones
             </h2>
             <div className="flex flex-col gap-4">
-              {registros.map((registro, indice) => (
+              {!cargando && registros.length === 0 && (
+                <p className="rounded-xl bg-white p-4 text-sm">Todavía no hay cambios registrados.</p>
+              )}
+              {registros.map((registro) => (
                 <RegistroMedicacion
-                  key={`${registro.fecha}-${indice}`}
-                  fecha={registro.fecha}
-                  detalle={registro.detalle}
-                  autor={registro.autor}
+                  key={registro.cambio.id}
+                  fecha={fechaLarga(registro.cambio.fechaCambio)}
+                  detalle={textoDelCambio(registro.remedio, registro.cambio.cambio)}
+                  // PENDIENTE BACK: falta "según indicación de <profesional>", el back no guarda el profesional
+                  autor={autorDelCambio(registro.cambio.usuarioId)}
                 />
               ))}
             </div>
@@ -194,6 +331,7 @@ export default function MedFam() {
           <button
             type="button"
             onClick={abrirDialogo}
+            disabled={!adulto}
             className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#B7C8F0] bg-[#1550E0] px-4 text-base font-semibold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
           >
             <LuPlus aria-hidden="true" className="size-5" />
@@ -249,15 +387,16 @@ export default function MedFam() {
           <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-5 pt-4">
             <div className="flex items-center gap-3 rounded-2xl border border-[#D7DFE6] bg-[#F6F8FA] p-4 shadow-xs">
               <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#E7EDFB] text-lg font-bold text-[#1550E0]">
-                JP
+                {adulto ? iniciales(adulto.nombreCompleto) : ""}
               </div>
               <div>
                 <span className="rounded-full bg-[#E7EDFB] px-2 py-1 text-xs font-bold uppercase text-[#0D328B]">
                   Paciente asignado
                 </span>
-                <p className="mt-1 font-bold">José Pérez</p>
+                <p className="mt-1 font-bold">{adulto?.nombreCompleto}</p>
+                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
                 <p className="text-sm font-semibold text-[#435059]">
-                  Papá · 78 años
+                  Papá{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
                 </p>
               </div>
             </div>
@@ -341,16 +480,31 @@ export default function MedFam() {
                   id="medicamento-cambio"
                   required
                   value={medicamento}
-                  onChange={(event) => setMedicamento(event.target.value)}
+                  onChange={(event) => elegirMedicamento(event.target.value)}
                   className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
                 >
                   <option value="" disabled>Seleccioná un medicamento</option>
-                  <option value="Losartán 50mg — Presión arterial">Losartán 50mg — Presión arterial</option>
-                  <option value="Omeprazol 20mg — Protector gástrico">Omeprazol 20mg — Protector gástrico</option>
-                  <option value="Atorvastatina 10mg — Control de lípidos">Atorvastatina 10mg — Control de lípidos</option>
-                  <option value="Nuevo medicamento">Nuevo medicamento</option>
+                  {medicamentos.map((remedio) => (
+                    <option key={remedio.id} value={remedio.id}>{remedio.nombre} {remedio.dosis}</option>
+                  ))}
+                  <option value="nuevo">Nuevo medicamento</option>
                 </select>
               </div>
+              {/* agregado: para un medicamento nuevo el back necesita el nombre */}
+              {esNuevo && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold" htmlFor="nombre-nuevo">
+                    Nombre del medicamento
+                  </label>
+                  <input
+                    id="nombre-nuevo"
+                    required
+                    value={nombreNuevo}
+                    onChange={(event) => setNombreNuevo(event.target.value)}
+                    className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
+                  />
+                </div>
+              )}
               <div className="space-y-2">
                 <label
                   className="block text-sm font-semibold"
@@ -368,6 +522,42 @@ export default function MedFam() {
                   className="w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] p-3 text-sm leading-5 focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
                 />
               </div>
+              {/* agregado: el back guarda los horarios aparte, en formato "HH:MM" */}
+              {!suspende && (
+                <div className="space-y-2">
+                  <p className="block text-sm font-semibold">Horarios de las tomas</p>
+                  {horarios.map((horario, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input
+                        type="time"
+                        required
+                        aria-label={`Horario ${i + 1}`}
+                        value={horario}
+                        onChange={(event) => cambiarHorario(i, event.target.value)}
+                        className="h-14 flex-1 rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
+                      />
+                      {horarios.length > 1 && (
+                        <button
+                          type="button"
+                          aria-label={`Quitar horario ${i + 1}`}
+                          onClick={() => setHorarios(horarios.filter((_, j) => j !== i))}
+                          className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"
+                        >
+                          <LuX aria-hidden="true" className="size-5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setHorarios([...horarios, "20:00"])}
+                    className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#E7EDFB] px-4 text-sm font-semibold text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"
+                  >
+                    <LuPlus aria-hidden="true" className="size-4" />
+                    Agregar horario
+                  </button>
+                </div>
+              )}
               <div className="space-y-2">
                 <label
                   className="block text-sm font-semibold"
@@ -404,21 +594,25 @@ export default function MedFam() {
 
             <aside className="mt-5 rounded-2xl border border-[#B7C8F0] bg-[#EAF4FE] p-4">
               <h3 className="font-semibold">Registro clínico auditado</h3>
+              {/* PENDIENTE BACK: el back todavía no avisa a la red cuando cambia la medicación */}
               <p className="mt-2 text-sm leading-5 text-[#435059]">
                 Esta actualización quedará asentada con tu firma digital (
-                {nombreUsuario}) y notificará por alerta prioritaria a Sofía,
-                María Rodríguez y Dr. Valenzuela.
+                {nombreUsuario})
+                {otrosDeLaRed.length > 0 && ` y notificará por alerta prioritaria a ${otrosDeLaRed.join(", ")}`}.
               </p>
             </aside>
+            {errorDialogo && (
+              <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{errorDialogo}</p>
+            )}
             <div className="mt-5 flex flex-col gap-3 pb-2">
               <button
                 type="button"
                 onClick={registrarCambio}
-                disabled={!tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio}
+                disabled={faltanDatos || guardando}
                 className="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <LuCheck className="size-5" />
-                Guardar cambios en la medicación
+                {guardando ? "Guardando…" : "Guardar cambios en la medicación"}
               </button>
               <button
                 type="button"
