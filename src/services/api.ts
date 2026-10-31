@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.PROD
+export const BASE_URL = import.meta.env.PROD
   ? '/api'
   : 'https://proyectos-tic.ort.edu.ar/nonos/api'; //cambiar si se quiere apuntar a otro back
 

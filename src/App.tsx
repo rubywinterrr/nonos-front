@@ -14,6 +14,7 @@ const ContactosFamilia = lazy(() => import("./Pages/Familia/contactos"));
 const Ingreso = lazy(() => import("./Pages/LogIn"));
 const PagCuenta = lazy(() => import("./Pages/Adulto/Cuenta"));
 const CuentaFamilia = lazy(() => import("./Pages/Familia/Cuenta"));
+const Emergencia = lazy(() => import("./Pages/Medico/Emergencia"));
 import { useAuth } from "./hooks/useAuth";
 const SOS = lazy(() => import("./Pages/Adulto/PantallaSOS"));
 const Salud = lazy(() => import("./Pages/Adulto/Salud"));
@@ -82,6 +83,8 @@ function App() {
       >
         <Routes>
           <Route path="/ingresar" element={<Ingreso />} />
+          {/* pantalla pública del médico: se abre al escanear el QR de la pulsera, sin login */}
+          <Route path="/emergencia/:qrId" element={<Emergencia />} />
           <Route element={<RutaProtegida />}>
             <Route
               path="adulto-mayor/dispositivos"
