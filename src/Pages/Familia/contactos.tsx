@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Header from "../../components/Header";
 import TarjetaContactos from "../../components/TarjetaContacto";
+import GestionContactos from "../../components/GestionContactos";
 import {
   LuArrowLeft,
   LuAsterisk,
@@ -58,6 +59,8 @@ export default function ContactosFamilia() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mensajeInvitacion, setMensajeInvitacion] = useState<string | null>(null);
+  // se suma 1 después de agregar, editar o borrar un contacto, para volver a cargar
+  const [recargar, setRecargar] = useState(0);
 
   useEffect(() => {
     if (!usuario) return;
@@ -79,7 +82,7 @@ export default function ContactosFamilia() {
       }
     };
     cargar();
-  }, [usuario]);
+  }, [usuario, recargar]);
 
   // la red sin mí y solo con quienes tienen teléfono (la tarjeta necesita un número para llamar)
   const red = ordenarRed(vinculos).filter((v) => v.familiar.telefono && v.familiarId !== usuario?.id);
@@ -273,18 +276,19 @@ export default function ContactosFamilia() {
                 // PENDIENTE BACK: falta el horario del cuidador ("En domicilio de 8 a 14 hs")
                 />
               ))}
-              {contactos.map((contacto) => (
-                <TarjetaContactos
-                  key={contacto.id}
-                  variante="familia"
-                  nombre={contacto.nombre}
-                  vinculo={contacto.esEmergencia ? "Contacto de emergencia" : "Contacto agendado"}
-                  telefono={contacto.telefono}
-                />
-              ))}
               {/* PENDIENTE BACK: no hay dato del médico de cabecera ("Dr. Esteban Martínez") */}
             </div>
           </section>
+
+          {/* agregado (no está en el Figma): los contactos agendados del adulto se gestionan acá */}
+          {adulto && (
+            <GestionContactos
+              adultoId={adulto.id}
+              nombreAdulto={adulto.nombreCompleto}
+              contactos={contactos}
+              onCambio={() => setRecargar(recargar + 1)}
+            />
+          )}
 
           <div className="flex w-full flex-col gap-2">
             <button
