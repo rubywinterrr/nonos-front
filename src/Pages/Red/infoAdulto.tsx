@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import CondicionMedica from "../../components/CondicionMedica";
 import ContactoVinculado from "../../components/ContactoVinculado";
+import GestionCondiciones from "../../components/GestionCondiciones";
 import {
   LuActivity,
   LuShieldAlert,
@@ -52,6 +53,10 @@ export default function InfoAdulto() {
   const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
   const [datos, setDatos] = useState<UsuarioById | null>(null);
   const [condiciones, setCondiciones] = useState<Condicion[]>([]);
+  // true mientras se editan las alergias y condiciones
+  const [editandoFicha, setEditandoFicha] = useState(false);
+  // se suma 1 después de editar, para volver a cargar
+  const [recargar, setRecargar] = useState(0);
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,7 +82,7 @@ export default function InfoAdulto() {
       }
     };
     cargar();
-  }, [usuario]);
+  }, [usuario, recargar]);
 
   const alergias = condiciones.filter((c) => esAlergia(c));
   const otrasCondiciones = condiciones.filter((c) => !esAlergia(c));
@@ -231,7 +236,26 @@ export default function InfoAdulto() {
               />
             ))}
           </div>
+          {/* agregado (no está en el Figma): editar las alergias y condiciones */}
+          {!editandoFicha && (
+            <button
+              type="button"
+              onClick={() => setEditandoFicha(true)}
+              className="mt-4 min-h-11 w-full cursor-pointer rounded-lg bg-[#E7EDFB] text-sm font-semibold text-[#0D328B] hover:bg-[#D3E0F8]"
+            >
+              Editar alergias y condiciones
+            </button>
+          )}
         </section>
+
+        {editandoFicha && (
+          <GestionCondiciones
+            adultoId={adulto.id}
+            condiciones={condiciones}
+            onCambio={() => setRecargar(recargar + 1)}
+            onCerrar={() => setEditandoFicha(false)}
+          />
+        )}
 
         <section
           aria-labelledby="personas-vinculadas"

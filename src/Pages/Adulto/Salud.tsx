@@ -14,6 +14,7 @@ import CajaMed from "../../components/cajaMedicacion";
 import { useState, useEffect } from "react";
 import { medicamentosService, type Medicamento } from "../../services/medicamentosService";
 import { condicionesService, type Condicion } from "../../services/condicionesService";
+import GestionCondiciones from "../../components/GestionCondiciones";
 import calcularEdad from "../../utils/calcularEdad";
 import textoGrupoSanguineo from "../../utils/textoGrupoSanguineo";
 
@@ -25,6 +26,9 @@ export default function Salud() {
   const [error, setError] = useState<string | null>(null);
   const [condiciones, setCondiciones] = useState<Condicion[]>([]);
   const [errorCondiciones, setErrorCondiciones] = useState<string | null>(null);
+  // true mientras edita sus alergias y condiciones; recargar se suma 1 después de cada cambio
+  const [editandoFicha, setEditandoFicha] = useState(false);
+  const [recargar, setRecargar] = useState(0);
 
   useEffect(() => {
     if (!usuario) return;
@@ -63,7 +67,7 @@ export default function Salud() {
       }
     };
 
-      // trae las condiciones médicas activas del usuario (alergias, enfermedades, etc.)
+    // trae las condiciones médicas activas del usuario (alergias, enfermedades, etc.)
     const fetchCondiciones = async () => {
       setErrorCondiciones(null);
       try {
@@ -77,7 +81,7 @@ export default function Salud() {
 
     fetchMedicamentos();
     fetchCondiciones();
-  }, [usuario]);
+  }, [usuario, recargar]);
 
   return (
     <>
@@ -114,10 +118,10 @@ export default function Salud() {
               <div className="flex flex-col gap-1 items-end justify-end">
                 <p className="text-gray-600">Edad</p>
                 <h1 className="text-xl font-bold">
-                {usuario?.fechaNacimiento
+                  {usuario?.fechaNacimiento
                     ? `${calcularEdad(usuario.fechaNacimiento)} años`
                     : "Sin dato de edad"}
-                  </h1>{" "}
+                </h1>{" "}
               </div>
             </div>
             <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-start gap-5">
@@ -138,7 +142,7 @@ export default function Salud() {
                 <h1 className="text-xl font-bold">
                   {usuario?.obraSocial || "Sin dato de cobertura"}
                 </h1>
-                  {usuario?.carnetObraSocial && (
+                {usuario?.carnetObraSocial && (
                   <p className="text-gray-600">N° {usuario.carnetObraSocial}</p>
                 )}
               </div>
@@ -167,6 +171,24 @@ export default function Salud() {
             )}
             {errorCondiciones && (
               <p role="alert" className="text-red-700">{errorCondiciones}</p>
+            )}
+            {/* agregado (no está en el Figma): el adulto puede corregir sus alergias y condiciones */}
+            {usuario && editandoFicha && (
+              <GestionCondiciones
+                adultoId={usuario.id}
+                condiciones={condiciones}
+                onCambio={() => setRecargar(recargar + 1)}
+                onCerrar={() => setEditandoFicha(false)}
+              />
+            )}
+            {!editandoFicha && (
+              <button
+                type="button"
+                onClick={() => setEditandoFicha(true)}
+                className="min-h-12 w-full cursor-pointer rounded-xl bg-white text-base font-semibold text-blue-700 hover:bg-gray-100"
+              >
+                Editar alergias y condiciones
+              </button>
             )}
           </div>
         </div>
