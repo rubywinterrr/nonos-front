@@ -9,11 +9,21 @@ import TarjetaContactos from "../../components/TarjetaContacto";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { contactosService, type Contacto } from "../../services/contactosService";
+import { usuarioService, type Vinculo } from "../../services/usuariosService";
 
+// texto del rol de alguien de la red
+function textoRol(vinculo: Vinculo) {
+  if (vinculo.tipoVinculo === "FAMILIAR") return "Familiar";
+  if (vinculo.tipoCuidador === "DIGITAL") return "Cuidador digital";
+  return "Cuidador presencial";
+}
+
+// contactos del adulto: el 107, su red (familiares y cuidadores) y los contactos que agendó
 export default function Contactos() {
 
   const { usuario } = useAuth();
   const [contactos, setContactos] = useState<Contacto[]>([]);
+  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +37,9 @@ export default function Contactos() {
       try {
         const data = await contactosService.getContactos(usuario.id);
         setContactos(data);
+        // su red de personas vinculadas (solo los que tienen teléfono para llamar)
+        const red = await usuarioService.getVinculos(usuario.id);
+        setVinculos(red.filter((v) => v.familiar.telefono));
       } catch (err) {
         console.error(err);
         setError("Hubo un error al cargar los contactos");
@@ -69,14 +82,25 @@ export default function Contactos() {
         <div className="flex flex-col lg:flex-row gap-5 w-full flex-wrap">
           {loading && <p>Cargando contactos...</p>}
           {error && <p className="text-red-600">{error}</p>}
+          {vinculos.map((vinculo) => (
+            <TarjetaContactos
+              key={vinculo.id}
+              nombre={vinculo.familiar.nombreCompleto}
+              vinculo={textoRol(vinculo)}
+              telefono={vinculo.familiar.telefono ?? ""}
+            />
+          ))}
           {contactos.map((contacto) => (
             <TarjetaContactos
               key={contacto.id}
               nombre={contacto.nombre}
-              fotoContacto="/fotoPerfil_1.jpeg" // el back por ahora no devuelve foto, se puede agregar más adelante
+              vinculo={contacto.esEmergencia ? "Contacto de emergencia" : "Contacto"}
               telefono={contacto.telefono}
             />
           ))}
+          {!loading && !error && vinculos.length === 0 && contactos.length === 0 && (
+            <p className="text-gray-600">Todavía no tenés contactos cargados.</p>
+          )}
         </div>
         <div className="w-full border-gray-400 border-t" />
         <div className="flex flex-col w-full gap-4 items-center justify-center">
@@ -98,10 +122,16 @@ export default function Contactos() {
               </div>
             </div>
           </div>
-          <h1 className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 lg:w-32/100">
-            <BsChatLeftText />
-            Avisar a {contactos.length > 0 ? contactos[0].nombre : "tu familia"} para agregar contactos.
-          </h1>
+          {/* manda un mensaje de texto a la primera persona de su red para que le agregue contactos */}
+          {vinculos.length > 0 && (
+            <a
+              href={`sms:${vinculos[0].familiar.telefono}?body=${encodeURIComponent("Hola, ¿me ayudás a agregar contactos en NONOS?")}`}
+              className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 hover:bg-gray-300 active:bg-gray-400 lg:w-32/100"
+            >
+              <BsChatLeftText />
+              Avisar a {vinculos[0].familiar.nombreCompleto.split(" ")[0]} para agregar contactos.
+            </a>
+          )}
         </div>
       </main>
     </>

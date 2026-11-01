@@ -130,14 +130,21 @@ export default function TarjetaContactos({
     <>
       <div className="bg-white rounded-2xl flex flex-col gap-3 w-full h-40 items-center justify-center lg:w-32/100">
         <div className="w-full h-45/100 flex items-center p-1 gap-3 pl-6">
-          <img
-            className="border rounded-full aspect-square h-95/100 text-xs object-cover"
-            src={fotoContacto}
-            alt="Foto de contacto"
-          />
+          {fotoContacto ? (
+            <img
+              className="border rounded-full aspect-square h-95/100 text-xs object-cover"
+              src={fotoContacto}
+              alt="Foto de contacto"
+            />
+          ) : (
+            // sin foto: las iniciales del nombre
+            <span aria-hidden="true" className="flex aspect-square h-95/100 items-center justify-center rounded-full border bg-[#E7EDFB] text-xl font-semibold">
+              {obtenerIniciales(nombre)}
+            </span>
+          )}
           <div className="flex flex-col justify-baseline">
             <h1 className="font-bold text-2xl">{nombre}</h1>
-            <p className="text-gray-500 text-md">Ubicación</p>
+            {vinculo && <p className="text-gray-500 text-md">{vinculo}</p>}
           </div>
         </div>
         <a
