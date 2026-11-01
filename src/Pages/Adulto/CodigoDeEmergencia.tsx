@@ -2,6 +2,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type CodigoQR } from "../../services/usuariosService";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import {
@@ -285,8 +286,16 @@ export default function Codigo() {
                 ? "Salir de pantalla completa"
                 : "Mostrar código en pantalla completa"}
             </button>
-            {/* agregado: abre la pantalla que ve el médico al escanear la pulsera.
-                Esta misma dirección es la que va grabada en el QR de la pulsera */}
+            {/* agregado: el QR que va grabado en la pulsera. Lleva a la pantalla del médico;
+                no cambia nunca (el que cambia es el código de 6 dígitos) */}
+            {codigo && (
+              <div className="w-full lg:w-80/100 bg-white rounded-xl flex flex-col items-center gap-3 p-5 text-center">
+                <h2 className="text-lg font-semibold">QR de tu pulsera</h2>
+                <QRCodeSVG value={`${window.location.origin}/emergencia/${codigo.id}`} size={180} level="M" title="QR de la pulsera" />
+                <p className="text-sm text-gray-600">Este es el código que va grabado en tu pulsera. El médico lo escanea y después escribe los 6 números.</p>
+              </div>
+            )}
+            {/* agregado: abre la pantalla que ve el médico al escanear la pulsera */}
             {codigo && (
               <Link
                 to={`/emergencia/${codigo.id}`}
