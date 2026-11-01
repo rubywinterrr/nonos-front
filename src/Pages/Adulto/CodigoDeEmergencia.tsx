@@ -1,6 +1,7 @@
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type CodigoQR } from "../../services/usuariosService";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import {
@@ -284,6 +285,22 @@ export default function Codigo() {
                 ? "Salir de pantalla completa"
                 : "Mostrar código en pantalla completa"}
             </button>
+            {/* agregado: abre la pantalla que ve el médico al escanear la pulsera.
+                Esta misma dirección es la que va grabada en el QR de la pulsera */}
+            {codigo && (
+              <Link
+                to={`/emergencia/${codigo.id}`}
+                target="_blank"
+                className="w-full min-h-12 lg:w-80/100 bg-white rounded-xl text-lg flex flex-col items-center justify-center gap-1 p-3 text-center cursor-pointer hover:bg-gray-100"
+              >
+                <span className="flex items-center gap-2 font-semibold text-blue-700">
+                  <MdQrCodeScanner className="text-2xl" />
+                  Abrir la ficha como la ve el médico
+                </span>
+                <span className="break-all text-xs text-gray-600">{window.location.origin}/emergencia/{codigo.id}</span>
+              </Link>
+            )}
+            {/* PENDIENTE BACK: el "sonido de ayuda" no existe todavía, queda el texto del diseño */}
             <div className="w-full min-h-12 lg:w-80/100 bg-white rounded-xl text-xl flex items-center justify-between gap-2 p-3 pl-5 pr-5">
               <div className="flex gap-2 items-center">
                 <MdVibration className="text-2xl" />
