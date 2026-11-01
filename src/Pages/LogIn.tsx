@@ -17,7 +17,7 @@ function IngresoContent() {
     <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">
       <div className="flex flex-col gap-3 items-center text-[#002B2F]">
         {/* logo oficial (isotipo del Figma) */}
-        <img src="/public/logo/isotipo-cuadrado.png" alt="" className="h-20 aspect-square" />
+        <img src="/logo/isotipo-cuadrado.png" alt="" className="h-20 aspect-square" />
         <div className="flex flex-col items-center gap-0">
           <h1 className="text-3xl font-semibold">NONOS</h1>
           <span className="text-md text-gray-500 p-0 m-0">
