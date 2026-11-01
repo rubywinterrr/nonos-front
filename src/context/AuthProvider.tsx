@@ -37,13 +37,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return data.user;
     };
 
+    // vuelve a traer los datos del usuario, por ejemplo después de editar su perfil
+    const recargarUsuario = async () => {
+        const data = await authService.getProfile();
+        setUsuario(data.user);
+    };
+
     const logout = async () => {
         await authService.logout();
         setUsuario(null);
     };
 
     return (
-        <AuthContext.Provider value={{ usuario, loading, login, loginConGoogle, logout }}>
+        <AuthContext.Provider value={{ usuario, loading, login, loginConGoogle, logout, recargarUsuario }}>
             {children}
         </AuthContext.Provider>
     );

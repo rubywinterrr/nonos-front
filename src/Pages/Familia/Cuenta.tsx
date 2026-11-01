@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
+import MiPerfil from "../../components/MiPerfil";
 import { useAuth } from "../../hooks/useAuth";
 import calcularEdad from "../../utils/calcularEdad";
 import {
@@ -261,6 +262,9 @@ export default function CuentaFamilia() {
             </span>
           </div>
         </section>
+
+        {/* agregado (no está en el Figma): editar mis datos, cerrar todas las sesiones y dar de baja la cuenta */}
+        <MiPerfil />
 
         <button
           type="button"

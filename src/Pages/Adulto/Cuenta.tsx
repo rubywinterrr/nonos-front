@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
+import MiPerfil from "../../components/MiPerfil";
 import Desplegable from "../../components/menuDesplegable";
 import { useAuth } from "../../hooks/useAuth";
 import PulseraConexion from "../../components/PulseraConexion";
@@ -327,6 +328,9 @@ export default function PagCuenta() {
             </div>
           </aside>
         )}
+
+        {/* agregado (no está en el Figma): editar mis datos, cerrar todas las sesiones y dar de baja la cuenta */}
+        <MiPerfil />
 
         {usuario?.rol !== "CUIDADOR" && <Desplegable />}
 
