@@ -16,6 +16,8 @@ import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
 import tiempoDesde from "../../utils/tiempoDesde";
 import { tomasDeHoy, proximaToma, momentoDelDia, yaPaso } from "../../utils/tomasDeHoy";
+import ActivarAvisos from "../../components/ActivarAvisos";
+import LinkAvisos from "../../components/LinkAvisos";
 import { horasYMinutos } from "../../utils/formatoSignos";
 import {
   MdArrowForward,
@@ -160,6 +162,9 @@ export default function HomeFamilia() {
         </div>
 
         <InvitacionesPendientes onAceptada={() => setRecargar(recargar + 1)} />
+        {/* agregado (no está en el Figma): activar los avisos push y ver los recibidos */}
+        <ActivarAvisos />
+        <LinkAvisos />
 
         {cargando && <p className="text-center text-[#424656]">Cargando…</p>}
         {!cargando && !adulto && (

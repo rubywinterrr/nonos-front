@@ -15,6 +15,7 @@ const Ingreso = lazy(() => import("./Pages/LogIn"));
 const PagCuenta = lazy(() => import("./Pages/Adulto/Cuenta"));
 const CuentaFamilia = lazy(() => import("./Pages/Familia/Cuenta"));
 const Emergencia = lazy(() => import("./Pages/Medico/Emergencia"));
+const Avisos = lazy(() => import("./Pages/Red/avisos"));
 import { useAuth } from "./hooks/useAuth";
 const SOS = lazy(() => import("./Pages/Adulto/PantallaSOS"));
 const Salud = lazy(() => import("./Pages/Adulto/Salud"));
@@ -72,6 +73,15 @@ function CuentaSegunRol() {
   return usuario?.rol === "FAMILIAR" ? <CuentaFamilia /> : <PagCuenta />;
 }
 
+// las notificaciones push del back abren /alerta o /dispositivo, que no son pantallas:
+// el familiar y el cuidador van a sus avisos; el adulto, a su inicio
+function IrAAvisos() {
+  const { usuario } = useAuth();
+  if (usuario?.rol === "FAMILIAR") return <Navigate to="/familia/avisos" replace />;
+  if (usuario?.rol === "CUIDADOR") return <Navigate to="/cuidador/avisos" replace />;
+  return <Navigate to="/adulto/home" replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -90,6 +100,8 @@ function App() {
               path="adulto-mayor/dispositivos"
               element={<VueltaPulsera />}
             />
+            <Route path="alerta" element={<IrAAvisos />} />
+            <Route path="dispositivo" element={<IrAAvisos />} />
             <Route element={<LayoutConFooter />}>
               <Route path="adulto" element={<RutaPorRol rol="ADULTO_MAYOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
@@ -137,6 +149,7 @@ function App() {
                   element={<MedidasAnticipadas />}
                 />
                 <Route path="info/adulto" element={<InfoAdulto />} />
+                <Route path="avisos" element={<Avisos />} />
               </Route>
               <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
@@ -155,6 +168,7 @@ function App() {
                 <Route path="medidas-anticipadas" element={<MedidasAnticipadas />} />
                 <Route path="contactos" element={<ContactosFamilia />} />
                 <Route path="configuracion" element={<AjustesCuidador />} />
+                <Route path="avisos" element={<Avisos />} />
               </Route>
               <Route path="cuenta" element={<CuentaSegunRol />} />
             </Route>
