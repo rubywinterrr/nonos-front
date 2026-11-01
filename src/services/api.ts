@@ -54,6 +54,10 @@ const cerrarSesion = () => {
 
 // convierte la respuesta en datos, o tira un error si algo salió mal
 const leerRespuesta = async <T>(response: Response): Promise<T> => {
+  // 429 = el back frena por demasiados intentos seguidos (login, SOS, código QR)
+  if (response.status === 429) {
+    throw new Error('Hiciste demasiados intentos seguidos. Esperá unos minutos y probá de nuevo.');
+  }
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({})); //cuando el back dice que no, manda un JSON explicando por qué (errorData) (esto lo intenta leer, y si no puede, devuelve un objeto vacio por el catch)
     throw new Error( // 
