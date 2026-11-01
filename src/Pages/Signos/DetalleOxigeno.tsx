@@ -6,6 +6,7 @@ import { idDelAdultoQueSeMira } from "../../utils/adultoQueSeMira";
 import { DIA_MS, claveDelDia, diaCorto, diasDelPeriodo, hora, ultimosDias } from "../../utils/formatoSignos";
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
+import GloboGrafico from "../../components/GloboGrafico";
 
 // por debajo de este valor el oxígeno se considera bajo
 const MINIMO_SALUDABLE = 95;
@@ -20,6 +21,13 @@ function posicionY(valor: number) {
 }
 
 // etiqueta del oxígeno según el valor
+// color del punto: azul si es el elegido, rojo si está por debajo de lo saludable, blanco si no
+function colorDelPunto(valor: number, elegido: boolean) {
+  if (elegido) return "#1550E0";
+  if (valor < MINIMO_SALUDABLE) return "#BA1A1A";
+  return "white";
+}
+
 function estadoOxigeno(valor: number) {
   if (valor >= 98) return "Óptimo";
   if (valor >= MINIMO_SALUDABLE) return "Normal";
@@ -35,6 +43,8 @@ export default function DetalleOxigeno() {
   const [error, setError] = useState<string | null>(null);
   const [sinAdulto, setSinAdulto] = useState(false);
   const [cargadoEn, setCargadoEn] = useState(0);
+  // el día que tocó la persona en el gráfico (si no tocó ninguno, se muestra el último con datos)
+  const [diaElegido, setDiaElegido] = useState<string | null>(null);
   // la pulsera mide el oxígeno de noche (una vez por día), así que "Hoy" muestra igual los últimos 7 días
   const dias = Math.max(7, diasDelPeriodo(periodo));
 
@@ -109,6 +119,13 @@ export default function DetalleOxigeno() {
     if (dia.promedio !== null) linea = linea + `${(30 + i * paso).toFixed(1)},${posicionY(dia.promedio).toFixed(1)} `;
   });
 
+  // el día del globo: el elegido o, si no hay, el último con mediciones
+  let indiceMostrado = -1;
+  diasDelGrafico.forEach((dia, i) => {
+    if (dia.promedio !== null && (diaElegido === null || dia.clave === diaElegido)) indiceMostrado = i;
+  });
+  const diaMostrado = indiceMostrado >= 0 ? diasDelGrafico[indiceMostrado] : null;
+
   return (
     <PantallaDetalleSigno
       titulo="Oxígeno en sangre"
@@ -144,31 +161,53 @@ export default function DetalleOxigeno() {
           </p>
         ) : (
           <>
-            <svg viewBox="0 0 320 175" role="img" aria-label={`Oxígeno: promedio diario de los últimos ${dias} días`} className="w-full">
-              {/* franja saludable: 95 % o más */}
-              <rect x="30" y={posicionY(GRAFICO_MAX)} width="285" height={posicionY(MINIMO_SALUDABLE) - posicionY(GRAFICO_MAX)} fill="#84F6E6" opacity="0.3" />
-              <line x1="30" x2="315" y1={posicionY(MINIMO_SALUDABLE)} y2={posicionY(MINIMO_SALUDABLE)} stroke="#006A61" strokeDasharray="4 3" />
-              {[88, 92, 96, 100].map((valor) => (
-                <text key={valor} x="2" y={posicionY(valor) + 4} fontSize="10" fill="#424656">{valor}</text>
-              ))}
-              <polyline points={linea} fill="none" stroke="#1550E0" strokeWidth="2" strokeLinejoin="round" />
-              {diasDelGrafico.map((dia, i) => (
-                <g key={dia.clave}>
-                  {dia.promedio !== null && (
-                    <>
-                      <circle cx={30 + i * paso} cy={posicionY(dia.promedio)} r="4" fill={dia.promedio < MINIMO_SALUDABLE ? "#BA1A1A" : "white"} stroke="#1550E0" strokeWidth="2" />
-                      {dias <= 7 && (
-                        <text x={30 + i * paso} y={posicionY(dia.promedio) - 9} fontSize="10" fontWeight="bold" fill="#0E1D28" textAnchor="middle">{dia.promedio}%</text>
-                      )}
-                    </>
-                  )}
-                  {/* en el mes se escribe 1 de cada 5 días para que no se encimen */}
-                  {(dias <= 7 || i % 5 === 0 || i === diasDelGrafico.length - 1) && (
-                    <text x={30 + i * paso} y="172" fontSize="10" fill="#424656" textAnchor="middle">{dia.etiqueta}</text>
-                  )}
-                </g>
-              ))}
-            </svg>
+            <div className="relative">
+              <svg viewBox="0 0 320 175" role="img" aria-label={`Oxígeno: promedio diario de los últimos ${dias} días`} className="w-full">
+                {/* franja saludable: 95 % o más */}
+                <rect x="30" y={posicionY(GRAFICO_MAX)} width="285" height={posicionY(MINIMO_SALUDABLE) - posicionY(GRAFICO_MAX)} fill="#84F6E6" opacity="0.3" />
+                <line x1="30" x2="315" y1={posicionY(MINIMO_SALUDABLE)} y2={posicionY(MINIMO_SALUDABLE)} stroke="#006A61" strokeDasharray="4 3" />
+                <text x="34" y={posicionY(GRAFICO_MAX) + 10} fontSize="9" fontWeight="bold" fill="#006A61">Saludable · 95 % o más</text>
+                {[88, 92, 96, 100].map((valor) => (
+                  <text key={valor} x="2" y={posicionY(valor) + 4} fontSize="10" fill="#424656">{valor}</text>
+                ))}
+                <polyline points={linea} fill="none" stroke="#1550E0" strokeWidth="2" strokeLinejoin="round" />
+                {diasDelGrafico.map((dia, i) => (
+                  <g key={dia.clave}>
+                    {dia.promedio !== null && (
+                      <>
+                        <circle cx={30 + i * paso} cy={posicionY(dia.promedio)} r={i === indiceMostrado ? 6 : 4} fill={colorDelPunto(dia.promedio, i === indiceMostrado)} stroke="#1550E0" strokeWidth="2" />
+                        {/* círculo invisible más grande, para que sea fácil tocar el punto */}
+                        <circle
+                          cx={30 + i * paso}
+                          cy={posicionY(dia.promedio)}
+                          r="12"
+                          fill="transparent"
+                          className="cursor-pointer"
+                          onPointerDown={() => setDiaElegido(dia.clave)}
+                          onPointerEnter={() => setDiaElegido(dia.clave)}
+                        />
+                        {dias <= 7 && (
+                          <text x={30 + i * paso} y={posicionY(dia.promedio) - 9} fontSize="10" fontWeight="bold" fill="#0E1D28" textAnchor="middle">{dia.promedio}%</text>
+                        )}
+                      </>
+                    )}
+                    {/* en el mes se escribe 1 de cada 5 días para que no se encimen */}
+                    {(dias <= 7 || i % 5 === 0 || i === diasDelGrafico.length - 1) && (
+                      <text x={30 + i * paso} y="172" fontSize="10" fill="#424656" textAnchor="middle">{dia.etiqueta}</text>
+                    )}
+                  </g>
+                ))}
+              </svg>
+              {diaMostrado && diaMostrado.promedio !== null && (
+                <GloboGrafico
+                  izquierda={((30 + indiceMostrado * paso) / 320) * 100}
+                  arriba={(posicionY(diaMostrado.promedio) / 175) * 100}
+                  titulo={`${diaMostrado.promedio} %`}
+                  detalle={`${diaMostrado.etiqueta === "Hoy" ? "Hoy" : diaCorto(diaMostrado.fecha)} · promedio del día`}
+                />
+              )}
+            </div>
+            <p className="text-xs text-[#424656]">Tocá un punto para ver el promedio de ese día.</p>
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />Promedio del día</li>
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="h-0.5 w-4 bg-[#006A61]" />Mínimo saludable (95 %)</li>

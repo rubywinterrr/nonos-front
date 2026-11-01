@@ -7,6 +7,7 @@ import { idDelAdultoQueSeMira } from "../../utils/adultoQueSeMira";
 import { DIA_MS, diaCorto, diasDelPeriodo, hora, horasYMinutos } from "../../utils/formatoSignos";
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
+import GloboGrafico from "../../components/GloboGrafico";
 
 // a partir de cuántos minutos dormidos se considera "sueño reparador"
 const SUENO_REPARADOR = 7 * 60;
@@ -48,6 +49,9 @@ export default function DetalleSueno() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sinAdulto, setSinAdulto] = useState(false);
+  // la noche o la etapa que tocó la persona en el gráfico
+  const [nocheElegida, setNocheElegida] = useState<string | null>(null);
+  const [etapaElegida, setEtapaElegida] = useState<string | null>(null);
   const dias = diasDelPeriodo(periodo);
 
   useEffect(() => {
@@ -102,6 +106,33 @@ export default function DetalleSueno() {
   }
   const promedio = noches.length > 0 ? Math.round(suma / noches.length) : 0;
   const maximo = masLarga ? masLarga.valor : 0;
+
+  // la noche del globo: la elegida o, si no hay, la última
+  let indiceNoche = noches.length - 1;
+  noches.forEach((noche, i) => {
+    if (noche.id === nocheElegida) indiceNoche = i;
+  });
+  const nocheMostrada = indiceNoche >= 0 ? noches[indiceNoche] : null;
+
+  // las 4 etapas con su color, para la barra repartida de la última noche
+  const listaEtapas = [
+    { nombre: "Profundo", minutos: etapas.profundo, color: "bg-[#0B2E8A]" },
+    { nombre: "REM", minutos: etapas.rem, color: "bg-[#1550E0]" },
+    { nombre: "Ligero", minutos: etapas.ligero, color: "bg-[#B9D2FF]" },
+    { nombre: "Despierto", minutos: etapas.despierto, color: "bg-[#F5A524]" },
+  ];
+  // dónde está el centro de la etapa elegida (en % del ancho), para apuntar el globo
+  let centroEtapa = 0;
+  let acumulado = 0;
+  let etapaMostrada = null;
+  for (const etapa of listaEtapas) {
+    const ancho = porcentaje(etapa.minutos, total);
+    if (etapa.nombre === etapaElegida) {
+      centroEtapa = acumulado + ancho / 2;
+      etapaMostrada = etapa;
+    }
+    acumulado += ancho;
+  }
 
   // texto de "Lo que vemos"
   let loQueVemos = "";
@@ -158,12 +189,30 @@ export default function DetalleSueno() {
             {/* el back guarda cuántos minutos hubo de cada etapa (no a qué hora), por eso se muestran como una barra repartida */}
             {tieneEtapas ? (
               <>
-                <div role="img" aria-label="Reparto de la noche por etapas" className="flex h-8 w-full overflow-hidden rounded-lg">
-                  <div className="bg-[#0B2E8A]" style={{ width: `${porcentaje(etapas.profundo, total)}%` }} />
-                  <div className="bg-[#1550E0]" style={{ width: `${porcentaje(etapas.rem, total)}%` }} />
-                  <div className="bg-[#B9D2FF]" style={{ width: `${porcentaje(etapas.ligero, total)}%` }} />
-                  <div className="bg-[#F5A524]" style={{ width: `${porcentaje(etapas.despierto, total)}%` }} />
+                <div className="relative mt-14">
+                  <div role="group" aria-label="Reparto de la noche por etapas" className="flex h-8 w-full overflow-hidden rounded-lg">
+                    {listaEtapas.map((etapa) => (
+                      <button
+                        type="button"
+                        key={etapa.nombre}
+                        aria-label={`${etapa.nombre}: ${horasYMinutos(etapa.minutos)}`}
+                        onClick={() => setEtapaElegida(etapa.nombre)}
+                        onPointerEnter={() => setEtapaElegida(etapa.nombre)}
+                        className={`cursor-pointer ${etapa.color} ${etapa.nombre === etapaElegida ? "ring-2 ring-inset ring-[#16222C]" : ""}`}
+                        style={{ width: `${porcentaje(etapa.minutos, total)}%` }}
+                      />
+                    ))}
+                  </div>
+                  {etapaMostrada && (
+                    <GloboGrafico
+                      izquierda={centroEtapa}
+                      arriba={0}
+                      titulo={horasYMinutos(etapaMostrada.minutos)}
+                      detalle={`${etapaMostrada.nombre} · ${porcentaje(etapaMostrada.minutos, total)} % de la noche`}
+                    />
+                  )}
                 </div>
+                <p className="text-xs text-[#424656]">Tocá una parte de la barra para ver cuánto duró.</p>
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
                   <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#0B2E8A]" />Profundo</li>
                   <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />REM</li>
@@ -183,16 +232,31 @@ export default function DetalleSueno() {
               <span className="text-4xl font-bold">{horasYMinutos(promedio)}</span>
               <span className="text-base font-semibold text-[#424656]">por noche</span>
             </p>
-            <div role="img" aria-label={`Horas de sueño de cada noche de los últimos ${dias} días`} className="flex h-40 items-end gap-1 border-b border-[#D4E4F3]">
-              {noches.map((noche) => (
-                <div
-                  key={noche.id}
-                  title={`${diaCorto(noche.timestamp)}: ${horasYMinutos(noche.valor)}`}
-                  className={`min-w-0 flex-1 rounded-t ${noche.valor >= SUENO_REPARADOR ? "bg-[#1550E0]" : "bg-[#B9D2FF]"}`}
-                  style={{ height: `${maximo > 0 ? Math.max(2, (noche.valor / maximo) * 100) : 2}%` }}
+            <div className="relative mt-12">
+              <div role="group" aria-label={`Horas de sueño de cada noche de los últimos ${dias} días`} className="flex h-40 items-end gap-1 border-b border-[#D4E4F3]">
+                {noches.map((noche, i) => (
+                  <button
+                    type="button"
+                    key={noche.id}
+                    aria-label={`${diaCorto(noche.timestamp)}: ${horasYMinutos(noche.valor)}`}
+                    aria-pressed={i === indiceNoche}
+                    onClick={() => setNocheElegida(noche.id)}
+                    onPointerEnter={() => setNocheElegida(noche.id)}
+                    className={`min-w-0 flex-1 cursor-pointer rounded-t ${noche.valor >= SUENO_REPARADOR ? "bg-[#1550E0]" : "bg-[#B9D2FF]"} ${i === indiceNoche ? "ring-2 ring-[#16222C]" : ""}`}
+                    style={{ height: `${maximo > 0 ? Math.max(2, (noche.valor / maximo) * 100) : 2}%` }}
+                  />
+                ))}
+              </div>
+              {nocheMostrada && (
+                <GloboGrafico
+                  izquierda={((indiceNoche + 0.5) / noches.length) * 100}
+                  arriba={100 - (maximo > 0 ? Math.max(2, (nocheMostrada.valor / maximo) * 100) : 2)}
+                  titulo={horasYMinutos(nocheMostrada.valor)}
+                  detalle={`Noche del ${diaCorto(nocheMostrada.timestamp)}`}
                 />
-              ))}
+              )}
             </div>
+            <p className="text-xs text-[#424656]">Tocá una barra para ver esa noche.</p>
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />7 h o más</li>
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#B9D2FF]" />Menos de 7 h</li>

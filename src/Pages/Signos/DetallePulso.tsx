@@ -6,6 +6,7 @@ import { idDelAdultoQueSeMira } from "../../utils/adultoQueSeMira";
 import { DIA_MS, diasDelPeriodo, diaYHora, hora } from "../../utils/formatoSignos";
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
+import GloboGrafico from "../../components/GloboGrafico";
 
 // zona segura del pulso en reposo
 const PULSO_MIN = 60;
@@ -68,6 +69,8 @@ export default function DetallePulso() {
   const [error, setError] = useState<string | null>(null);
   const [sinAdulto, setSinAdulto] = useState(false);
   const [cargadoEn, setCargadoEn] = useState(0);
+  // la medición que tocó la persona en el gráfico (si no tocó ninguna, se muestra la más alta)
+  const [elegido, setElegido] = useState<Medicion | null>(null);
   const dias = diasDelPeriodo(periodo);
 
   useEffect(() => {
@@ -136,6 +139,30 @@ export default function DetallePulso() {
   const desde = hasta - dias * DIA_MS;
   const etiquetas = [0, 1, 2, 3, 4].map((i) => desde + (i / 4) * (hasta - desde));
 
+  // al tocar o pasar por el gráfico, busca la medición más cercana a esa hora
+  const elegirPorPosicion = (evento: React.PointerEvent<SVGRectElement>) => {
+    const svg = evento.currentTarget.ownerSVGElement;
+    if (!svg) return;
+    const caja = svg.getBoundingClientRect();
+    const x = ((evento.clientX - caja.left) / caja.width) * 320;
+    const tiempo = desde + ((x - 30) / 285) * (hasta - desde);
+    let cercano: Medicion | null = null;
+    let menorDiferencia = Infinity;
+    for (const pulso of pulsos) {
+      const diferencia = Math.abs(new Date(pulso.timestamp).getTime() - tiempo);
+      if (diferencia < menorDiferencia) {
+        menorDiferencia = diferencia;
+        cercano = pulso;
+      }
+    }
+    setElegido(cercano);
+  };
+
+  // el dato del globo: el elegido si es de este período, si no el más alto
+  const mostrado = elegido && pulsos.includes(elegido) ? elegido : maximo;
+  const xMostrado = mostrado ? posicionX(new Date(mostrado.timestamp).getTime(), desde, hasta) : 0;
+  const yMostrado = mostrado ? posicionY(mostrado.valor) : 0;
+
   return (
     <PantallaDetalleSigno
       titulo="Frecuencia cardíaca"
@@ -167,31 +194,59 @@ export default function DetallePulso() {
           <p className="py-8 text-center text-sm text-[#424656]">Sin mediciones de pulso en este período.</p>
         ) : (
           <>
-            <svg viewBox="0 0 320 200" role="img" aria-label={`Pulso ${nombreDelPeriodo(periodo)}: entre ${minimo ? Math.round(minimo.valor) : ""} y ${maximo ? Math.round(maximo.valor) : ""} lpm`} className="w-full">
-              {/* zona segura: de 60 a 100 lpm */}
-              <rect x="30" y={posicionY(PULSO_MAX)} width="285" height={posicionY(PULSO_MIN) - posicionY(PULSO_MAX)} fill="#84F6E6" opacity="0.3" />
-              {/* líneas guía con su valor */}
-              {[40, 70, 100, 130].map((valor) => (
-                <g key={valor}>
-                  <line x1="30" x2="315" y1={posicionY(valor)} y2={posicionY(valor)} stroke="#D4E4F3" strokeDasharray="3 3" />
-                  <text x="2" y={posicionY(valor) + 4} fontSize="10" fill="#424656">{valor}</text>
-                </g>
-              ))}
-              {tramosDelGrafico(pulsos, desde, hasta).map((tramo, i) => (
-                <polyline key={i} points={tramo} fill="none" stroke="#1550E0" strokeWidth="2" strokeLinejoin="round" />
-              ))}
-              {minimo && (
-                <circle cx={posicionX(new Date(minimo.timestamp).getTime(), desde, hasta)} cy={posicionY(minimo.valor)} r="4" fill="white" stroke="#006A61" strokeWidth="2" />
+            <div className="relative">
+              <svg viewBox="0 0 320 200" role="img" aria-label={`Pulso ${nombreDelPeriodo(periodo)}: entre ${minimo ? Math.round(minimo.valor) : ""} y ${maximo ? Math.round(maximo.valor) : ""} lpm`} className="w-full">
+                {/* zona segura: de 60 a 100 lpm */}
+                <rect x="30" y={posicionY(PULSO_MAX)} width="285" height={posicionY(PULSO_MIN) - posicionY(PULSO_MAX)} fill="#84F6E6" opacity="0.3" />
+                <text x="312" y={posicionY(PULSO_MIN) - 5} fontSize="9" fontWeight="bold" fill="#006A61" textAnchor="end">Zona segura · 60–100 lpm</text>
+                {/* líneas guía con su valor */}
+                {[40, 70, 100, 130].map((valor) => (
+                  <g key={valor}>
+                    <line x1="30" x2="315" y1={posicionY(valor)} y2={posicionY(valor)} stroke="#D4E4F3" strokeDasharray="3 3" />
+                    <text x="2" y={posicionY(valor) + 4} fontSize="10" fill="#424656">{valor}</text>
+                  </g>
+                ))}
+                {tramosDelGrafico(pulsos, desde, hasta).map((tramo, i) => (
+                  <polyline key={i} points={tramo} fill="none" stroke="#1550E0" strokeWidth="2" strokeLinejoin="round" />
+                ))}
+                {minimo && (
+                  <g>
+                    <circle cx={posicionX(new Date(minimo.timestamp).getTime(), desde, hasta)} cy={posicionY(minimo.valor)} r="4" fill="white" stroke="#006A61" strokeWidth="2" />
+                    <text x={posicionX(new Date(minimo.timestamp).getTime(), desde, hasta)} y={posicionY(minimo.valor) + 15} fontSize="9" fontWeight="bold" fill="#006A61" textAnchor="middle">Min {Math.round(minimo.valor)}</text>
+                  </g>
+                )}
+                {/* el último dato: "Ahora · 72" */}
+                {ultimo && periodo === "hoy" && (
+                  <g>
+                    <circle cx={posicionX(new Date(ultimo.timestamp).getTime(), desde, hasta)} cy={posicionY(ultimo.valor)} r="5" fill="white" stroke="#1550E0" strokeWidth="2" />
+                    <text x={posicionX(new Date(ultimo.timestamp).getTime(), desde, hasta) - 4} y="183" fontSize="9" fontWeight="bold" fill="#1550E0" textAnchor="end">Ahora · {Math.round(ultimo.valor)}</text>
+                  </g>
+                )}
+                {/* el dato elegido: línea punteada hasta abajo y punto azul */}
+                {mostrado && (
+                  <g>
+                    <line x1={xMostrado} x2={xMostrado} y1={yMostrado} y2="175" stroke="#1550E0" strokeDasharray="2 3" />
+                    <circle cx={xMostrado} cy={yMostrado} r="5" fill="#1550E0" stroke="white" strokeWidth="2" />
+                  </g>
+                )}
+                {/* capa invisible que recibe los toques sobre el gráfico */}
+                <rect x="30" y="0" width="285" height="180" fill="transparent" className="cursor-pointer" onPointerMove={elegirPorPosicion} onPointerDown={elegirPorPosicion} />
+                {etiquetas.map((tiempo, i) => (
+                  <text key={i} x={posicionX(tiempo, desde, hasta)} y="195" fontSize="10" fill="#424656" textAnchor={anclaDeEtiqueta(i)}>
+                    {periodo === "hoy" ? hora(tiempo) : new Date(tiempo).getDate()}
+                  </text>
+                ))}
+              </svg>
+              {mostrado && (
+                <GloboGrafico
+                  izquierda={(xMostrado / 320) * 100}
+                  arriba={(yMostrado / 200) * 100}
+                  titulo={`${Math.round(mostrado.valor)} lpm`}
+                  detalle={periodo === "hoy" ? `${hora(mostrado.timestamp)} hs` : diaYHora(mostrado.timestamp)}
+                />
               )}
-              {maximo && (
-                <circle cx={posicionX(new Date(maximo.timestamp).getTime(), desde, hasta)} cy={posicionY(maximo.valor)} r="4" fill="#1550E0" />
-              )}
-              {etiquetas.map((tiempo, i) => (
-                <text key={i} x={posicionX(tiempo, desde, hasta)} y="195" fontSize="10" fill="#424656" textAnchor={anclaDeEtiqueta(i)}>
-                  {periodo === "hoy" ? hora(tiempo) : new Date(tiempo).getDate()}
-                </text>
-              ))}
-            </svg>
+            </div>
+            <p className="text-xs text-[#424656]">Tocá el gráfico para ver el pulso de cada momento.</p>
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />Pulso</li>
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-sm bg-[#84F6E6]" />Zona segura (60-100)</li>

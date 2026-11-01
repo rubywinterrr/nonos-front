@@ -6,6 +6,7 @@ import { idDelAdultoQueSeMira } from "../../utils/adultoQueSeMira";
 import { DIA_MS, claveDelDia, diaCorto, diasDelPeriodo, ultimosDias } from "../../utils/formatoSignos";
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
+import GloboGrafico from "../../components/GloboGrafico";
 
 // meta de pasos diaria (fija hasta que el back permita guardarla por persona)
 const META_PASOS = 3000;
@@ -17,6 +18,12 @@ interface Barra {
   pasos: number;
   // fecha del día (solo en semana y mes)
   fecha: number;
+}
+
+// un número con dos cifras ("9" → "09")
+function dosCifras(numero: number) {
+  if (numero < 10) return `0${numero}`;
+  return `${numero}`;
 }
 
 // suma los pasos de cada hora de hoy (0 a 23)
@@ -52,6 +59,8 @@ export default function DetallePasos() {
   const [error, setError] = useState<string | null>(null);
   const [sinAdulto, setSinAdulto] = useState(false);
   const [cargadoEn, setCargadoEn] = useState(0);
+  // la barra que tocó la persona (si no tocó ninguna, se muestra la más activa)
+  const [barraElegida, setBarraElegida] = useState<string | null>(null);
   const dias = diasDelPeriodo(periodo);
 
   useEffect(() => {
@@ -93,6 +102,17 @@ export default function DetallePasos() {
     if (barra.pasos > 0 && (!masActiva || barra.pasos > masActiva.pasos)) masActiva = barra;
   }
   const maximo = masActiva ? masActiva.pasos : 0;
+
+  // la barra del globo: la elegida o, si no hay, la más activa
+  let indiceMostrado = -1;
+  barras.forEach((barra, i) => {
+    if (barraElegida !== null && barra.clave === barraElegida) indiceMostrado = i;
+  });
+  if (indiceMostrado === -1 && masActiva) indiceMostrado = barras.indexOf(masActiva);
+  const barraMostrada = indiceMostrado >= 0 ? barras[indiceMostrado] : null;
+  const alturaMostrada = barraMostrada && maximo > 0 ? Math.max(2, (barraMostrada.pasos / maximo) * 100) : 2;
+  // hora actual, para la línea "Ahora" del gráfico de hoy
+  const horaActual = new Date(cargadoEn).getHours();
   const promedioPorDia = Math.round(total / dias);
   const porcentajeMeta = Math.round((promedioPorDia / META_PASOS) * 100);
   const diasConMeta = barras.filter((b) => b.pasos >= META_PASOS).length;
@@ -154,15 +174,35 @@ export default function DetallePasos() {
         ) : (
           <>
             {/* barras: la altura de cada una es su porcentaje respecto de la más alta */}
-            <div role="img" aria-label={esHoy ? "Pasos por hora de hoy" : `Pasos por día de los últimos ${dias} días`} className="flex h-40 items-end gap-0.5 border-b border-[#D4E4F3]">
-              {barras.map((barra) => (
-                <div
-                  key={barra.clave}
-                  title={`${barra.etiqueta}: ${barra.pasos} pasos`}
-                  className={`min-w-0 flex-1 rounded-t ${masActiva && barra.clave === masActiva.clave ? "bg-[#1550E0]" : "bg-[#B9D2FF]"}`}
-                  style={{ height: `${maximo > 0 ? Math.max(2, (barra.pasos / maximo) * 100) : 2}%` }}
+            <div className="relative mt-12">
+              <div role="group" aria-label={esHoy ? "Pasos por hora de hoy" : `Pasos por día de los últimos ${dias} días`} className="flex h-40 items-end gap-0.5 border-b border-[#D4E4F3]">
+                {barras.map((barra, i) => (
+                  <button
+                    type="button"
+                    key={barra.clave}
+                    aria-label={`${barra.etiqueta}: ${barra.pasos} pasos`}
+                    aria-pressed={i === indiceMostrado}
+                    onClick={() => setBarraElegida(barra.clave)}
+                    onPointerEnter={() => setBarraElegida(barra.clave)}
+                    className={`min-w-0 flex-1 cursor-pointer rounded-t ${i === indiceMostrado ? "bg-[#1550E0]" : "bg-[#B9D2FF] hover:bg-[#93B8F5]"}`}
+                    style={{ height: `${maximo > 0 ? Math.max(2, (barra.pasos / maximo) * 100) : 2}%` }}
+                  />
+                ))}
+              </div>
+              {/* línea punteada en la hora actual */}
+              {esHoy && (
+                <div aria-hidden="true" className="pointer-events-none absolute bottom-0 top-0 border-l border-dashed border-[#9AA9B8]" style={{ left: `${((horaActual + 0.5) / 24) * 100}%` }}>
+                  <span className="absolute -top-5 -translate-x-1/2 text-xs font-bold text-[#1550E0]">Ahora</span>
+                </div>
+              )}
+              {barraMostrada && (
+                <GloboGrafico
+                  izquierda={((indiceMostrado + 0.5) / barras.length) * 100}
+                  arriba={100 - alturaMostrada}
+                  titulo={`${barraMostrada.pasos.toLocaleString("es-AR")} pasos`}
+                  detalle={esHoy ? `${dosCifras(Number(barraMostrada.clave))}–${dosCifras(Number(barraMostrada.clave) + 1)} h` : diaCorto(barraMostrada.fecha)}
                 />
-              ))}
+              )}
             </div>
             <div className="flex gap-0.5 text-[0.65rem] text-[#424656]">
               {barras.map((barra, i) => (
@@ -172,10 +212,7 @@ export default function DetallePasos() {
                 </span>
               ))}
             </div>
-            <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
-              <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />Momento más activo</li>
-              <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#B9D2FF]" />Resto</li>
-            </ul>
+            <p className="text-xs text-[#424656]">Tocá una barra para ver sus pasos.</p>
           </>
         )}
       </section>
