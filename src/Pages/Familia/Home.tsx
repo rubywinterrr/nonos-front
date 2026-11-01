@@ -18,6 +18,7 @@ import tiempoDesde from "../../utils/tiempoDesde";
 import { tomasDeHoy, proximaToma, momentoDelDia, yaPaso } from "../../utils/tomasDeHoy";
 import ActivarAvisos from "../../components/ActivarAvisos";
 import LinkAvisos from "../../components/LinkAvisos";
+import AccesosRed from "../../components/AccesosRed";
 import { horasYMinutos } from "../../utils/formatoSignos";
 import {
   MdArrowForward,
@@ -164,7 +165,7 @@ export default function HomeFamilia() {
         <InvitacionesPendientes onAceptada={() => setRecargar(recargar + 1)} />
         {/* agregado (no está en el Figma): activar los avisos push y ver los recibidos */}
         <ActivarAvisos />
-        <LinkAvisos />
+
 
         {cargando && <p className="text-center text-[#424656]">Cargando…</p>}
         {!cargando && !adulto && (
@@ -408,6 +409,10 @@ export default function HomeFamilia() {
             </Link>
           </div>
         </section>
+
+        {/* agregado (no está en el Figma): avisos recibidos, alertas y notas de la red */}
+        <LinkAvisos />
+        <AccesosRed />
       </div>
     </main>
   );

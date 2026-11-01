@@ -16,6 +16,8 @@ const PagCuenta = lazy(() => import("./Pages/Adulto/Cuenta"));
 const CuentaFamilia = lazy(() => import("./Pages/Familia/Cuenta"));
 const Emergencia = lazy(() => import("./Pages/Medico/Emergencia"));
 const Avisos = lazy(() => import("./Pages/Red/avisos"));
+const AlertasRed = lazy(() => import("./Pages/Red/alertas"));
+const NotasRed = lazy(() => import("./Pages/Red/notas"));
 import { useAuth } from "./hooks/useAuth";
 const SOS = lazy(() => import("./Pages/Adulto/PantallaSOS"));
 const Salud = lazy(() => import("./Pages/Adulto/Salud"));
@@ -150,6 +152,8 @@ function App() {
                 />
                 <Route path="info/adulto" element={<InfoAdulto />} />
                 <Route path="avisos" element={<Avisos />} />
+                <Route path="alertas" element={<AlertasRed />} />
+                <Route path="notas" element={<NotasRed />} />
               </Route>
               <Route path="cuidador" element={<RutaPorRol rol="CUIDADOR" />}>
                 <Route index element={<Navigate to="home" replace />} />
@@ -169,6 +173,8 @@ function App() {
                 <Route path="contactos" element={<ContactosFamilia />} />
                 <Route path="configuracion" element={<AjustesCuidador />} />
                 <Route path="avisos" element={<Avisos />} />
+                <Route path="alertas" element={<AlertasRed />} />
+                <Route path="notas" element={<NotasRed />} />
               </Route>
               <Route path="cuenta" element={<CuentaSegunRol />} />
             </Route>
@@ -181,3 +187,4 @@ function App() {
 }
 
 export default App;
+
