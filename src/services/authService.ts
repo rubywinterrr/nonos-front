@@ -1,4 +1,5 @@
 import { apiFetch } from './api';
+import { desactivarPush } from '../utils/notificacionesPush';
 
 // así guarda el back el grupo sanguíneo; para mostrarlo usar textoGrupoSanguineo (utils)
 export type GrupoSanguineo =
@@ -92,6 +93,13 @@ export const authService = {
   logout: async () => {
     const refreshToken = localStorage.getItem('nonos_refresh_token');
 
+    // da de baja los avisos push de este celular, así no le llegan a la próxima persona que entre
+    try {
+      await desactivarPush();
+    } catch {
+      // si falla, igual se cierra la sesión
+    }
+
     try {
       if (refreshToken) {
         await apiFetch('/auth/logout', {
@@ -110,6 +118,11 @@ export const authService = {
 
   // POST /auth/logout-all (cierra la sesión en TODOS los dispositivos; responde 204 sin contenido)
   logoutAll: async () => {
+    try {
+      await desactivarPush();
+    } catch {
+      // si falla, igual se cierran las sesiones
+    }
     try {
       await apiFetch<void>('/auth/logout-all', {
         method: 'POST',
