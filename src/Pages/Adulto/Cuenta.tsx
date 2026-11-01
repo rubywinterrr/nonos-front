@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import Desplegable from "../../components/menuDesplegable";
@@ -19,7 +20,10 @@ import {
   LuRadio,
   LuShieldCheck,
   LuSmartphone,
+  LuUserRound,
 } from "react-icons/lu";
+import { dispositivosService, type Dispositivo } from "../../services/dispositivosService";
+import { usuarioService, type Vinculo } from "../../services/usuariosService";
 
 function textoRol(rol: string) {
   if (rol === "ADULTO_MAYOR") return "Adulto Mayor";
@@ -30,8 +34,63 @@ function textoRol(rol: string) {
 export default function PagCuenta() {
   const { usuario, logout } = useAuth();
   const esAdulto = usuario?.rol === "ADULTO_MAYOR";
-  const nombreDePila =
-    usuario?.nombreCompleto?.trim().split(/\s+/)[0] || "José";
+  const nombreDePila = usuario ? usuario.nombreCompleto.trim().split(" ")[0] : "";
+  const [boton, setBoton] = useState<Dispositivo | null>(null);
+  const [identificador, setIdentificador] = useState("");
+  const [registrando, setRegistrando] = useState(false);
+  const [secreto, setSecreto] = useState<string | null>(null);
+  const [errorBoton, setErrorBoton] = useState<string | null>(null);
+  const [contactoApoyo, setContactoApoyo] = useState<Vinculo | null>(null);
+  // se suma 1 después de registrar el botón, para volver a traerlo
+  const [recargar, setRecargar] = useState(0);
+
+  useEffect(() => {
+    if (!usuario || usuario.rol !== "ADULTO_MAYOR") return;
+    const id = usuario.id;
+
+    // trae el botón físico registrado (si hay) y la persona principal de su red
+    const cargar = async () => {
+      try {
+        const dispositivos = await dispositivosService.getDispositivos(id);
+        setBoton(dispositivos.find((d) => d.tipo === "BOTON_FISICO") ?? null);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        const vinculos = await usuarioService.getVinculos(id);
+        const deEmergencia = vinculos.find((v) => v.esContactoEmergencia);
+        setContactoApoyo(deEmergencia ?? vinculos[0] ?? null);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    cargar();
+  }, [usuario, recargar]);
+
+  // registra el botón físico con el código que figura en su base
+  const registrarBoton = async () => {
+    if (!usuario || !identificador.trim()) {
+      setErrorBoton("Escribí el identificador del botón.");
+      return;
+    }
+    setRegistrando(true);
+    setErrorBoton(null);
+    try {
+      const respuesta = await dispositivosService.registrarBotonFisico({
+        usuarioId: usuario.id,
+        identificadorExterno: identificador.trim(),
+      });
+      // el back muestra el secreto una sola vez: hay que anotarlo para configurar el botón
+      setSecreto(respuesta.secreto);
+      setIdentificador("");
+      setRecargar(recargar + 1);
+    } catch (err) {
+      console.error(err);
+      setErrorBoton(err instanceof Error ? err.message : "No se pudo registrar el botón.");
+    } finally {
+      setRegistrando(false);
+    }
+  };
 
   return (
     <main className="mainBody">
@@ -44,15 +103,19 @@ export default function PagCuenta() {
           className="w-full rounded-2xl border border-[#D7DFE6] bg-white p-4 shadow-xs"
         >
           <div className="flex items-center gap-3.5 border-b border-[#D7DFE6] pb-4">
-            <img
-              src={usuario?.fotoUrl || "/jose-perez-cuenta.png"}
-              alt="Foto de perfil"
-              className="size-12 shrink-0 rounded-full bg-[#E7EDFB] object-cover"
-            />
+            {usuario?.fotoUrl ? (
+              <img
+                src={usuario.fotoUrl}
+                alt="Foto de perfil"
+                className="size-12 shrink-0 rounded-full bg-[#E7EDFB] object-cover"
+              />
+            ) : (
+              <LuUserRound aria-hidden="true" className="size-12 shrink-0 rounded-full bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
+            )}
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg font-bold leading-6">
-                  {usuario?.nombreCompleto || "José Pérez"}
+                  {usuario?.nombreCompleto}
                 </h2>
                 {esAdulto && (
                   <span className="rounded-full border border-[#BAEDD3] bg-[#E9EEF2] px-2 py-0.5 text-xs font-bold text-[#0B4C2B]">
@@ -61,10 +124,8 @@ export default function PagCuenta() {
                 )}
               </div>
               <p className="text-xs font-medium leading-4 text-[#435059]">
-                {usuario?.fechaNacimiento
-                  ? `${calcularEdad(usuario.fechaNacimiento)} años`
-                  : "78 años"}{" "}
-                · {textoRol(usuario?.rol || "ADULTO_MAYOR")}
+                {usuario?.fechaNacimiento && `${calcularEdad(usuario.fechaNacimiento)} años · `}
+                {textoRol(usuario?.rol || "ADULTO_MAYOR")}
               </p>
             </div>
           </div>
@@ -79,7 +140,7 @@ export default function PagCuenta() {
                   Correo electrónico
                 </p>
                 <p className="break-all text-sm font-semibold leading-5">
-                  {usuario?.email || "jose.perez1946@email.com"}
+                  {usuario?.email}
                 </p>
               </div>
             </div>
@@ -93,7 +154,7 @@ export default function PagCuenta() {
                   Teléfono vinculado
                 </p>
                 <p className="text-sm font-semibold leading-5">
-                  {usuario?.telefono || "+54 11 4455-8899"}
+                  {usuario?.telefono || "Sin dato"}
                 </p>
               </div>
             </div>
@@ -134,39 +195,59 @@ export default function PagCuenta() {
                 El botón físico envía la misma alerta prioritaria que el botón
                 de la aplicación.
               </p>
-              <div className="mt-2 flex min-h-30 flex-col items-center justify-center rounded-xl border border-dashed border-[#D7DFE6] p-3 text-center">
-                <span className="mb-2 flex size-8 items-center justify-center rounded-full bg-[#E9EEF2] text-[#435059]">
-                  <LuRadio aria-hidden="true" className="size-4" />
-                </span>
-                <p className="text-xs font-bold">
-                  No hay ningún botón registrado
+              {boton ? (
+                <div className="mt-2 flex flex-col items-center justify-center gap-1 rounded-xl border border-[#BAEDD3] bg-[#E8FAF1] p-3 text-center">
+                  <p className="text-xs font-bold text-[#0B4C2B]">Botón registrado</p>
+                  <p className="text-xs text-[#435059]">Identificador: {boton.identificadorExterno}</p>
+                </div>
+              ) : (
+                <>
+                  <div className="mt-2 flex min-h-30 flex-col items-center justify-center rounded-xl border border-dashed border-[#D7DFE6] p-3 text-center">
+                    <span className="mb-2 flex size-8 items-center justify-center rounded-full bg-[#E9EEF2] text-[#435059]">
+                      <LuRadio aria-hidden="true" className="size-4" />
+                    </span>
+                    <p className="text-xs font-bold">
+                      No hay ningún botón registrado
+                    </p>
+                    <p className="mt-1 max-w-60 text-xs leading-4 text-[#435059]">
+                      Registrá el código para que sus pedidos de ayuda lleguen a tu
+                      red.
+                    </p>
+                  </div>
+                  <label
+                    htmlFor="identificador-boton"
+                    className="mt-4 block text-xs font-bold uppercase tracking-wide text-[#435059]"
+                  >
+                    Identificador del botón
+                  </label>
+                  <input
+                    id="identificador-boton"
+                    type="text"
+                    value={identificador}
+                    onChange={(evento) => setIdentificador(evento.target.value)}
+                    placeholder="Ej: NONOS-8492 o MAC"
+                    className="mt-2 h-11 w-full rounded-xl border border-[#D7DFE6] bg-white px-3 text-sm font-medium outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]"
+                  />
+                  <p className="mt-2 text-xs text-[#435059]">
+                    Figura en la base del dispositivo físico.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={registrarBoton}
+                    disabled={registrando}
+                    className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#1550E0] px-4 text-lg font-bold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+                  >
+                    <LuPlus aria-hidden="true" className="size-5" /> {registrando ? "Registrando…" : "Registrar botón"}
+                  </button>
+                </>
+              )}
+              {errorBoton && <p role="alert" className="mt-2 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{errorBoton}</p>}
+              {secreto && (
+                <p role="status" className="mt-2 rounded-xl border border-[#BAEDD3] bg-[#E8FAF1] p-3 text-sm text-[#0B4C2B]">
+                  Botón registrado. Anotá esta clave para configurarlo, se muestra una sola vez:{" "}
+                  <span className="font-mono font-bold">{secreto}</span>
                 </p>
-                <p className="mt-1 max-w-60 text-xs leading-4 text-[#435059]">
-                  Registrá el código para que sus pedidos de ayuda lleguen a tu
-                  red.
-                </p>
-              </div>
-              <label
-                htmlFor="identificador-boton"
-                className="mt-4 block text-xs font-bold uppercase tracking-wide text-[#435059]"
-              >
-                Identificador del botón
-              </label>
-              <input
-                id="identificador-boton"
-                type="text"
-                placeholder="Ej: NONOS-8492 o MAC"
-                className="mt-2 h-11 w-full rounded-xl border border-[#D7DFE6] bg-white px-3 text-sm font-medium outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]"
-              />
-              <p className="mt-2 text-xs text-[#435059]">
-                Figura en la base del dispositivo físico.
-              </p>
-              <button
-                type="button"
-                className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#1550E0] px-4 text-lg font-bold text-white shadow-sm hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
-              >
-                <LuPlus aria-hidden="true" className="size-5" /> Registrar botón
-              </button>
+              )}
             </article>
             {/* conectar, sincronizar y recuperar datos de la pulsera */}
             <PulseraConexion />
@@ -190,6 +271,7 @@ export default function PagCuenta() {
           <article className="rounded-xl border border-[#D7DFE6] p-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-xs font-semibold">Contraseña de acceso</h3>
+              {/* PENDIENTE BACK: no hay dato de cuándo se cambió la contraseña */}
               <span className="rounded border border-[#D7DFE6] px-2 py-0.5 text-xs text-[#435059]">
                 Hace 3 meses
               </span>
@@ -198,6 +280,7 @@ export default function PagCuenta() {
               Puedes cambiar tu contraseña o solicitar asistencia si no la
               recuerdas con claridad.
             </p>
+            {/* PENDIENTE BACK: no hay endpoint para cambiar o restablecer la contraseña */}
             <button
               type="button"
               className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#D7DFE6] bg-white px-3 text-xs font-bold text-[#1550E0] hover:bg-[#E7EDFB] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
@@ -206,6 +289,7 @@ export default function PagCuenta() {
               contraseña
             </button>
           </article>
+          {/* PENDIENTE BACK: no existe el acceso con huella o PIN */}
           <div className="flex items-center gap-3 rounded-xl border border-[#D7DFE6] bg-[#E9EEF2] p-3">
             <LuFingerprint
               aria-hidden="true"
@@ -228,7 +312,7 @@ export default function PagCuenta() {
           </div>
         </section>
 
-        {esAdulto && (
+        {esAdulto && contactoApoyo && (
           <aside className="flex w-full items-start gap-3 rounded-2xl border border-[#BAEDD3] bg-[#E9EEF2] p-4">
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#E8FAF1] text-[#0B6D3C]">
               <LuShieldCheck aria-hidden="true" className="size-4" />
@@ -236,7 +320,8 @@ export default function PagCuenta() {
             <div>
               <h2 className="text-sm font-bold">Red de apoyo vinculada</h2>
               <p className="mt-1 text-xs leading-4 text-[#0B4C2B]">
-                Tu hija <strong>Sofía Gómez</strong> está autorizada para
+                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Tu hija" queda fijo */}
+                Tu hija <strong>{contactoApoyo.familiar.nombreCompleto}</strong> está autorizada para
                 asistir con el acceso a tu cuenta si alguna vez lo necesitas.
               </p>
             </div>
