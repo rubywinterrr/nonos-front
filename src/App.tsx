@@ -51,6 +51,7 @@ const DetallePulso = lazy(() => import("./Pages/Signos/DetallePulso"));
 const DetalleOxigeno = lazy(() => import("./Pages/Signos/DetalleOxigeno"));
 const DetallePasos = lazy(() => import("./Pages/Signos/DetallePasos"));
 const DetalleSueno = lazy(() => import("./Pages/Signos/DetalleSueno"));
+import rutaSegunRol from "./utils/rutaSegunRol";
 
 function LayoutConFooter() {
   const location = useLocation();
@@ -84,6 +85,14 @@ function IrAAvisos() {
   return <Navigate to="/adulto/home" replace />;
 }
 
+// la raíz ("/") no es una pantalla: con sesión manda al inicio de cada rol, sin sesión al login
+function Inicio() {
+  const { usuario, loading } = useAuth();
+  if (loading) return <div className="mainBody" aria-busy="true" />;
+  if (!usuario) return <Navigate to="/ingresar" replace />;
+  return <Navigate to={rutaSegunRol(usuario.rol)} replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -95,6 +104,7 @@ function App() {
       >
         <Routes>
           <Route path="/ingresar" element={<Ingreso />} />
+          <Route path="/" element={<Inicio />} />
           {/* pantalla pública del médico: se abre al escanear el QR de la pulsera, sin login */}
           <Route path="/emergencia/:qrId" element={<Emergencia />} />
           <Route element={<RutaProtegida />}>
