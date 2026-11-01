@@ -72,7 +72,8 @@ export default function ConfigCuenta1() {
     <main className="mainBody gap-0">
       <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
-          <span className="text-xl font-bold">NONOS</span>
+          <img src="/public/logo/isotipo-cuadrado.png" alt="" className="size-9" />
+          <span className="text-xl font-bold text-[#0A2666]">NONOS</span>
         </div>
       </header>
 

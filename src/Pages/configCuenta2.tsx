@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { condicionesService } from "../services/condicionesService";
+import { medicamentosService } from "../services/medicamentosService";
 import {
   LuActivity,
   LuArrowLeft,
@@ -19,6 +20,31 @@ import {
   LuAccessibility,
 } from "react-icons/lu";
 
+// una medicación escrita en el paso 2: "Losartán 50mg" y a qué hora la toma
+interface MedicacionEscrita {
+  texto: string;
+  horario: string;
+}
+
+// separa "Losartán 50 mg" en nombre ("Losartán") y dosis ("50 mg"):
+// la dosis arranca en la primera palabra que tiene un número
+function separarNombreYDosis(texto: string) {
+  const palabras = texto.trim().split(" ").filter((p) => p !== "");
+  let inicioDosis = -1;
+  for (let i = 0; i < palabras.length; i++) {
+    const tieneNumero = palabras[i].split("").some((letra) => letra >= "0" && letra <= "9");
+    if (tieneNumero) {
+      inicioDosis = i;
+      break;
+    }
+  }
+  if (inicioDosis <= 0) return { nombre: texto.trim(), dosis: "" };
+  return {
+    nombre: palabras.slice(0, inicioDosis).join(" "),
+    dosis: palabras.slice(inicioDosis).join(" "),
+  };
+}
+
 interface Props {
   icono: ReactNode;
   children: ReactNode;
@@ -33,11 +59,10 @@ function CondicionMedica({ icono, children, seleccionada, onClick }: Props) {
       type="button"
       aria-pressed={seleccionada}
       onClick={onClick}
-      className={`flex min-h-15 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left text-[#16222C] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
-        seleccionada
-          ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
-          : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
-      }`}
+      className={`flex min-h-15 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left text-[#16222C] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${seleccionada
+        ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+        : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+        }`}
     >
       <span
         aria-hidden="true"
@@ -77,9 +102,13 @@ export default function ConfigCuenta2() {
   const [respuestaMedicacion, setRespuestaMedicacion] = useState<
     "si" | "no" | null
   >(null);
-  const [medicacionesAdicionales, setMedicacionesAdicionales] = useState<
-    number[]
-  >([]);
+  // la primera medicación y las que se agregan con "Agregar otra medicación"
+  const [medicaciones, setMedicaciones] = useState<MedicacionEscrita[]>([{ texto: "", horario: "08:00" }]);
+
+  // cambia el texto o el horario de la medicación número i
+  function cambiarMedicacion(i: number, campo: "texto" | "horario", valor: string) {
+    setMedicaciones(medicaciones.map((m, j) => (j === i ? { ...m, [campo]: valor } : m)));
+  }
 
   // marca la condición si no estaba marcada, o la desmarca si ya lo estaba
   function alternarCondicion(nombre: string) {
@@ -115,8 +144,29 @@ export default function ConfigCuenta2() {
       return;
     }
 
+    // cada medicación necesita nombre, dosis (con número) y horario
+    const aGuardar = [];
+    if (respuestaMedicacion === "si") {
+      for (const medicacion of medicaciones) {
+        const { nombre, dosis } = separarNombreYDosis(medicacion.texto);
+        if (!nombre || !dosis || !medicacion.horario) {
+          setError("Escribí cada medicación con su dosis (ej: Losartán 50 mg) y su horario.");
+          return;
+        }
+        aGuardar.push({ nombre, dosis, horario: medicacion.horario });
+      }
+    }
+
     setGuardando(true);
     try {
+      for (const medicacion of aGuardar) {
+        await medicamentosService.crearMedicamento({
+          nombre: medicacion.nombre,
+          dosis: medicacion.dosis,
+          horariosDelDia: [medicacion.horario],
+          usuarioId: usuario.id,
+        });
+      }
       for (const nombre of seleccionadas) {
         await condicionesService.crearCondicion({ nombre, usuarioId: usuario.id });
       }
@@ -140,7 +190,8 @@ export default function ConfigCuenta2() {
     <main className="mainBody">
       <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
-          <span className="text-xl font-bold">NONOS</span>
+          <img src="/public/logo/isotipo-cuadrado.png" alt="" className="size-9" />
+          <span className="text-xl font-bold text-[#0A2666]">NONOS</span>
         </div>
       </header>
 
@@ -211,11 +262,10 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaAlergias === "si"}
               onClick={() => setRespuestaAlergias("si")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
-                respuestaAlergias === "si"
-                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
-                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
-              }`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaAlergias === "si"
+                ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+                }`}
             >
               <LuCircleCheck aria-hidden="true" className="size-5 shrink-0" />
               Sí, tengo
@@ -224,11 +274,10 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaAlergias === "no"}
               onClick={() => setRespuestaAlergias("no")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
-                respuestaAlergias === "no"
-                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
-                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
-              }`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaAlergias === "no"
+                ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+                }`}
             >
               <LuCircleX aria-hidden="true" className="size-5 shrink-0" />
               No tengo
@@ -385,11 +434,10 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaMedicacion === "si"}
               onClick={() => setRespuestaMedicacion("si")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
-                respuestaMedicacion === "si"
-                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
-                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
-              }`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaMedicacion === "si"
+                ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+                }`}
             >
               <LuCircleCheck aria-hidden="true" className="size-5 shrink-0" />
               Sí, tengo
@@ -398,11 +446,10 @@ export default function ConfigCuenta2() {
               type="button"
               aria-pressed={respuestaMedicacion === "no"}
               onClick={() => setRespuestaMedicacion("no")}
-              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${
-                respuestaMedicacion === "no"
-                  ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
-                  : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
-              }`}
+              className={`flex min-h-14 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 px-2 text-base font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3] ${respuestaMedicacion === "no"
+                ? "border-[#144BD3] bg-[#C9D9F7] shadow-inner hover:bg-[#BCD0F3] active:bg-[#ADC4ED]"
+                : "border-transparent bg-[#E7EDFB] hover:bg-[#D7E3FA] active:bg-[#C6D5F3]"
+                }`}
             >
               <LuCircleX aria-hidden="true" className="size-5 shrink-0" />
               No tengo
@@ -419,31 +466,32 @@ export default function ConfigCuenta2() {
                   *
                 </span>
               </label>
-              <input
-                id="medicamentos"
-                required
-                type="text"
-                placeholder="Ej: Lozartón 500mg"
-                className="min-h-15 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
-              />
-              {medicacionesAdicionales.map((numero) => (
-                <input
-                  key={numero}
-                  required
-                  type="text"
-                  aria-label={`Medicación adicional ${numero} (obligatoria)`}
-                  placeholder="Ej: Lozartón 500mg"
-                  className="min-h-15 w-full rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
-                />
+              {medicaciones.map((medicacion, i) => (
+                <div key={i} className="flex w-full gap-2">
+                  <input
+                    id={i === 0 ? "medicamentos" : undefined}
+                    required
+                    type="text"
+                    aria-label={i === 0 ? undefined : `Medicación adicional ${i} (obligatoria)`}
+                    value={medicacion.texto}
+                    onChange={(evento) => cambiarMedicacion(i, "texto", evento.target.value)}
+                    placeholder="Ej: Lozartón 500mg"
+                    className="min-h-15 min-w-0 flex-1 rounded-2xl bg-[#E7EDFB] px-4 text-base text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                  />
+                  {/* agregado: el back necesita a qué hora se toma cada medicación */}
+                  <input
+                    type="time"
+                    required
+                    aria-label={`Horario de la medicación ${i + 1}`}
+                    value={medicacion.horario}
+                    onChange={(evento) => cambiarMedicacion(i, "horario", evento.target.value)}
+                    className="min-h-15 w-28 shrink-0 rounded-2xl bg-[#E7EDFB] px-2 text-base text-[#16222C] inset-shadow-sm focus-visible:outline-2 focus-visible:outline-[#144BD3]"
+                  />
+                </div>
               ))}
               <button
                 type="button"
-                onClick={() =>
-                  setMedicacionesAdicionales((actuales) => [
-                    ...actuales,
-                    actuales.length + 1,
-                  ])
-                }
+                onClick={() => setMedicaciones([...medicaciones, { texto: "", horario: "20:00" }])}
                 className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#E7EDFB] px-3 text-base font-semibold text-[#0D328B] hover:bg-[#D7E3FA] active:bg-[#C6D5F3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#144BD3]"
               >
                 <LuPlus aria-hidden="true" className="size-5 shrink-0" />

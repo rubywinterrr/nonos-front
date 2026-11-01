@@ -15,6 +15,7 @@ self.addEventListener("push", (evento) => {
     self.registration.showNotification(datos.title || "NONOS", {
       body: datos.body,
       data: datos.data || {},
+      icon: "/public/logo/icono-192.png",
     }),
   );
 });
