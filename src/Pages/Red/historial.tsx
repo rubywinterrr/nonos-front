@@ -52,6 +52,13 @@ type VentanaConDictado = Window & {
   webkitSpeechRecognition?: new () => ReconocimientoVoz;
 };
 
+// fecha de un evento del back en el formato que pide <input type="datetime-local"> ("2026-10-30T18:30")
+const fechaParaInput = (fecha: string) => {
+  const d = new Date(fecha);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+};
+
 const obtenerFechaHoraLocalParaInput = () => {
   const fecha = new Date();
   fecha.setMinutes(fecha.getMinutes() - fecha.getTimezoneOffset());
@@ -107,6 +114,8 @@ export default function Historial() {
   const [dialogoAbierto, setDialogoAbierto] = useState(false);
   const [cerrandoDialogo, setCerrandoDialogo] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState("Observación cotidiana");
+  // id del evento que se está editando (null = se está cargando uno nuevo)
+  const [editandoId, setEditandoId] = useState<string | null>(null);
   const [nuevoDetalle, setNuevoDetalle] = useState("");
   const [momentoSuceso, setMomentoSuceso] = useState(obtenerFechaHoraLocalParaInput);
   const [dictando, setDictando] = useState(false);
@@ -165,11 +174,15 @@ export default function Historial() {
       detalle: texto,
       autor: nombreDelAutor(evento.authorId),
       categoria: categoriaDelTipo(tipo),
+      // solo quien lo escribió lo puede editar o borrar (lo controla el back)
+      esMio: usuario !== null && evento.authorId === usuario.id,
+      original: evento,
     };
   });
 
 
   const abrirDialogo = () => {
+    setEditandoId(null);
     setCerrandoDialogo(false);
     setDialogoAbierto(true);
     dialogoRef.current?.showModal();
@@ -244,6 +257,36 @@ export default function Historial() {
     }
   };
 
+  // abre el diálogo con los datos de un evento propio para corregirlo
+  const abrirEdicion = (evento: EventoHistorial) => {
+    const { tipo, texto } = leerDescripcion(evento.descripcion);
+    if (tipo === "Observación prioritaria") {
+      setTipoSeleccionado("Observación cotidiana");
+      setPrioritaria(true);
+    } else {
+      setTipoSeleccionado(tipo);
+      setPrioritaria(false);
+    }
+    setNuevoDetalle(texto);
+    setMomentoSuceso(fechaParaInput(evento.fecha));
+    setErrorGuardar(null);
+    setEditandoId(evento.id);
+    setCerrandoDialogo(false);
+    setDialogoAbierto(true);
+    dialogoRef.current?.showModal();
+  };
+
+  // borra un evento propio
+  const borrarEvento = async (id: string) => {
+    try {
+      await eventosHistorialService.eliminarEvento(id);
+      setRecargar(recargar + 1);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo borrar el registro.");
+    }
+  };
+
   // guarda la observación en el historial del adulto
   const registrarCambio = async () => {
     if (!nuevoDetalle.trim() || !adulto) return;
@@ -254,11 +297,20 @@ export default function Historial() {
     setErrorGuardar(null);
     try {
       // PENDIENTE BACK: "prioritaria" queda guardada en el texto, pero el back todavía no avisa a nadie
-      await eventosHistorialService.crearEvento({
-        usuarioId: adulto.id,
-        descripcion: `${tipo}: ${nuevoDetalle.trim()}`,
-        fecha: fechaSuceso.toISOString(),
-      });
+      if (editandoId) {
+        // corrige un evento propio
+        await eventosHistorialService.actualizarEvento(editandoId, {
+          descripcion: `${tipo}: ${nuevoDetalle.trim()}`,
+          fecha: fechaSuceso.toISOString(),
+        });
+      } else {
+        await eventosHistorialService.crearEvento({
+          usuarioId: adulto.id,
+          descripcion: `${tipo}: ${nuevoDetalle.trim()}`,
+          fecha: fechaSuceso.toISOString(),
+        });
+      }
+      setEditandoId(null);
       setNuevoDetalle("");
       setMomentoSuceso(obtenerFechaHoraLocalParaInput());
       setPrioritaria(false);
@@ -310,7 +362,7 @@ export default function Historial() {
             {cargando && <p className="text-center text-sm text-[#435059]">Cargando historial…</p>}
             {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
             {!cargando && !adulto && !error && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">Todavía no estás vinculado a ningún adulto mayor.</p>}
-            {registrosVisibles.map((registro) => <TarjetaHistorial key={registro.id} fecha={registro.fecha} hora={registro.hora} tipo={registro.tipo} detalle={registro.detalle} autor={registro.autor} categoria={registro.categoria} />)}
+            {registrosVisibles.map((registro) => <TarjetaHistorial key={registro.id} fecha={registro.fecha} hora={registro.hora} tipo={registro.tipo} detalle={registro.detalle} autor={registro.autor} categoria={registro.categoria} onEditar={registro.esMio ? () => abrirEdicion(registro.original) : undefined} onBorrar={registro.esMio ? () => borrarEvento(registro.id) : undefined} />)}
             {!cargando && adulto && registrosVisibles.length === 0 && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">No hay registros en esta categoría.</p>}
           </section>
 
@@ -336,7 +388,7 @@ export default function Historial() {
               <span className="mx-auto block h-1.5 w-12 rounded-full bg-[#B7C8F0]" />
             </button>
             <div className="flex h-16 items-center justify-between gap-2">
-              <h2 id="titulo-nuevo-registro" className="text-xl font-bold tracking-tight sm:text-2xl">Registrar observación</h2>
+              <h2 id="titulo-nuevo-registro" className="text-xl font-bold tracking-tight sm:text-2xl">{editandoId ? "Editar observación" : "Registrar observación"}</h2>
               <button type="button" aria-label="Cerrar" onClick={cerrarDialogo} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"><LuX aria-hidden="true" className="size-5" /></button>
             </div>
           </div>
