@@ -447,7 +447,7 @@ export default function ContactosFamilia() {
                 <input
                   id="telefono-invitado"
                   type="tel"
-                  placeholder="Ej: +54 9 11 4490-2211"
+                  placeholder="Ej: +54 11 4490-2211"
                   className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#77848F]"
                 />
               </div>

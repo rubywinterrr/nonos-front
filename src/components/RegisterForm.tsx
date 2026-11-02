@@ -204,7 +204,7 @@ export default function RegisterForm() {
                   <button
                     className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${tipoCuidador === tipo
                       ? "bg-gray-300"
-                      : "hover:bg-gray-100"
+                      : "hover:bg-gray-100 bg-white"
                       }`}
                     onClick={() => setTipoCuidador(tipo)}
                     type="button"

@@ -285,7 +285,7 @@ export default function CuentaFamilia() {
           <button
             type="button"
             onClick={logout}
-            className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#F6D4BE] bg-[#FFF1E6] px-4 text-lg font-bold text-[#9A3E00] hover:bg-[#FFE6D4] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+            className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#F6D4BE] bg-red-100 px-4 text-lg font-bold text-[#9A3E00] hover:bg-red-200 active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
           >
             <LuLogOut aria-hidden="true" className="size-5" /> Cerrar sesión
           </button>

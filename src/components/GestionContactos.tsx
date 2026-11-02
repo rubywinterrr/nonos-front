@@ -91,7 +91,7 @@ export default function GestionContactos({ adultoId, nombreAdulto, contactos, on
           type="tel"
           value={telefono}
           onChange={(evento) => setTelefono(evento.target.value)}
-          placeholder="Ej: +54 9 11 4490-2211"
+          placeholder="Ej: +54 11 4490-2211"
           className="h-12 rounded-lg border border-[#D7DFE6] bg-white px-3 text-base font-normal focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
         />
       </label>
