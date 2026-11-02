@@ -18,6 +18,7 @@ import { usuarioService, type AdultoMayorVinculado } from "../../services/usuari
 import type { TipoAlerta } from "../../services/alertasService";
 import type { TipoCuidador } from "../../services/invitacionesService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // todos los tipos de alerta del back (es lo que el back pone por defecto)
 const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "MEDICACION_STOCK_BAJO", "CAMBIO_DE_RUTINA", "LOGRO_POSITIVO"];
@@ -184,8 +185,7 @@ export default function AjustesCuidador() {
           <section className="flex items-start gap-3 rounded-2xl bg-white/70 p-4">
             <LuUserRound aria-hidden="true" className="size-9 shrink-0 rounded-lg bg-white p-2 text-[#1550E0]" />
             <div>
-              {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "(Papá)" queda fijo */}
-              <h2 className="font-bold">{adulto?.nombreCompleto} (Papá)</h2>
+              <h2 className="font-bold">{adulto?.nombreCompleto} ({etiquetaRol(adulto?.rol)})</h2>
               <p className="text-sm text-[#424656]">
                 Personalizá qué avisos recibís de {adulto?.nombreCompleto}. Por defecto vienen priorizadas las alertas críticas.
               </p>

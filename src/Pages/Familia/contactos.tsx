@@ -26,6 +26,7 @@ import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../s
 import { contactosService, type Contacto } from "../../services/contactosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // texto del vínculo de alguien de la red
 // PENDIENTE BACK: el vínculo no guarda el parentesco ("Hija", "Hijo"), por eso va el rol
@@ -362,8 +363,7 @@ export default function ContactosFamilia() {
                   Rol de acompañamiento
                 </span>
                 <p className="mt-1 font-bold leading-5">{nombreAdulto}</p>
-                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
-                <p className="text-sm leading-5 text-[#435059]">Papá{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}</p>
+                <p className="text-sm leading-5 text-[#435059]">{etiquetaRol(adulto?.rol)}{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}</p>
               </div>
             </div>
 
@@ -387,7 +387,7 @@ export default function ContactosFamilia() {
               >
                 <LuUserRound aria-hidden="true" className="size-10 shrink-0 rounded-lg bg-[#D6E8FF] p-2 text-[#1550E0]" />
                 <span className="flex-1">
-                  <span className="block font-semibold leading-5">Familiar directo</span>
+                  <span className="block font-semibold leading-5">Familiar</span>
                   <span className="mt-1 block text-sm leading-5 text-[#435059]">Acceso total a decisiones y contactos directos.</span>
                 </span>
                 <span className={`mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border-2 ${rol === "familiar" ? "border-[#1550E0] bg-[#1550E0] text-white" : "border-[#9DAFC2]"}`}>
@@ -433,7 +433,7 @@ export default function ContactosFamilia() {
               <input
                 id="rol-especifico"
                 type="text"
-                placeholder="Hija menor (coordinación)"
+                placeholder="Familiar (coordinación)"
                 className="mt-2 h-12 w-full rounded-lg border border-[#D7DFE6] bg-white px-3 text-sm outline-none placeholder:text-[#77848F] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]"
               />
             </div>

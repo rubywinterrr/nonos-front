@@ -7,6 +7,7 @@ import { eventosHistorialService, type EventoHistorial } from "../../services/ev
 import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 import {
   LuActivity,
   LuCalendarDays,
@@ -403,8 +404,7 @@ export default function Historial() {
               <div className="min-w-0">
                 <span className="mb-1 inline-flex rounded-full bg-[#E7EDFB] px-2 py-0.5 text-xs font-bold uppercase text-[#0D328B]">Paciente asignado</span>
                 <h3 className="font-bold leading-5">{adulto?.nombreCompleto}</h3>
-                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
-                <p className="text-sm font-semibold leading-5 text-[#435059]">Papá{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}</p>
+                <p className="text-sm font-semibold leading-5 text-[#435059]">{etiquetaRol(adulto?.rol)}{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}</p>
               </div>
             </div>
 

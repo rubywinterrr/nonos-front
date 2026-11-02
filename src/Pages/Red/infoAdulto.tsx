@@ -16,6 +16,7 @@ import { condicionesService, type Condicion } from "../../services/condicionesSe
 import type { GrupoSanguineo } from "../../services/authService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // grupo sanguíneo como en el diseño: "0 Positivo (0+)"
 function grupoSanguineoLargo(grupo: GrupoSanguineo | null) {
@@ -123,9 +124,8 @@ export default function InfoAdulto() {
             )}
             <div>
               <h2 className="text-xl font-bold leading-7">{adulto.nombreCompleto}</h2>
-              {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
               <p className="text-base font-semibold leading-6 text-[#435059]">
-                Papá{adulto.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
+                {etiquetaRol(adulto.rol)}{adulto.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
               </p>
             </div>
           </div>

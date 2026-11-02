@@ -25,9 +25,10 @@ import {
 } from "react-icons/lu";
 import { dispositivosService, type Dispositivo } from "../../services/dispositivosService";
 import { usuarioService, type Vinculo } from "../../services/usuariosService";
+import { etiquetaRolVinculo } from "../../utils/etiquetaRol";
 
 function textoRol(rol: string) {
-  if (rol === "ADULTO_MAYOR") return "Adulto Mayor";
+  if (rol === "ADULTO_MAYOR") return "Adulto mayor";
   if (rol === "FAMILIAR") return "Familiar";
   return "Cuidador";
 }
@@ -321,8 +322,7 @@ export default function PagCuenta() {
             <div>
               <h2 className="text-sm font-bold">Red de apoyo vinculada</h2>
               <p className="mt-1 text-xs leading-4 text-[#0B4C2B]">
-                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Tu hija" queda fijo */}
-                Tu hija <strong>{contactoApoyo.familiar.nombreCompleto}</strong> está autorizada para
+                Tu {etiquetaRolVinculo(contactoApoyo.tipoVinculo, contactoApoyo.tipoCuidador).toLowerCase()} <strong>{contactoApoyo.familiar.nombreCompleto}</strong> está autorizada para
                 asistir con el acceso a tu cuenta si alguna vez lo necesitas.
               </p>
             </div>

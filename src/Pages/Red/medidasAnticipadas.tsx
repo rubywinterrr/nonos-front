@@ -9,7 +9,7 @@ const TEXTO_EVITAR = "Para evitar en una emergencia:";
 const TEXTO_ACOMPANANTE = "\n\nQuién quiero que me acompañe:";
 const TEXTO_ATENCION = "\n\nCómo prefiero ser atendido:";
 
-const VALOR_DECISION = "Quiero que mi hija Sofía esté presente en todo momento y tome las decisiones de atención si yo no puedo.";
+const VALOR_DECISION = "Quiero que mi familiar Sofía esté presente en todo momento y tome las decisiones de atención si yo no puedo.";
 const VALOR_INTERNACION = "Prefiero permanecer en mi domicilio siempre que sea médicamente viable. En caso de requerir traslado, priorizar Sanatorio San Cayetano.";
 
 function armarMedidas(evitar: string, acompanante: string, atencion: string) {
