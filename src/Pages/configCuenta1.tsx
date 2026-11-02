@@ -19,6 +19,7 @@ import { usuarioService } from "../services/usuariosService";
 import type { GrupoSanguineo } from "../services/authService";
 import textoGrupoSanguineo from "../utils/textoGrupoSanguineo";
 
+
 const GRUPOS_SANGUINEOS: GrupoSanguineo[] = [
   "A_POSITIVO",
   "A_NEGATIVO",
@@ -31,7 +32,7 @@ const GRUPOS_SANGUINEOS: GrupoSanguineo[] = [
 ];
 
 export default function ConfigCuenta1() {
-  const { usuario } = useAuth();
+  const { usuario, recargarUsuario } = useAuth();
   const navigate = useNavigate();
   // arrancan con lo que ya tenga guardado el usuario, por si vuelve desde el paso 2
   const [fechaNacimiento, setFechaNacimiento] = useState(usuario?.fechaNacimiento?.slice(0, 10) ?? "");
@@ -59,6 +60,8 @@ export default function ConfigCuenta1() {
         obraSocial: obraSocial.trim(),
         carnetObraSocial: carnet.trim(),
       });
+      // trae de nuevo el usuario para que la app vea la cobertura y los datos recién guardados
+      await recargarUsuario();
       navigate("/adulto/configurar-cuenta/2");
     } catch (err) {
       console.error(err);

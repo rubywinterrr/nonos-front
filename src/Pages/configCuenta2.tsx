@@ -18,6 +18,7 @@ import {
   LuShieldCheck,
   LuTriangleAlert,
   LuAccessibility,
+  LuX
 } from "react-icons/lu";
 
 // una medicación escrita en el paso 2: "Losartán 50mg" y a qué hora la toma
@@ -108,6 +109,11 @@ export default function ConfigCuenta2() {
   // cambia el texto o el horario de la medicación número i
   function cambiarMedicacion(i: number, campo: "texto" | "horario", valor: string) {
     setMedicaciones(medicaciones.map((m, j) => (j === i ? { ...m, [campo]: valor } : m)));
+  }
+
+  // saca la medicación número i (la primera no se puede sacar)
+  function quitarMedicacion(i: number) {
+    setMedicaciones(medicaciones.filter((_, j) => j !== i));
   }
 
   // marca la condición si no estaba marcada, o la desmarca si ya lo estaba
@@ -487,6 +493,16 @@ export default function ConfigCuenta2() {
                     onChange={(evento) => cambiarMedicacion(i, "horario", evento.target.value)}
                     className="min-h-15 w-28 shrink-0 rounded-2xl bg-[#E7EDFB] px-2 text-base text-[#16222C] inset-shadow-sm focus-visible:outline-2 focus-visible:outline-[#144BD3]"
                   />
+                   {i > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => quitarMedicacion(i)}
+                      aria-label={`Sacar la medicación ${i + 1}`}
+                      className="flex min-h-15 w-12 shrink-0 cursor-pointer items-center justify-center rounded-2xl bg-[#FBE9E9] text-[#A92323] hover:bg-[#F5D0D0]"
+                    >
+                      <LuX aria-hidden="true" className="size-5" />
+                    </button>
+                  )}
                 </div>
               ))}
               <button
