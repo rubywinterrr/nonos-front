@@ -18,6 +18,7 @@ import {
 } from "react-icons/lu";
 import { usuarioService, type AdultoMayorVinculado } from "../../services/usuariosService";
 import { leerAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // cuenta del familiar: sus datos, los adultos mayores con los que está vinculado y la sesión
 export default function CuentaFamilia() {
@@ -79,10 +80,9 @@ export default function CuentaFamilia() {
                   Titular
                 </span>
               </div>
-              {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Hija" queda fijo */}
               <p className="text-xs font-semibold leading-4 text-[#1550E0]">
                 {usuario?.fechaNacimiento && `${calcularEdad(usuario.fechaNacimiento)} años · `}
-                Hija
+                {etiquetaRol(usuario?.rol)}
               </p>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function CuentaFamilia() {
                     )}
                   </div>
                   <p className="text-xs font-semibold leading-4 text-[#1550E0]">
-                    {adulto.fechaNacimiento && `${calcularEdad(adulto.fechaNacimiento)} años · `}Adulto Mayor
+                    {adulto.fechaNacimiento && `${calcularEdad(adulto.fechaNacimiento)} años · `}{etiquetaRol(adulto.rol)}
                   </p>
                 </div>
               </div>

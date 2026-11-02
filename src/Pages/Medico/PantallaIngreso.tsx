@@ -77,7 +77,7 @@ export default function PantallaIngreso({ digitos, onCambiarDigitos, onValidar, 
                   <h3 className="text-lg font-bold">Sofía Gómez</h3>
                   <span className="rounded bg-[#BAEDD3] px-2 py-0.5 text-sm font-semibold">Principal</span>
                 </div>
-                <p className="text-sm font-semibold text-[#435059]">Hija</p>
+                <p className="text-sm font-semibold text-[#435059]">Familiar</p>
                 <p className="mt-1 text-base font-semibold">+54 11 4455-6677</p>
               </div>
             </div>

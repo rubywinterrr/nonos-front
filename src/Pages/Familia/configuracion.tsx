@@ -17,6 +17,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type AdultoMayorVinculado } from "../../services/usuariosService";
 import type { TipoAlerta } from "../../services/alertasService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // todos los tipos de alerta del back (es lo que el back pone por defecto)
 const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "MEDICACION_STOCK_BAJO", "CAMBIO_DE_RUTINA", "LOGRO_POSITIVO"];
@@ -131,7 +132,7 @@ export default function ConfigFam() {
 
         <section aria-label="Persona vinculada" className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-xs">
           <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0]"><LuCircleUserRound aria-hidden="true" className="size-5" /></span>
-          <div>{/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "(Papá)" queda fijo */}<h2 className="text-sm font-bold leading-5">{adulto?.nombreCompleto} (Papá)</h2><p className="mt-1 text-xs leading-4 text-[#435059]">Personalizá qué avisos recibís de {adulto?.nombreCompleto}. Por defecto vienen priorizadas las alertas críticas.</p></div>
+          <div><h2 className="text-sm font-bold leading-5">{adulto?.nombreCompleto} ({etiquetaRol(adulto?.rol)})</h2><p className="mt-1 text-xs leading-4 text-[#435059]">Personalizá qué avisos recibís de {adulto?.nombreCompleto}. Por defecto vienen priorizadas las alertas críticas.</p></div>
         </section>
 
         <section aria-labelledby="perfil-aviso" className="rounded-2xl bg-white p-4 shadow-xs">

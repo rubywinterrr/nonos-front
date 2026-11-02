@@ -8,6 +8,7 @@ import { medicamentosService, type CambioMedicacion, type Medicamento } from "..
 import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 import {
   LuCalendarDays,
   LuCheck,
@@ -394,9 +395,8 @@ export default function MedFam() {
                   Paciente asignado
                 </span>
                 <p className="mt-1 font-bold">{adulto?.nombreCompleto}</p>
-                {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
                 <p className="text-sm font-semibold text-[#435059]">
-                  Papá{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
+                  {etiquetaRol(adulto?.rol)}{adulto?.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
                 </p>
               </div>
             </div>

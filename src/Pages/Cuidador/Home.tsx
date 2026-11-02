@@ -13,6 +13,7 @@ import { medicamentosService, type Medicamento } from "../../services/medicament
 import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
+import { etiquetaRol } from "../../utils/etiquetaRol";
 import tiempoDesde from "../../utils/tiempoDesde";
 import ActivarAvisos from "../../components/ActivarAvisos";
 import LinkAvisos from "../../components/LinkAvisos";
@@ -183,9 +184,8 @@ export default function HomeFamilia() {
                   )}
                   <div>
                     <h2 id="persona-vinculada" className="text-lg font-bold leading-snug sm:text-xl">{adulto.nombreCompleto}</h2>
-                    {/* PENDIENTE BACK: el vínculo no guarda el parentesco, por ahora "Papá" queda fijo */}
                     <p className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">
-                      Papá{adulto.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
+                      {etiquetaRol(adulto.rol)}{adulto.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
                     </p>
                   </div>
                 </div>
