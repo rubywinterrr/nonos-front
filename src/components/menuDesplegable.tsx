@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LuCheck, LuChevronDown, LuMonitor, LuShieldCheck, LuUserRoundPlus, LuUsersRound } from "react-icons/lu";
+import { LuCheck, LuChevronDown, LuCirclePlus, LuMonitor, LuShieldCheck, LuUserRoundPlus, LuUsersRound } from "react-icons/lu";
 import { useAuth } from "../hooks/useAuth";
 import { invitacionesService, type NuevaInvitacion } from "../services/invitacionesService";
 
@@ -8,9 +8,12 @@ interface Props {
   abiertoAlInicio?: boolean;
   // avisa a la pantalla que se creó una invitación (por ejemplo, para recargar las pendientes)
   onInvitacionCreada?: () => void;
+  // permite reutilizar el desplegable desde el CTA principal de Contactos
+  textoBoton?: string;
+  varianteBoton?: "tarjeta" | "primario";
 }
 
-export default function Desplegable({ abiertoAlInicio = false, onInvitacionCreada }: Props) {
+export default function Desplegable({ abiertoAlInicio = false, onInvitacionCreada, textoBoton = "Invitar a un nuevo acompañante", varianteBoton = "tarjeta" }: Props) {
   const [isOpen, setIsOpen] = useState(abiertoAlInicio);
   const [rolSeleccionado, setRolSeleccionado] = useState("familiar");
   const [nivelAcceso, setNivelAcceso] = useState("predeterminado");
@@ -59,17 +62,31 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
 
   return (
     <section aria-label="Invitar a un nuevo acompañante" className="flex w-full flex-col gap-3">
-      <button type="button" aria-expanded={isOpen} onClick={() => setIsOpen(!isOpen)} className="flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-white p-4 text-left hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#E7EDFB] text-[#1550E0]"><LuUserRoundPlus aria-hidden="true" className="size-6" /></span>
-        <span className="min-w-0 flex-1"><span className="block text-sm font-bold leading-5">Invitar a un nuevo acompañante</span><span className="mt-0.5 block text-xs leading-4 text-[#435059]">Le llegará un enlace por correo electrónico para vincularse.</span></span>
-        <LuChevronDown aria-hidden="true" className={`size-5 shrink-0 text-[#1550E0] transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+        className={varianteBoton === "primario"
+          ? "flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#144BD3] px-4 py-3 text-base font-bold text-white shadow-xs hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+          : "flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-white p-4 text-left hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"}
+      >
+        {varianteBoton === "primario" ? (
+          <LuCirclePlus aria-hidden="true" className="size-5 shrink-0" />
+        ) : (
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#E7EDFB] text-[#1550E0]"><LuUserRoundPlus aria-hidden="true" className="size-6" /></span>
+        )}
+        <span className={varianteBoton === "primario" ? "min-w-0" : "min-w-0 flex-1"}>
+          <span className={varianteBoton === "primario" ? "block leading-5" : "block text-sm font-bold leading-5"}>{textoBoton}</span>
+          {varianteBoton === "tarjeta" && <span className="mt-0.5 block text-xs font-normal leading-4 text-[#435059]">Le llegará un enlace por correo electrónico para vincularse.</span>}
+        </span>
+        {varianteBoton === "tarjeta" && <LuChevronDown aria-hidden="true" className={`size-5 shrink-0 text-[#1550E0] transition-transform ${isOpen ? "" : "-rotate-90"}`} />}
       </button>
 
       {isOpen && (
         <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
           <div>
             <label htmlFor="email-invitacion" className="block text-sm font-bold leading-5">Correo electrónico de la persona</label>
-            <input id="email-invitacion" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ej: familiar@gmail.com" className="mt-1.5 h-12 w-full rounded-xl border border-[#D7DFE6] bg-white px-4 text-sm shadow-xs outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]" />
+            <input id="email-invitacion" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ej: familiar@gmail.com" required className="mt-1.5 h-12 w-full rounded-xl border border-[#D7DFE6] bg-white px-4 text-sm shadow-xs outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]" />
           </div>
 
           <fieldset className="flex flex-col gap-2.5">

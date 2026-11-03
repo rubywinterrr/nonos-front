@@ -1,11 +1,8 @@
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
-import { FaHeart } from "react-icons/fa";
-import { BsChatLeftText } from "react-icons/bs";
-import { VscInfo } from "react-icons/vsc";
-import { MdOutlinePhone } from "react-icons/md";
-import { BiHealth } from "react-icons/bi";
+import { LuAsterisk, LuBriefcaseMedical, LuPhone, LuUsers } from "react-icons/lu";
 import TarjetaContactos from "../../components/TarjetaContacto";
+import Desplegable from "../../components/menuDesplegable";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { contactosService, type Contacto } from "../../services/contactosService";
@@ -16,6 +13,10 @@ function textoRol(vinculo: Vinculo) {
   if (vinculo.tipoVinculo === "FAMILIAR") return "Familiar";
   if (vinculo.tipoCuidador === "DIGITAL") return "Cuidador digital";
   return "Cuidador presencial";
+}
+
+function esContactoMedico(nombre: string) {
+  return /^(dr\.?|dra\.?|doctor(?:a)?)\s/i.test(nombre);
 }
 
 // contactos del adulto: el 107, su red (familiares y cuidadores) y los contactos que agendó
@@ -53,85 +54,66 @@ export default function Contactos() {
 
   return (
     <>
-      <main className="mainBody gap-7">
+      <main className="mainBody gap-4">
         <Header />
-        <div className="flex flex-col gap-3">
-          <VueltaAtras titulo="Contactos" />
-          <h1 className="bg-gray-200 font-semibold text-md text-gray-500 p-3 rounded-full h-10 flex gap-2 items-center w-fit">
-            <FaHeart />
-            Acompañamiento diario
-          </h1>
-        </div>
-        <div className="rounded-2xl bg-black w-full h-23 flex items-center justify-between p-3 lg:w-32/100">
-          <div className="flex items-center gap-3 border h-full">
-            <div className="h-95/100 aspect-square rounded-full bg-red-600 p-4 flex justify-center items-center text-3xl text-white">
-              <BiHealth />
-            </div>
-            <a href="tel:+5491130285858" className="flex flex-col justify-baseline">
-              <h2 className="font-semibold text-white text-xl">
-                107 Ambulancia
-              </h2>
-              <h2 className="text-md text-gray-400">Emergencias médicas</h2>
-            </a>
-          </div>
-          <a href="tel:+5491130285858" className="bg-white rounded-lg aspect-square h-full flex items-center justify-center flex-col gap-1 p-1 cursor-pointer">
-            <MdOutlinePhone className="text-3xl" />
-            <p className="text-xs font-semibold">Llamar</p>
-          </a>
-        </div>
-        <div className="flex flex-col lg:flex-row gap-5 w-full flex-wrap">
-          {loading && <p>Cargando contactos...</p>}
-          {error && <p className="text-red-600">{error}</p>}
-          {vinculos.map((vinculo) => (
-            <TarjetaContactos
-              key={vinculo.id}
-              nombre={vinculo.familiar.nombreCompleto}
-              vinculo={textoRol(vinculo)}
-              telefono={vinculo.familiar.telefono ?? ""}
-            />
-          ))}
-          {contactos.map((contacto) => (
-            <TarjetaContactos
-              key={contacto.id}
-              nombre={contacto.nombre}
-              vinculo={contacto.esEmergencia ? "Contacto de emergencia" : "Contacto"}
-              telefono={contacto.telefono}
-            />
-          ))}
-          {!loading && !error && vinculos.length === 0 && contactos.length === 0 && (
-            <p className="text-gray-600">Todavía no tenés contactos cargados.</p>
-          )}
-        </div>
-        <div className="w-full border-gray-400 border-t" />
-        <div className="flex flex-col w-full gap-4 items-center justify-center">
-          <div className="w-full bg-[#EFF4FC] rounded-xl h-40 flex justify-center items-center p-3 lg:w-40/100">
-            <div className="flex gap-3 w-full">
-              <div className=" h-full w-13/100 lg:flex lg:justify-center lg:items-baseline ">
-                <div className=" bg-[#D6E0F1] aspect-square w-full lg:w-80/100 lg:mt-2 p-2.5 rounded-full flex items-center justify-center text-2xl text-gray-500">
-                  <VscInfo />
-                </div>
+        <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32">
+          <VueltaAtras titulo="Contactos" compacto seccion="Mis contactos" />
+
+          <section className="flex w-full flex-col gap-3" aria-labelledby="servicios-auxilio">
+            <h2 id="servicios-auxilio" className="flex items-center gap-2 text-lg font-semibold leading-6 text-[#16222C]">
+              <LuAsterisk aria-hidden="true" className="size-4 text-[#C92A2A]" />
+              Servicios de Auxilio
+            </h2>
+            <article className="flex w-full flex-col gap-4 rounded-xl bg-white p-4 shadow-xs">
+              <div className="flex items-center gap-2">
+                <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#A92323] text-white">
+                  <LuBriefcaseMedical className="size-5" />
+                </span>
+                <h3 className="text-lg font-semibold leading-6 text-[#16222C]">107 Ambulancia (SAME)</h3>
               </div>
-              <div className=" pt-1 flex flex-col w-87/100 gap-2 h-full">
-                <h1 className=" w-full h-24/100 font-semibold text-lg">
-                  ¿Necesitas agregar a alguien?
-                </h1>
-                <p className=" max-w-90/100 h-70/100 text-gray-500 text-md w-full">
-                  Tu familia gestiona los contactos para mayor seguridad. Puedes
-                  avisarles con un solo toque.
-                </p>{" "}
+              <a href="tel:107" className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#A92323] px-4 py-3 text-xl font-bold leading-6 text-white hover:bg-[#921D1D] active:bg-[#741717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#741717]">
+                <LuPhone aria-hidden="true" className="size-5" />
+                Llamar al 107
+              </a>
+            </article>
+          </section>
+
+          <section className="flex w-full flex-col gap-4 pt-1" aria-labelledby="red-personas">
+            <h2 id="red-personas" className="flex items-center gap-2 text-lg font-semibold leading-6 text-[#16222C]">
+              <LuUsers aria-hidden="true" className="size-5 text-[#1550E0]" />
+              Red de Personas
+            </h2>
+
+            {loading && <p role="status" className="text-sm text-[#435059]">Cargando contactos…</p>}
+            {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+
+            {!loading && !error && (
+              <div className="flex w-full flex-col gap-3">
+                {vinculos.map((vinculo) => (
+                  <TarjetaContactos
+                    key={vinculo.id}
+                    nombre={vinculo.familiar.nombreCompleto}
+                    vinculo={textoRol(vinculo)}
+                    telefono={vinculo.familiar.telefono ?? ""}
+                  />
+                ))}
+                {contactos.map((contacto) => (
+                  <TarjetaContactos
+                    key={contacto.id}
+                    nombre={contacto.nombre}
+                    vinculo={esContactoMedico(contacto.nombre) ? "Médico de cabecera" : contacto.esEmergencia ? "Contacto de emergencia" : "Contacto"}
+                    telefono={contacto.telefono}
+                    esMedico={esContactoMedico(contacto.nombre)}
+                  />
+                ))}
+                {vinculos.length === 0 && contactos.length === 0 && (
+                  <p className="rounded-xl bg-white p-4 text-sm text-[#435059]">Todavía no tenés contactos cargados.</p>
+                )}
               </div>
-            </div>
-          </div>
-          {/* manda un mensaje de texto a la primera persona de su red para que le agregue contactos */}
-          {vinculos.length > 0 && (
-            <a
-              href={`sms:${vinculos[0].familiar.telefono}?body=${encodeURIComponent("Hola, ¿me ayudás a agregar contactos en NONOS?")}`}
-              className="bg-gray-200 rounded-xl w-full text-center font-semibold p-2 text-md justify-center gap-2 flex items-center cursor-pointer h-15 hover:bg-gray-300 active:bg-gray-400 lg:w-32/100"
-            >
-              <BsChatLeftText />
-              Avisar a {vinculos[0].familiar.nombreCompleto.split(" ")[0]} para agregar contactos.
-            </a>
-          )}
+            )}
+          </section>
+
+          <Desplegable textoBoton="Invitar miembro a la red" varianteBoton="primario" />
         </div>
       </main>
     </>

@@ -1,4 +1,3 @@
-import { MdOutlinePhone } from "react-icons/md";
 import {
   LuCalendarDays,
   LuClock3,
@@ -16,12 +15,6 @@ interface TarjetaContactosProps {
   prioridad?: string;
   horario?: string;
   esMedico?: boolean;
-}
-
-function obtenerNombre(nombreCompleto: string): string {
-  const partes = nombreCompleto.trim().split(/\s+/);
-  const nombres = /^(dr|dra)\.?$/i.test(partes[0]) ? partes.slice(1) : partes;
-  return nombres[0] || "";
 }
 
 function obtenerIniciales(nombreCompleto: string): string {
@@ -127,35 +120,32 @@ export default function TarjetaContactos({
   }
 
   return (
-    <>
-      <div className="bg-white rounded-2xl flex flex-col gap-3 w-full h-40 items-center justify-center lg:w-32/100">
-        <div className="w-full h-45/100 flex items-center p-1 gap-3 pl-6">
-          {fotoContacto ? (
-            <img
-              className="border rounded-full aspect-square h-95/100 text-xs object-cover"
-              src={fotoContacto}
-              alt="Foto de contacto"
-            />
-          ) : (
-            // sin foto: las iniciales del nombre
-            <span aria-hidden="true" className="flex aspect-square h-95/100 items-center justify-center rounded-full border bg-[#E7EDFB] text-xl font-semibold">
-              {obtenerIniciales(nombre)}
-            </span>
-          )}
-          <div className="flex flex-col justify-baseline">
-            <h1 className="font-bold text-2xl">{nombre}</h1>
-            {vinculo && <p className="text-gray-500 text-md">{vinculo}</p>}
-          </div>
+    <article className={`flex w-full flex-col gap-4 bg-white p-4 shadow-xs ${esMedico ? "rounded-xl" : "rounded-2xl border border-[#D7DFE6] p-5"}`}>
+      <div className="flex min-w-0 items-center gap-3.5">
+        {esMedico ? (
+          <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEF2] text-[#16222C]">
+            <LuStethoscope className="size-5" />
+          </span>
+        ) : fotoContacto ? (
+          <img className="size-14 shrink-0 rounded-full border-2 border-[#B7C8F0] bg-[#E7EDFB] object-cover" src={fotoContacto} alt={`Foto de ${nombre}`} />
+        ) : (
+          <span aria-hidden="true" className="flex size-14 shrink-0 items-center justify-center rounded-full border-2 border-[#B7C8F0] bg-[#E7EDFB] text-base font-semibold text-[#0D328B]">
+            {obtenerIniciales(nombre)}
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg font-semibold leading-6 text-[#16222C]">{nombre}</h3>
+          {vinculo && <p className="text-base leading-5 text-[#435059]">{vinculo}</p>}
         </div>
-        <a
-          href={`tel:${telefono}`}
-          className="font-semibold text-xl w-90/100 h-30/100 rounded-xl bg-gray-300 flex items-center justify-center hover:bg-black hover:text-white active:scale-97 hover:scale-102 active:bg-gray-400 cursor-pointer gap-5"
-        >
-          {" "}
-          <MdOutlinePhone className="text-2xl" />
-          Llamar a {obtenerNombre(nombre)}
-        </a>
       </div>
-    </>
+      <a
+        href={`tel:${telefono}`}
+        aria-label={esMedico ? `Llamar al consultorio de ${nombre}` : `Llamar a ${nombre}`}
+        className={`flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-3 text-base font-semibold transition-colors ${esMedico ? "bg-[#E9EEF2] text-[#16222C] hover:bg-[#D7DFE6] active:bg-[#C6D0D8]" : "bg-[#144BD3] text-white hover:bg-[#1245BF] active:bg-[#0F389D]"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]`}
+      >
+        <LuPhone aria-hidden="true" className="size-4 shrink-0" />
+        {esMedico ? "Llamar consultorio" : "Llamar"}
+      </a>
+    </article>
   );
 }
