@@ -10,29 +10,30 @@ import { notificacionesService } from "../services/notificacionesService";
 export default function Header() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
+  const usuarioId = usuario?.id;
   const [notificacionesSinLeer, setNotificacionesSinLeer] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(() => window.scrollY > 0);
 
   useEffect(() => {
+    if (!usuarioId) return;
     let activo = true;
 
-    if (!usuario) {
-      setNotificacionesSinLeer(0);
-      return () => {
-        activo = false;
-      };
-    }
+    const cargarCantidad = () => {
+      notificacionesService.getNotificaciones()
+        .then((notificaciones) => {
+          if (activo) setNotificacionesSinLeer(notificaciones.filter((notificacion) => !notificacion.leida).length);
+        })
+        .catch((error) => console.error("No se pudieron cargar las notificaciones:", error));
+    };
 
-    notificacionesService.getNotificaciones()
-      .then((notificaciones) => {
-        if (activo) setNotificacionesSinLeer(notificaciones.filter((notificacion) => !notificacion.leida).length);
-      })
-      .catch((error) => console.error("No se pudieron cargar las notificaciones:", error));
+    cargarCantidad();
+    window.addEventListener("nonos:notificaciones-actualizadas", cargarCantidad);
 
     return () => {
       activo = false;
+      window.removeEventListener("nonos:notificaciones-actualizadas", cargarCantidad);
     };
-  }, [usuario?.id]);
+  }, [usuarioId]);
 
   useEffect(() => {
     const handleScroll = () => setHasScrolled(window.scrollY > 0);
@@ -51,6 +52,8 @@ export default function Header() {
     else navigate("/ingresar");
   }
 
+  const notificacionesVisibles = usuario ? notificacionesSinLeer : 0;
+
   return (
     <>
       <header
@@ -66,13 +69,13 @@ export default function Header() {
           <button
             type="button"
             onClick={abrirNotificaciones}
-            aria-label={notificacionesSinLeer ? `Ver ${notificacionesSinLeer} notificaciones sin leer` : "Ver notificaciones"}
+            aria-label={notificacionesVisibles ? `Ver ${notificacionesVisibles} notificaciones sin leer` : "Ver notificaciones"}
             className="relative flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-white/35 active:bg-white/55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
           >
             <LuBell aria-hidden="true" className="size-7" />
-            {!!notificacionesSinLeer && (
+            {!!notificacionesVisibles && (
               <span aria-hidden="true" className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full border-2 border-[#B9D2FF] bg-[#A92323] px-1 text-xs font-bold leading-5 text-white">
-                {notificacionesSinLeer > 99 ? "99+" : notificacionesSinLeer}
+                {notificacionesVisibles > 99 ? "99+" : notificacionesVisibles}
               </span>
             )}
           </button>
