@@ -49,9 +49,13 @@ const AjustesCuidador = lazy(() => import("./Pages/Cuidador/AjustesAccess"));
 // Signos vitales: la misma pantalla para los 3 roles (muestra al adulto que se está mirando)
 const SignosAdulto = lazy(() => import("./Pages/Adulto/SignosVitales"));
 const DetallePulso = lazy(() => import("./Pages/Signos/DetallePulso"));
+const DetallePulsoAdulto = lazy(() => import("./Pages/Adulto/Signos/DetallePulso"));
 const DetalleOxigeno = lazy(() => import("./Pages/Signos/DetalleOxigeno"));
 const DetallePasos = lazy(() => import("./Pages/Signos/DetallePasos"));
 const DetalleSueno = lazy(() => import("./Pages/Signos/DetalleSueno"));
+const DetalleOxigenoAdulto = lazy(() => import("./Pages/Adulto/Signos/DetalleOxigeno"));
+const DetallePasosAdulto = lazy(() => import("./Pages/Adulto/Signos/DetallePasos"));
+const DetalleSuenoAdulto = lazy(() => import("./Pages/Adulto/Signos/DetalleSueno"));
 import rutaSegunRol from "./utils/rutaSegunRol";
 
 function LayoutConFooter() {
@@ -123,10 +127,10 @@ function App() {
                 <Route path="home" element={<HomeAdulto />} />
                 <Route path="avisos" element={<AvisosAdulto />} />
                 <Route path="signos" element={<SignosAdulto />} />
-                <Route path="signos/pulso" element={<DetallePulso />} />
-                <Route path="signos/oxigeno" element={<DetalleOxigeno />} />
-                <Route path="signos/pasos" element={<DetallePasos />} />
-                <Route path="signos/sueno" element={<DetalleSueno />} />
+                <Route path="signos/pulso" element={<DetallePulsoAdulto />} />
+                <Route path="signos/oxigeno" element={<DetalleOxigenoAdulto />} />
+                <Route path="signos/pasos" element={<DetallePasosAdulto />} />
+                <Route path="signos/sueno" element={<DetalleSuenoAdulto />} />
                 <Route path="sos" element={<SOS />} />
                 <Route path="salud" element={<Salud />} />
                 <Route path="medicamentos" element={<MedicacionActual />} />
