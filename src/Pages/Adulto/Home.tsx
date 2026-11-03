@@ -4,11 +4,10 @@ import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { alertasService, type Alerta } from "../../services/alertasService";
 import { dispositivosService, type Dispositivo } from "../../services/dispositivosService";
-import { usuarioService, type Vinculo } from "../../services/usuariosService";
 import { medicionesService, type ResumenMedicion } from "../../services/medicionesService";
 import { medicamentosService, type Medicamento } from "../../services/medicamentosService";
 import { RiAlertFill } from "react-icons/ri";
-import { LuArrowRight, LuCheck, LuClock3, LuFootprints, LuPhone, LuPill, LuQrCode, LuShieldCheck, LuTriangleAlert } from "react-icons/lu";
+import { LuArrowRight, LuCheck, LuClock3, LuFootprints, LuPill, LuQrCode, LuShieldCheck, LuTriangleAlert } from "react-icons/lu";
 import { MdChevronRight, MdOutlineDescription, MdOutlineInfo, MdOutlineVolunteerActivism } from "react-icons/md";
 import obtenerFechaActual from "../../utils/obtenerFechaActual";
 import AvisosSalud from "../../components/AvisosSalud";
@@ -17,14 +16,6 @@ import { tomasDeHoy, proximaToma, momentoDelDia } from "../../utils/tomasDeHoy";
 
 const SETENTA_Y_DOS_HORAS = 72 * 60 * 60 * 1000;
 const META_PASOS = 3000;
-
-// conserva los atajos de llamada del Home, priorizando contactos de emergencia
-function personasParaLlamar(vinculos: Vinculo[]) {
-  const emergencia = vinculos.filter((v) => v.esContactoEmergencia && v.familiar.telefono);
-  emergencia.sort((a, b) => (a.prioridadContacto ?? 99) - (b.prioridadContacto ?? 99));
-  const resto = vinculos.filter((v) => !v.esContactoEmergencia && v.familiar.telefono);
-  return [...emergencia, ...resto].slice(0, 2);
-}
 
 interface SignoCardProps {
   etiqueta: string;
@@ -86,7 +77,6 @@ export default function Home() {
   const [alertas, setAlertas] = useState<Alerta[]>([]);
   const [incidentes72hs, setIncidentes72hs] = useState<number>(0);
   const [pulsera, setPulsera] = useState<Dispositivo | null>(null);
-  const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [resumen, setResumen] = useState<ResumenMedicion[]>([]);
   const [pasosHoy, setPasosHoy] = useState<number | null>(null);
   const [suenoMinutos, setSuenoMinutos] = useState<number | null>(null);
@@ -110,15 +100,6 @@ export default function Home() {
           (a) => ahora - new Date(a.createdAt).getTime() <= SETENTA_Y_DOS_HORAS
         );
         setIncidentes72hs(recientes.length);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    // familiares y cuidadores, para los botones de llamar
-    const cargarVinculos = async () => {
-      try {
-        setVinculos(await usuarioService.getVinculos(id));
       } catch (err) {
         console.error(err);
       }
@@ -182,7 +163,6 @@ export default function Home() {
     };
 
     cargarAlertas();
-    cargarVinculos();
     cargarMedicamentos();
     sincronizarPulsera();
 
@@ -201,7 +181,6 @@ export default function Home() {
   const alertasPendientes = alertas.filter((a) => a.estado === "PENDIENTE" && a.categoria === "CRITICO");
   const pulso = resumen.find((r) => r.tipo === "FRECUENCIA_CARDIACA");
   const oxigeno = resumen.find((r) => r.tipo === "SPO2");
-  const llamar = personasParaLlamar(vinculos);
   const tomas = tomasDeHoy(medicamentos);
   const pasosRestantes = pasosHoy === null ? null : Math.max(0, META_PASOS - pasosHoy);
   const progresoPasos = pasosHoy === null ? 0 : (pasosHoy / META_PASOS) * 100;
@@ -390,29 +369,6 @@ export default function Home() {
             </Link>
           </div>
         </section>
-
-        <details className="w-full rounded-2xl bg-white/70 p-4">
-          <summary className="cursor-pointer text-base font-bold text-[#16222C] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]">Más accesos</summary>
-          {llamar.length > 0 && (
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {llamar.map((vinculo) => (
-                <a key={vinculo.id} href={`tel:${vinculo.familiar.telefono}`} className="flex min-h-12 min-w-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#EBF5FF] px-2 py-2 text-sm font-semibold text-[#0B5FFF] hover:bg-[#DCEBFA] active:bg-[#CBDEF2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]">
-                  <LuPhone aria-hidden="true" className="size-4 shrink-0" />
-                  <span className="truncate">Llamar a {vinculo.familiar.nombreCompleto.split(" ")[0]}</span>
-                </a>
-              ))}
-            </div>
-          )}
-          {(!pulsera || pulsera.requiereReautenticacion) && (
-            <Link to="/cuenta" className="mt-3 flex min-h-12 items-center justify-between rounded-lg px-2 text-sm font-semibold text-[#0B5FFF] underline hover:bg-[#E7EDFB]">
-              {pulsera ? "Volver a conectar mi pulsera" : "Conectar mi pulsera"}
-              <LuArrowRight aria-hidden="true" className="size-5" />
-            </Link>
-          )}
-          <Link to="../ayuda" className="mt-3 flex min-h-12 items-center justify-between rounded-lg px-2 text-sm font-semibold text-[#0B5FFF] underline hover:bg-[#E7EDFB]">
-            Ayuda y soporte <LuArrowRight aria-hidden="true" className="size-5" />
-          </Link>
-        </details>
       </div>
     </main>
     );
