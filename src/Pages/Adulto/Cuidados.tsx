@@ -3,7 +3,7 @@ import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { IoMdHeart } from "react-icons/io";
 import { MdLock, MdCheck, MdOutlineEdit, MdOutlinePeopleAlt } from "react-icons/md";
-import { LuCirclePlus, LuX } from "react-icons/lu";
+import { LuCirclePlus, LuRotateCcw, LuX } from "react-icons/lu";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService } from "../../services/usuariosService";
 
@@ -62,6 +62,7 @@ function TarjetaIndicacion({ titulo, valor, onEditar }: { titulo: string; valor:
 export default function Cuidados() {
   const { usuario } = useAuth();
   const dialogoRef = useRef<HTMLDialogElement>(null);
+  const dialogoRestablecerRef = useRef<HTMLDialogElement>(null);
   const [evitar, setEvitar] = useState("");
   const [acompanante, setAcompanante] = useState("");
   const [atencion, setAtencion] = useState("");
@@ -76,6 +77,8 @@ export default function Cuidados() {
   const [campoActivo, setCampoActivo] = useState<CampoIndicacion | null>(null);
   const [borrador, setBorrador] = useState("");
   const [errorDialogo, setErrorDialogo] = useState<string | null>(null);
+  const [restablecerAbierto, setRestablecerAbierto] = useState(false);
+  const [cerrandoRestablecer, setCerrandoRestablecer] = useState(false);
 
   useEffect(() => {
     if (!usuario) return;
@@ -123,6 +126,42 @@ export default function Cuidados() {
       document.body.style.overflow = overflowOriginal;
     };
   }, [dialogoAbierto]);
+
+  useEffect(() => {
+    if (!restablecerAbierto) return;
+    const overflowOriginal = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    if (!dialogoRestablecerRef.current?.open) dialogoRestablecerRef.current?.showModal();
+    return () => { document.body.style.overflow = overflowOriginal; };
+  }, [restablecerAbierto]);
+
+  const cerrarRestablecer = () => {
+    if (!dialogoRestablecerRef.current?.open || cerrandoRestablecer) return;
+    setCerrandoRestablecer(true);
+  };
+
+  const confirmarRestablecer = async () => {
+    if (!usuario) return;
+    setGuardando(true);
+    setError(null);
+    setMensaje(null);
+    try {
+      await usuarioService.editarMedidasAnticipadas(usuario.id, armarTexto("", "", ""));
+      await usuarioService.editarIndicacionesCuidado(usuario.id, "");
+      setEvitar("");
+      setAcompanante("");
+      setAtencion("");
+      setIndicacionesExtra("");
+      setMostrarExtra(false);
+      setMensaje("Las indicaciones se restablecieron. Podés volver a completarlas cuando quieras.");
+      cerrarRestablecer();
+    } catch (err) {
+      console.error(err);
+      setError("No se pudieron restablecer las indicaciones.");
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   const datosDeCampo = (campo: CampoIndicacion): DatosIndicacion => {
     switch (campo) {
@@ -254,6 +293,14 @@ export default function Cuidados() {
           <MdCheck aria-hidden="true" className="text-2xl text-white" />
           {guardando ? "Guardando..." : "Confirmar mis indicaciones"}
         </button>
+        <button
+          type="button"
+          onClick={() => { setCerrandoRestablecer(false); setRestablecerAbierto(true); }}
+          disabled={guardando || loading}
+          className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border border-gray-300 bg-white p-4 text-base font-semibold text-[#16222C] hover:bg-gray-100 active:bg-[#E7EDFB] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <LuRotateCcw aria-hidden="true" className="size-5 text-[#1550E0]" />Restablecer opciones a valores por defecto
+        </button>
       </main>
 
       <dialog
@@ -319,6 +366,31 @@ export default function Cuidados() {
               </button>
             </div>
           )}
+        </section>
+      </dialog>
+
+      <dialog
+        ref={dialogoRestablecerRef}
+        onCancel={(event) => { event.preventDefault(); cerrarRestablecer(); }}
+        onClick={(event) => { if (event.target === event.currentTarget) cerrarRestablecer(); }}
+        onAnimationEnd={(event) => {
+          if (cerrandoRestablecer && event.animationName === "popup-bajar") {
+            dialogoRestablecerRef.current?.close();
+            setCerrandoRestablecer(false);
+            setRestablecerAbierto(false);
+          }
+        }}
+        aria-labelledby="titulo-restablecer-indicaciones"
+        className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoRestablecer ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
+      >
+        <section className="flex flex-col gap-4 p-5 pb-7">
+          <button type="button" aria-label="Cerrar confirmación" onClick={cerrarRestablecer} className="mx-auto h-1.5 w-12 cursor-pointer rounded-full bg-[#D7DFE6] hover:bg-[#B7C8F0] active:bg-[#8EA9D4]" />
+          <h2 id="titulo-restablecer-indicaciones" className="text-lg font-bold">¿Restablecer las indicaciones?</h2>
+          <p className="text-sm leading-6 text-[#435059]">Se borrarán las indicaciones que escribiste y volverán a mostrarse los ejemplos como texto de ayuda. Esta acción no se puede deshacer.</p>
+          <button type="button" onClick={confirmarRestablecer} disabled={guardando} className="w-full cursor-pointer rounded-xl bg-[#1550E0] px-5 py-4 font-semibold text-white hover:bg-[#1245C6] active:bg-[#0D328B] disabled:opacity-60">
+            {guardando ? "Restableciendo..." : "Sí, restablecer"}
+          </button>
+          <button type="button" onClick={cerrarRestablecer} className="w-full cursor-pointer rounded-xl border border-[#D7DFE6] bg-white px-5 py-3 font-semibold hover:bg-[#F6F8FA] active:bg-[#E7EDFB]">Cancelar</button>
         </section>
       </dialog>
     </>
