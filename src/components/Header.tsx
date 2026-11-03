@@ -2,17 +2,37 @@ import { useEffect, useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LuBell } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-
-interface HeaderProps {
-  notificaciones?: number;
-  onNotificacionesClick?: () => void;
-}
+import { useAuth } from "../hooks/useAuth";
+import { notificacionesService } from "../services/notificacionesService";
 
 // Encabezado global de la aplicación.
 // Muestra el menú, el nombre de la app y acceso a la cuenta en todas las pantallas principales.
-export default function Header({ notificaciones, onNotificacionesClick }: HeaderProps) {
+export default function Header() {
   const navigate = useNavigate();
+  const { usuario } = useAuth();
+  const [notificacionesSinLeer, setNotificacionesSinLeer] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(() => window.scrollY > 0);
+
+  useEffect(() => {
+    let activo = true;
+
+    if (!usuario) {
+      setNotificacionesSinLeer(0);
+      return () => {
+        activo = false;
+      };
+    }
+
+    notificacionesService.getNotificaciones()
+      .then((notificaciones) => {
+        if (activo) setNotificacionesSinLeer(notificaciones.filter((notificacion) => !notificacion.leida).length);
+      })
+      .catch((error) => console.error("No se pudieron cargar las notificaciones:", error));
+
+    return () => {
+      activo = false;
+    };
+  }, [usuario?.id]);
 
   useEffect(() => {
     const handleScroll = () => setHasScrolled(window.scrollY > 0);
@@ -22,6 +42,13 @@ export default function Header({ notificaciones, onNotificacionesClick }: Header
   }, []);
   function Cuenta() {
     navigate("/cuenta");
+  }
+
+  function abrirNotificaciones() {
+    if (usuario?.rol === "ADULTO_MAYOR") navigate("/adulto/avisos");
+    else if (usuario?.rol === "FAMILIAR") navigate("/familia/avisos");
+    else if (usuario?.rol === "CUIDADOR") navigate("/cuidador/avisos");
+    else navigate("/ingresar");
   }
 
   return (
@@ -36,21 +63,19 @@ export default function Header({ notificaciones, onNotificacionesClick }: Header
           NONOS
         </h1>
         <div className="flex items-center gap-3">
-          {onNotificacionesClick && (
-            <button
-              type="button"
-              onClick={onNotificacionesClick}
-              aria-label={notificaciones ? `Ver ${notificaciones} avisos pendientes` : "Ver avisos"}
-              className="relative flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-white/35 active:bg-white/55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
-            >
-              <LuBell aria-hidden="true" className="size-7" />
-              {!!notificaciones && (
-                <span aria-hidden="true" className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full border-2 border-[#B9D2FF] bg-[#A92323] px-1 text-xs font-bold leading-5 text-white">
-                  {notificaciones > 99 ? "99+" : notificaciones}
-                </span>
-              )}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={abrirNotificaciones}
+            aria-label={notificacionesSinLeer ? `Ver ${notificacionesSinLeer} notificaciones sin leer` : "Ver notificaciones"}
+            className="relative flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-white/35 active:bg-white/55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
+          >
+            <LuBell aria-hidden="true" className="size-7" />
+            {!!notificacionesSinLeer && (
+              <span aria-hidden="true" className="absolute -right-1 -top-1 flex min-w-6 items-center justify-center rounded-full border-2 border-[#B9D2FF] bg-[#A92323] px-1 text-xs font-bold leading-5 text-white">
+                {notificacionesSinLeer > 99 ? "99+" : notificacionesSinLeer}
+              </span>
+            )}
+          </button>
           <button
             type="button"
             onClick={Cuenta}

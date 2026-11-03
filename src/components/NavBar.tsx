@@ -29,7 +29,7 @@ export default function NavBar() {
       : `${basePath}/configuracion`;
 
   // Determina qué opción del footer está activa según la ruta actual.
-  const isHome = currentPath === homePath || currentPath === basePath;
+  const isHome = currentPath === homePath || currentPath === basePath || currentPath.endsWith("/avisos");
   const isMed =
     currentPath.startsWith(medicinasPath) ||
     (usuario?.rol === "ADULTO_MAYOR" &&

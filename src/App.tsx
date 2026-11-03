@@ -16,6 +16,7 @@ const PagCuenta = lazy(() => import("./Pages/Adulto/Cuenta"));
 const CuentaFamilia = lazy(() => import("./Pages/Familia/Cuenta"));
 const Emergencia = lazy(() => import("./Pages/Medico/Emergencia"));
 const Avisos = lazy(() => import("./Pages/Red/avisos"));
+const AvisosAdulto = lazy(() => import("./Pages/Adulto/Notificaciones"));
 const AlertasRed = lazy(() => import("./Pages/Red/alertas"));
 const NotasRed = lazy(() => import("./Pages/Red/notas"));
 import { useAuth } from "./hooks/useAuth";
@@ -120,6 +121,7 @@ function App() {
                 <Route path="configurar-cuenta" element={<ConfigCuenta1 />} />
                 <Route path="configurar-cuenta/2" element={<ConfigCuenta2 />} />
                 <Route path="home" element={<HomeAdulto />} />
+                <Route path="avisos" element={<AvisosAdulto />} />
                 <Route path="signos" element={<SignosAdulto />} />
                 <Route path="signos/pulso" element={<DetallePulso />} />
                 <Route path="signos/oxigeno" element={<DetalleOxigeno />} />

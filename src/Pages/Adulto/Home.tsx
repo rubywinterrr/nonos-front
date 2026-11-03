@@ -186,7 +186,6 @@ export default function Home() {
   const oxigeno = resumen.find((r) => r.tipo === "SPO2");
   const llamar = personasParaLlamar(vinculos);
   const tomas = tomasDeHoy(medicamentos);
-  const alertasEnEspera = alertas.filter((a) => a.estado === "PENDIENTE").length;
   const pasosRestantes = pasosHoy === null ? null : Math.max(0, META_PASOS - pasosHoy);
   const progresoPasos = pasosHoy === null ? 0 : (pasosHoy / META_PASOS) * 100;
   const progresoSueno = suenoMinutos === null ? 0 : (suenoMinutos / (8 * 60)) * 100;
@@ -224,10 +223,7 @@ export default function Home() {
 
   return (
       <main className="mainBody gap-6">
-        <Header
-          notificaciones={alertasEnEspera}
-          onNotificacionesClick={() => document.getElementById("avisos-home")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-        />
+        <Header />
         <div className="mx-auto flex w-full max-w-lg flex-col gap-6 pb-32 text-[#0E1D28]">
           <header className="flex flex-col gap-0.5 px-1">
             <h1 className="text-4xl font-bold leading-tight tracking-tight">Hola, {nombre || "Usuario"}</h1>
