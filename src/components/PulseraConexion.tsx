@@ -138,14 +138,11 @@ export default function PulseraConexion() {
   };
 
   return (
-    <section className="flex w-full flex-col gap-3 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="titulo-pulsera">
-      <h2 id="titulo-pulsera" className="flex items-center gap-2 text-lg font-bold">
-        <LuWatch aria-hidden="true" className="size-8 shrink-0 rounded-full bg-blue-50 p-1.5 text-blue-600" />
+    <article className="flex w-full flex-col gap-3 rounded-xl border border-[#E2EAF5] bg-white p-3.5" aria-labelledby="titulo-pulsera">
+      <h2 id="titulo-pulsera" className="flex items-center gap-2 text-xl font-bold leading-7 text-[#0E1D28]">
+        <LuWatch aria-hidden="true" className="size-6 shrink-0 rounded-full bg-[#EBF5FE] p-1 text-[#1550E0]" />
         Pulsera inteligente
       </h2>
-      <p className="text-sm text-slate-500">
-        Compartís solo los datos que autorices en Google Health. Se usan para detectar cambios importantes y avisar a tu red.
-      </p>
 
       {conectado === "1" && (
         <p className="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">¡Tu pulsera quedó conectada!</p>
@@ -171,10 +168,10 @@ export default function PulseraConexion() {
             type="button"
             onClick={conectar}
             disabled={ocupado}
-            className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#0B6D3C] bg-white px-3 text-sm font-bold text-[#1550E0] hover:bg-[#E8FAF1] active:bg-[#BAEDD3] disabled:cursor-wait disabled:opacity-70"
+            className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#7CD1C6] bg-white px-3 text-lg font-bold text-[#0049CC] transition-colors hover:bg-[#E8FAF1] active:bg-[#BAEDD3] disabled:cursor-wait disabled:opacity-70"
           >
             <LuLink aria-hidden="true" className="size-4" />
-            {pulsera ? "Volver a conectar con Google Health" : "Conectar con Google Health / Fitbit"}
+            {pulsera ? "Volver a conectar mi pulsera" : "Conectar mi pulsera"}
           </button>
         </>
       )}
@@ -264,6 +261,6 @@ export default function PulseraConexion() {
           </div>
         </>
       )}
-    </section>
+    </article>
   );
 }
