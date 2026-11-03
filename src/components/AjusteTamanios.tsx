@@ -1,78 +1,48 @@
-import { useState, useEffect } from "react";
-import { FaCheck } from "react-icons/fa6";
+import { useEffect, useState } from "react";
 import { leerTamanioGuardado, aplicarTamanioTexto, type TamanioTexto } from "../utils/tamanioTexto";
 
 export default function AjustesTexto() {
-  // arranca con el tamaño que la persona eligió la última vez
   const [tamaño, setTamaño] = useState<TamanioTexto>(leerTamanioGuardado());
 
-  // cada vez que cambia, se aplica a toda la app y se guarda
   useEffect(() => {
     aplicarTamanioTexto(tamaño);
   }, [tamaño]);
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm p-6 w-full border border-gray-100">
-      <div className="flex gap-4 items-center mb-6">
-        <div className="bg-[#EEF4FF] text-blue-600 rounded-2xl w-16 h-16 flex items-center justify-center text-3xl font-bold border border-blue-100">
-          Aa
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-[#1A202C]">
-            Tamaño del texto
-          </h2>
-          <p className="text-gray-500 text-lg">Elegí el tamaño más cómodo.</p>
-        </div>
-      </div>
+    <section aria-labelledby="titulo-tamanio-texto" className="flex w-full flex-col gap-3.5 rounded-3xl bg-white p-5 shadow-sm">
+      <h2 id="titulo-tamanio-texto" className="text-2xl font-bold text-[#16222C]">Tamaño de la letra</h2>
 
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-2.5 text-center">
         <button
+          type="button"
+          aria-pressed={tamaño === "normal"}
           onClick={() => setTamaño("normal")}
-          className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${
-            tamaño === "normal"
-              ? "border-blue-600 bg-[#EEF4FF] text-blue-600"
-              : "border-gray-200 text-[#1A202C] hover:bg-gray-50"
-          }`}
+          className={`flex min-w-0 min-h-22 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 py-3 transition-colors hover:bg-[#DCE6FA] active:bg-[#CCD9F5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${tamaño === "normal" ? "border-[#144BD3] bg-[#E7EDFB] text-[#0E3494]" : "border-[#D7DFE6] bg-[#E9EEF2] text-[#16222C]"}`}
         >
-          <span className="text-lg font-medium mb-1">A</span>
-          <span className="font-bold">Normal</span>
+          <span aria-hidden="true" className="text-xl font-bold">Aa</span>
+          <span className="text-sm font-semibold">Normal</span>
         </button>
 
         <button
+          type="button"
+          aria-pressed={tamaño === "grande"}
           onClick={() => setTamaño("grande")}
-          className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${
-            tamaño === "grande"
-              ? "border-blue-600 bg-[#EEF4FF] text-blue-600"
-              : "border-gray-200 text-[#1A202C] hover:bg-gray-50"
-          }`}
+          className={`flex min-w-0 min-h-22 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 py-3 transition-colors hover:bg-[#DCE6FA] active:bg-[#CCD9F5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${tamaño === "grande" ? "border-[#144BD3] bg-[#E7EDFB] text-[#0E3494]" : "border-[#D7DFE6] bg-[#E9EEF2] text-[#16222C]"}`}
         >
-          <span className="text-xl font-bold mb-1 flex items-center gap-1">
-            A {tamaño === "grande"}
-          </span>
-          <span className="font-bold">Grande</span>
+          <span aria-hidden="true" className="text-2xl font-bold">Aa</span>
+          <span className="text-sm font-semibold">Grande</span>
         </button>
 
         <button
+          type="button"
+          aria-pressed={tamaño === "muy_grande"}
           onClick={() => setTamaño("muy_grande")}
-          className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${
-            tamaño === "muy_grande"
-              ? "border-blue-600 bg-[#EEF4FF] text-blue-600"
-              : "border-gray-200 text-[#1A202C] hover:bg-gray-50"
-          }`}
+          className={`flex min-w-0 min-h-22 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 py-3 transition-colors hover:bg-[#DCE6FA] active:bg-[#CCD9F5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${tamaño === "muy_grande" ? "border-[#144BD3] bg-[#E7EDFB] text-[#0E3494]" : "border-[#D7DFE6] bg-[#E9EEF2] text-[#16222C]"}`}
         >
-          <span className="text-2xl font-black mb-1">A</span>
-          <span className="font-bold">Muy grande</span>
+          <span aria-hidden="true" className="text-3xl font-bold">Aa</span>
+          <span className="text-sm font-semibold">Muy grande</span>
         </button>
       </div>
-
-      <div className="text-blue-600 text-lg flex items-center gap-2 font-medium">
-        <FaCheck />
-        <p>
-          Tamaño seleccionado:{" "}
-          <span className="capitalize">{tamaño.replace("_", " ")}</span>
-          {tamaño === "grande" && " (recomendado)"}
-        </p>
-      </div>
-    </div>
+    </section>
   );
 }

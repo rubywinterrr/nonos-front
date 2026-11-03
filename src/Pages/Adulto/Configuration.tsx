@@ -1,23 +1,17 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { usuarioService, type Vinculo, type PreferenciasNotificacion } from "../../services/usuariosService";
-import Header from "../../components/Header";
-import VueltaAtras from "../../components/vueltaAtras";
-import { VscGear } from "react-icons/vsc";
-import AjustesTexto from "../../components/AjusteTamanios";
-import { MdOutlineNotifications, MdCheck, MdOutlineSchedule } from "react-icons/md";
-import { invitacionesService, type Invitacion } from "../../services/invitacionesService";
-import Desplegable from "../../components/menuDesplegable";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import { GoShieldLock } from "react-icons/go";
 import { HiCheck } from "react-icons/hi2";
-import PersonaVinculada from "../../components/tarjetaPersonaVinculada";
-import { LuUserRoundCheck } from "react-icons/lu";
-import { GoPlus } from "react-icons/go";
+import { LuArrowRight, LuChevronRight, LuClock3 } from "react-icons/lu";
+import { invitacionesService, type Invitacion } from "../../services/invitacionesService";
+import { usuarioService, type PreferenciasNotificacion, type Vinculo } from "../../services/usuariosService";
+import { useAuth } from "../../hooks/useAuth";
+import Header from "../../components/Header";
+import VueltaAtras from "../../components/vueltaAtras";
+import AjustesTexto from "../../components/AjusteTamanios";
+import Desplegable from "../../components/menuDesplegable";
 import Switch from "../../components/switch";
 
-// texto que se muestra debajo del nombre de cada persona vinculada
 function textoVinculo(vinculo: Vinculo) {
   if (vinculo.tipoVinculo === "FAMILIAR") return "Familiar";
   if (vinculo.tipoCuidador === "FISICO") return "Cuidador físico";
@@ -25,7 +19,6 @@ function textoVinculo(vinculo: Vinculo) {
   return "Cuidador";
 }
 
-// mismo texto que textoVinculo, pero para una invitación todavía no aceptada
 function textoInvitacion(invitacion: Invitacion) {
   if (invitacion.tipoVinculo === "FAMILIAR") return "Familiar";
   if (invitacion.tipoCuidador === "FISICO") return "Cuidador físico";
@@ -33,63 +26,24 @@ function textoInvitacion(invitacion: Invitacion) {
   return "Cuidador";
 }
 
+function iniciales(nombre: string) {
+  return nombre
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((parte) => parte[0]?.toLocaleUpperCase("es-AR") ?? "")
+    .join("");
+}
+
 export default function Config() {
   const { usuario } = useAuth();
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
-  const [loadingVinculos, setLoadingVinculos] = useState<boolean>(false);
+  const [loadingVinculos, setLoadingVinculos] = useState(false);
   const [errorVinculos, setErrorVinculos] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!usuario) return;
-
-    // trae las personas vinculadas al adulto (familiares y cuidadores)
-    const fetchVinculos = async () => {
-      setLoadingVinculos(true);
-      setErrorVinculos(null);
-
-      try {
-        const data = await usuarioService.getVinculos(usuario.id);
-        setVinculos(data);
-      } catch (err) {
-        console.error(err);
-        setErrorVinculos("Hubo un error al cargar las personas vinculadas");
-      } finally {
-        setLoadingVinculos(false);
-      }
-    };
-
-    fetchVinculos();
-  }, [usuario]);
-
-  // invitaciones que mandó el adulto y todavía nadie aceptó
   const [invitacionesPendientes, setInvitacionesPendientes] = useState<Invitacion[]>([]);
-  // se suma 1 cada vez que se manda una invitación, para que se vuelvan a pedir
-  const [recargarEnviadas, setRecargarEnviadas] = useState<number>(0);
-  const [mostrarInvitacion, setMostrarInvitacion] = useState<boolean>(false);
+  const [recargarEnviadas, setRecargarEnviadas] = useState(0);
+  const [mostrarInvitacion, setMostrarInvitacion] = useState(false);
 
-  useEffect(() => {
-    if (!usuario) return;
-
-    // trae las invitaciones enviadas y deja solo las pendientes
-    const fetchEnviadas = async () => {
-      try {
-        const data = await invitacionesService.getEnviadas();
-        setInvitacionesPendientes(data.filter((invitacion) => invitacion.estado === "PENDIENTE"));
-      } catch (err) {
-        // si falla no se muestra nada: es información extra, no bloquea la pantalla
-        console.error(err);
-      }
-    };
-
-    fetchEnviadas();
-  }, [usuario, recargarEnviadas]);
-
-  // después de mandar una invitación, la lista de pendientes se vuelve a cargar
-  const cargarEnviadas = () => {
-    setRecargarEnviadas(recargarEnviadas + 1);
-  };
-
-  // interruptores de notificaciones: arrancan prendidos (como en el back) hasta que llegan los guardados
   const [configNotificaciones, setConfigNotificaciones] = useState<PreferenciasNotificacion>({
     notifActividad: true,
     notifBienestar: true,
@@ -101,52 +55,89 @@ export default function Config() {
 
   useEffect(() => {
     if (!usuario) return;
+    let activo = true;
+    const fetchVinculos = async () => {
+      setLoadingVinculos(true);
+      setErrorVinculos(null);
+      try {
+        const data = await usuarioService.getVinculos(usuario.id);
+        if (activo) setVinculos(data);
+      } catch (err) {
+        console.error(err);
+        if (activo) setErrorVinculos("Hubo un error al cargar las personas vinculadas");
+      } finally {
+        if (activo) setLoadingVinculos(false);
+      }
+    };
+    void fetchVinculos();
+    return () => { activo = false; };
+  }, [usuario]);
 
-    // trae las preferencias guardadas para mostrar los interruptores como están
+  useEffect(() => {
+    if (!usuario) return;
+    let activo = true;
+    const fetchEnviadas = async () => {
+      try {
+        const data = await invitacionesService.getEnviadas();
+        if (activo) setInvitacionesPendientes(data.filter((invitacion) => invitacion.estado === "PENDIENTE"));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    void fetchEnviadas();
+    return () => { activo = false; };
+  }, [usuario, recargarEnviadas]);
+
+  useEffect(() => {
+    if (!usuario) return;
+    let activo = true;
     const fetchPreferencias = async () => {
       try {
         const data = await usuarioService.getPreferenciasNotificacion(usuario.id);
-        setConfigNotificaciones(data);
+        if (activo) setConfigNotificaciones(data);
       } catch (err) {
         console.error(err);
-        setErrorGuardar("No se pudieron cargar tus preferencias de notificaciones");
+        if (activo) setErrorGuardar("No se pudieron cargar tus preferencias de notificaciones");
       }
     };
-
-    fetchPreferencias();
+    void fetchPreferencias();
+    return () => { activo = false; };
   }, [usuario]);
 
-  // "Recibir notificaciones" no existe en el back: está prendido si alguna de las tres lo está
-  const recibirNotificaciones =
-    configNotificaciones.notifActividad ||
-    configNotificaciones.notifBienestar ||
-    configNotificaciones.notifRecordatorios;
+  const recibirNotificaciones = configNotificaciones.notifActividad ||
+    configNotificaciones.notifBienestar || configNotificaciones.notifRecordatorios;
 
-  // prende o apaga un interruptor (todavía no se guarda: eso pasa en "Guardar cambios")
   const handleToggle = (key: keyof PreferenciasNotificacion) => {
-    setConfigNotificaciones((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setMensajeGuardar(null);
+    setConfigNotificaciones((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // el general prende o apaga los tres juntos
   const handleToggleGeneral = () => {
+    const siguienteEstado = !recibirNotificaciones;
+    setMensajeGuardar(null);
     setConfigNotificaciones({
-      notifActividad: !recibirNotificaciones,
-      notifBienestar: !recibirNotificaciones,
-      notifRecordatorios: !recibirNotificaciones,
+      notifActividad: siguienteEstado,
+      notifBienestar: siguienteEstado,
+      notifRecordatorios: siguienteEstado,
     });
   };
 
-  // guarda los interruptores en el back
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleToggleActividadDescanso = () => {
+    const siguienteEstado = !(configNotificaciones.notifActividad && configNotificaciones.notifBienestar);
+    setMensajeGuardar(null);
+    setConfigNotificaciones((prev) => ({
+      ...prev,
+      notifActividad: siguienteEstado,
+      notifBienestar: siguienteEstado,
+    }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!usuario) return;
     setCargando(true);
     setErrorGuardar(null);
     setMensajeGuardar(null);
-
     try {
       await usuarioService.editarPreferenciasNotificacion(usuario.id, configNotificaciones);
       setMensajeGuardar("Tus cambios se guardaron");
@@ -158,154 +149,80 @@ export default function Config() {
     }
   };
 
+  const cargarEnviadas = () => setRecargarEnviadas((actual) => actual + 1);
+
   return (
-    <>
-      <main className="mainBody">
-        <Header />
-        <VueltaAtras titulo="Ajustes de accesibilidad" />
+    <main className="mainBody">
+      <Header />
+      <VueltaAtras titulo="Mis ajustes" compacto seccion="Mi app" />
 
-        {/* el form solo envuelve las preferencias: la invitación de abajo tiene su propio form
-            y no puede quedar adentro de este; "Guardar cambios" se une con form="form-ajustes" */}
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <form id="form-ajustes" onSubmit={handleSubmit} className="contents">
-          <div className="rounded-2xl bg-white w-full p-5 gap-3 flex justify-start pr-0 items-start">
-            <VscGear className="bg-blue-600 rounded-full text-white p-3 size-12" />
-            <div className="flex flex-col items-start justify-start max-w-80/100">
-              <h1 className="text-xl font-semibold">
-                Preferencias de tu aplicación
-              </h1>
-              <p className="text-gray-600">
-                Configurá todo a tu manera. Los ajustes se aplicarán cuando
-                guardes los cambios.
-              </p>
-            </div>
-          </div>
+          <AjustesTexto />
 
-          <div className="rounded-2xl bg-white w-full flex flex-col p-5 gap-5">
-            <div className="w-full flex justify-start items-start gap-3 relative">
-              <MdOutlineNotifications className="bg-blue-100/70 rounded-xl p-3 size-14 text-blue-600 border border-blue-300/35" />
-              <div className="flex flex-col items-start justify-start gap-2 pt-1">
-                <h1 className="font-semibold text-xl">Notificaciones</h1>
-                <p className="text-gray-500 text-lg">
-                  Elegí qué avisos querés recibir.
-                </p>
-              </div>
-              <h3 className="bg-green-50 text-sm text-green-700 pl-2 pr-2 rounded-full border flex items-center gap-2 border-green-300 p-1 font-semibold absolute right-0 top-0">
-                <MdCheck />
-                Activadas
-              </h3>
-            </div>
+          <section aria-labelledby="titulo-avisos" className="flex w-full flex-col gap-3 rounded-3xl bg-white p-5 shadow-sm">
+            <h2 id="titulo-avisos" className="text-2xl font-bold text-[#16222C]">Mis avisos</h2>
+            <div className="h-0.5 w-full bg-[#D7DFE6]" />
 
-            <div className="w-full flex p-5 font-semibold gap-5 min-h-20 rounded-2xl border bg-green-50 text-green-700 border-green-300">
-              <GoShieldLock className="text-3xl" />
-              <p className="max-w-85/100 text-green-800">
-                Solo notificaciones importantes. ACTIVADAS por defecto para no
-                mandarte avisos innecesarios.
-              </p>
+            <div className="flex min-h-12 items-center justify-between gap-3 py-1">
+              <span className="text-lg font-bold text-[#16222C]">Recibir avisos</span>
+              <Switch ariaLabel="Recibir avisos" checked={recibirNotificaciones} onChange={handleToggleGeneral} />
             </div>
+            <div className="h-0.5 w-full bg-[#D7DFE6]" />
 
-            <div className="w-full min-h-20 flex items-center justify-between rounded-2xl border border-gray-400 p-4">
-              <div>
-                <h1 className="font-semibold text-xl">
-                  Recibir notificaciones
-                </h1>
-                <p className="text-gray-600">
-                  Control general del sistema de alertas
-                </p>
-              </div>
+            <div className="flex min-h-12 items-center justify-between gap-3 py-1">
+              <span className="text-lg font-bold text-[#16222C]">Recordatorios</span>
+              <Switch ariaLabel="Recordatorios" checked={configNotificaciones.notifRecordatorios} onChange={() => handleToggle("notifRecordatorios")} />
+            </div>
+            <div className="h-0.5 w-full bg-[#D7DFE6]" />
+
+            <div className="flex min-h-12 items-center justify-between gap-3 py-1">
+              <span className="text-lg font-bold text-[#16222C]">Actividad y descanso</span>
               <Switch
-                checked={recibirNotificaciones}
-                onChange={handleToggleGeneral}
+                ariaLabel="Actividad y descanso"
+                checked={configNotificaciones.notifActividad && configNotificaciones.notifBienestar}
+                onChange={handleToggleActividadDescanso}
               />
             </div>
-
-            <div className="w-full flex p-5 relative items-center justify-between min-h-20 rounded-2xl border bg-green-50 border-green-300">
-              <div className="w-75/100">
-                <h1 className="text-lg font-semibold">
-                  Notificaciones importantes
-                </h1>
-                <p className="max-w-85/100 text-green-800">
-                  Siempre activas por seguridad.
-                </p>
-              </div>
-              <h3 className="border absolute right-3 border-green-300 text-green-700 h-fit p-2 rounded-full font-semibold">
-                Obligatoria
-              </h3>
-            </div>
-
-            <div className="w-full min-h-20 flex items-center justify-between rounded-2xl border border-gray-400 p-4">
-              <div>
-                <h1 className="font-semibold text-xl">Actividad</h1>
-                <p className="text-gray-600">Pasos y movimiento diario</p>
-              </div>
-              <Switch
-                checked={configNotificaciones.notifActividad}
-                onChange={() => handleToggle("notifActividad")}
-              />
-            </div>
-
-            <div className="w-full min-h-20 flex items-center justify-between rounded-2xl border border-gray-400 p-4">
-              <div>
-                <h1 className="font-semibold text-xl">Bienestar</h1>
-                <p className="text-gray-600">Monitoreo de descanso y salud</p>
-              </div>
-              <Switch
-                checked={configNotificaciones.notifBienestar}
-                onChange={() => handleToggle("notifBienestar")}
-              />
-            </div>
-
-            <div className="w-full min-h-20 flex items-center justify-between rounded-2xl border border-gray-400 p-4">
-              <div>
-                <h1 className="font-semibold text-xl">Recordatorios</h1>
-                <p className="text-gray-600">Avisos generales del día</p>
-              </div>
-              <Switch
-                checked={configNotificaciones.notifRecordatorios}
-                onChange={() => handleToggle("notifRecordatorios")}
-              />
-            </div>
-          </div>
+          </section>
         </form>
 
-        <div className="bg-white rounded-2xl w-full p-5 flex flex-col gap-7">
-          <div className="flex w-full gap-5">
-            <LuUserRoundCheck className="size-14 bg-blue-50 border border-blue-200 p-3 text-blue-600 rounded-xl" />
-            <div className="flex flex-col max-w-75/100 gap-2">
-              <h1 className="font-semibold text-xl">Personas vinculadas</h1>
-              <p className="text-gray-500">
-                Personas que pueden acompañarte y acceder a la información
-                autorizada.
-              </p>
+        <section aria-labelledby="titulo-acompanantes" className="flex w-full flex-col gap-3 rounded-3xl bg-white px-5 pb-6 pt-5 shadow-sm">
+          <h2 id="titulo-acompanantes" className="text-2xl font-bold text-[#16222C]">Usuarios acompañantes</h2>
+
+          {loadingVinculos && <p className="text-[#435059]">Cargando personas vinculadas...</p>}
+          {errorVinculos && <p role="alert" className="text-red-700">{errorVinculos}</p>}
+          {!loadingVinculos && !errorVinculos && vinculos.length === 0 && (
+            <p className="text-[#435059]">Todavía no tenés personas vinculadas.</p>
+          )}
+
+          {vinculos.map((vinculo, indice) => (
+            <div key={vinculo.id}>
+              {indice > 0 && <div className="mb-3 h-0.5 w-full bg-[#D7DFE6]" />}
+              <Link
+                to={`/adulto/Administrar-Vinculo?familiar=${vinculo.familiarId}`}
+                className="flex min-w-0 items-center gap-3.5 rounded-2xl py-1 transition-colors hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+              >
+                <span aria-hidden="true" className="flex size-13 shrink-0 items-center justify-center rounded-full bg-[#E7EDFB] text-lg font-bold text-[#0E3494]">
+                  {iniciales(vinculo.familiar.nombreCompleto)}
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-xl font-bold text-[#16222C]">{vinculo.familiar.nombreCompleto}</span>
+                  <span className="text-lg text-[#435059]">{textoVinculo(vinculo)}</span>
+                </span>
+                <LuChevronRight aria-hidden="true" className="size-5 shrink-0 text-[#9BA8B2]" />
+              </Link>
             </div>
-          </div>
-          <div className="flex flex-col w-full gap-5">
-            {loadingVinculos && <p>Cargando personas vinculadas...</p>}
-            {errorVinculos && <p className="text-red-600">{errorVinculos}</p>}
-            {!loadingVinculos && !errorVinculos && vinculos.length === 0 && (
-              <p className="text-gray-500">Todavía no tenés personas vinculadas.</p>
-            )}
-            {vinculos.map((vinculo) => (
-              <PersonaVinculada
-                key={vinculo.id}
-                nombre={vinculo.familiar.nombreCompleto}
-                ocupacion={textoVinculo(vinculo)}
-                familiarId={vinculo.familiarId}
-              />
-            ))}
-          </div>
+          ))}
 
           {invitacionesPendientes.length > 0 && (
-            <div className="flex flex-col w-full gap-3">
+            <div className="flex flex-col gap-3">
               {invitacionesPendientes.map((invitacion) => (
-                <div
-                  key={invitacion.id}
-                  className="w-full p-3 rounded-2xl border border-dashed border-slate-300 bg-white flex items-center gap-3"
-                >
-                  <MdOutlineSchedule aria-hidden="true" className="size-10 shrink-0 rounded-full bg-gray-100 p-2 text-gray-500" />
-                  <div className="flex min-w-0 flex-col gap-1">
-                    <p className="font-semibold text-lg wrap-anywhere">{invitacion.emailDestino}</p>
-                    <p className="text-gray-600">{textoInvitacion(invitacion)} · Vence el {new Date(invitacion.expiraEn).toLocaleDateString("es-AR")}</p>
-                    <p className="text-sm font-semibold text-blue-600">Esperando que acepte</p>
+                <div key={invitacion.id} className="flex items-center gap-3 rounded-2xl bg-[#EFF4FC] p-3">
+                  <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-[#435059]"><LuClock3 className="size-5" /></span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-bold text-[#16222C]">{invitacion.emailDestino}</p>
+                    <p className="text-sm text-[#435059]">{textoInvitacion(invitacion)} · Invitación pendiente</p>
                   </div>
                 </div>
               ))}
@@ -313,57 +230,38 @@ export default function Config() {
           )}
 
           {mostrarInvitacion ? (
-            <Desplegable abiertoAlInicio onInvitacionCreada={cargarEnviadas} />
+            <Desplegable abiertoAlInicio onInvitacionCreada={cargarEnviadas} textoBoton="Invitar usuario" varianteBoton="suave" />
           ) : (
             <button
               type="button"
               onClick={() => setMostrarInvitacion(true)}
-              className="font-semibold text-blue-600 flex items-center justify-center gap-2 bg-blue-100/70 border-4 border-dashed hover:bg-blue-100 cursor-pointer active:bg-blue-200 border-blue-700 w-full p-5 pt-4 pb-4 rounded-2xl text-xl select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+              className="flex min-h-15 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#E7EDFB] px-4 text-lg font-bold text-[#0E3494] transition-colors hover:bg-[#DCE6FA] active:bg-[#CCD9F5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
-              <GoPlus className="size-8" /> Agregar persona
+              Invitar usuario <LuArrowRight aria-hidden="true" className="size-6" />
             </button>
           )}
-        </div>
-        <AjustesTexto />
+        </section>
+
+        <Link
+          className="flex min-h-16 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-[#144BD3] px-4 text-lg font-bold text-[#0E3494] transition-colors hover:bg-[#E7EDFB] active:bg-[#D7E2FA] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+          to="../ayuda"
+        >
+          <AiOutlineQuestionCircle aria-hidden="true" className="size-6" />
+          Ayuda: cómo usar NONOS
+        </Link>
 
         <button
           type="submit"
           form="form-ajustes"
           disabled={cargando}
-          className="w-full bg-[#1a62ff] text-xl cursor-pointer hover:bg-blue-700 active:scale-[0.99] text-white font-medium py-3.5 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm mt-2 border-0 disabled:opacity-50"
+          className="flex min-h-18 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#144BD3] px-4 text-lg font-bold text-white transition-colors hover:bg-[#1245BF] active:bg-[#0E3494] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] disabled:cursor-wait disabled:opacity-60"
         >
-          <HiCheck className="text-2xl stroke-2" />{" "}
+          <HiCheck aria-hidden="true" className="size-6" />
           {cargando ? "Guardando..." : "Guardar cambios"}
         </button>
-        {errorGuardar && <p className="text-red-600">{errorGuardar}</p>}
-        {mensajeGuardar && <p className="text-green-700">{mensajeGuardar}</p>}
-
-        <div className="border-t w-full border-gray-500" />
-
-        <Link
-          className="bg-white rounded-2xl w-full flex items-start justify-start p-7 gap-3 relative"
-          to={"../ayuda"}
-        >
-          <AiOutlineQuestionCircle className="text-blue-600 bg-gray-100 p-2 size-12 rounded-lg border-gray-300 border" />
-          <div className="flex flex-col items-start justify-start gap-1 max-w-75/100">
-            <h1 className="font-semibold text-xl">Ayuda</h1>
-            <p className="text-gray-600">
-              Cómo usar NONOS y resolver problemas con guías sencillas.
-            </p>
-          </div>
-          <h2 className="bg-white text-sm text-blue-700 p-2 rounded-lg border flex items-center gap-2 border-gray-300 font-semibold absolute right-4 top-4 cursor-pointer hover:bg-gray-100 active:bg-gray-200">
-            Ver ayuda
-          </h2>
-        </Link>
-
-        <div className="flex flex-col gap-3 p-5 items-center justify-center w-full bg-white rounded-2xl border border-gray-100">
-          <p className="text-blue-600 font-black">Acerca de NONOS</p>
-          <p className="font-bold text-lg">NONOS · Tecnología que acompaña</p>
-          <p className=" text-gray-600 text-center">
-            Versión 1.0 · Sistema seguro de acompañamiento
-          </p>
-        </div>
-      </main>
-    </>
+        {errorGuardar && <p role="alert" className="px-1 text-sm text-red-700">{errorGuardar}</p>}
+        {mensajeGuardar && <p role="status" className="px-1 text-sm text-green-800">{mensajeGuardar}</p>}
+      </div>
+    </main>
   );
 }

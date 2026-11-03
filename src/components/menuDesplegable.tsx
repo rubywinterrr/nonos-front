@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LuCheck, LuChevronDown, LuCirclePlus, LuMonitor, LuShieldCheck, LuUserRoundPlus, LuUsersRound } from "react-icons/lu";
+import { LuArrowRight, LuCheck, LuChevronDown, LuCirclePlus, LuMonitor, LuShieldCheck, LuUserRoundPlus, LuUsersRound } from "react-icons/lu";
 import { useAuth } from "../hooks/useAuth";
 import { invitacionesService, type NuevaInvitacion } from "../services/invitacionesService";
 
@@ -10,7 +10,7 @@ interface Props {
   onInvitacionCreada?: () => void;
   // permite reutilizar el desplegable desde el CTA principal de Contactos
   textoBoton?: string;
-  varianteBoton?: "tarjeta" | "primario";
+  varianteBoton?: "tarjeta" | "primario" | "suave";
 }
 
 export default function Desplegable({ abiertoAlInicio = false, onInvitacionCreada, textoBoton = "Invitar a un nuevo acompañante", varianteBoton = "tarjeta" }: Props) {
@@ -68,18 +68,21 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
         onClick={() => setIsOpen(!isOpen)}
         className={varianteBoton === "primario"
           ? "flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#144BD3] px-4 py-3 text-base font-bold text-white shadow-xs hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
-          : "flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-white p-4 text-left hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"}
+          : varianteBoton === "suave"
+            ? "flex min-h-15 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#E7EDFB] px-4 text-lg font-bold text-[#0E3494] transition-colors hover:bg-[#DCE6FA] active:bg-[#CCD9F5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+            : "flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-white p-4 text-left hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"}
       >
         {varianteBoton === "primario" ? (
           <LuCirclePlus aria-hidden="true" className="size-5 shrink-0" />
-        ) : (
+        ) : varianteBoton === "suave" ? null : (
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#E7EDFB] text-[#1550E0]"><LuUserRoundPlus aria-hidden="true" className="size-6" /></span>
         )}
-        <span className={varianteBoton === "primario" ? "min-w-0" : "min-w-0 flex-1"}>
-          <span className={varianteBoton === "primario" ? "block leading-5" : "block text-sm font-bold leading-5"}>{textoBoton}</span>
+        <span className={varianteBoton === "primario" || varianteBoton === "suave" ? "min-w-0" : "min-w-0 flex-1"}>
+          <span className={varianteBoton === "primario" || varianteBoton === "suave" ? "block leading-5" : "block text-sm font-bold leading-5"}>{textoBoton}</span>
           {varianteBoton === "tarjeta" && <span className="mt-0.5 block text-xs font-normal leading-4 text-[#435059]">Le llegará un enlace por correo electrónico para vincularse.</span>}
         </span>
         {varianteBoton === "tarjeta" && <LuChevronDown aria-hidden="true" className={`size-5 shrink-0 text-[#1550E0] transition-transform ${isOpen ? "" : "-rotate-90"}`} />}
+        {varianteBoton === "suave" && <LuArrowRight aria-hidden="true" className="size-6 shrink-0" />}
       </button>
 
       {isOpen && (
