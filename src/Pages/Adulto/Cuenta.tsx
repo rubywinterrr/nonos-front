@@ -10,7 +10,6 @@ import calcularEdad from "../../utils/calcularEdad";
 import {
   LuChevronRight,
   LuCircleDot,
-  LuFingerprint,
   LuGlobe,
   LuLockKeyhole,
   LuLogOut,
@@ -291,27 +290,6 @@ export default function PagCuenta() {
               contraseña
             </button>
           </article>
-          {/* PENDIENTE BACK: no existe el acceso con huella o PIN */}
-          <div className="flex items-center gap-3 rounded-xl border border-[#D7DFE6] bg-[#E9EEF2] p-3">
-            <LuFingerprint
-              aria-hidden="true"
-              className="size-7 shrink-0 text-[#1550E0]"
-            />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold">
-                Acceso rápido con Huella o PIN
-              </p>
-              <p className="text-xs text-[#435059]">
-                Ingresa sin escribir la contraseña
-              </p>
-            </div>
-            <span
-              aria-label="Activado"
-              className="flex h-6 w-10 shrink-0 items-center justify-end rounded-full bg-[#1550E0] p-0.5"
-            >
-              <span className="size-5 rounded-full bg-white" />
-            </span>
-          </div>
         </section>
 
         {esAdulto && contactoApoyo && (

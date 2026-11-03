@@ -6,7 +6,6 @@ import { useAuth } from "../../hooks/useAuth";
 import calcularEdad from "../../utils/calcularEdad";
 import {
   LuChevronRight,
-  LuFingerprint,
   LuGlobe,
   LuLockKeyhole,
   LuLogOut,
@@ -241,26 +240,6 @@ export default function CuentaFamilia() {
               contraseña
             </button>
           </article>
-          {/* PENDIENTE BACK: no existe el acceso con huella o PIN */}
-          <div className="flex items-center gap-3 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-3">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-[#1550E0]">
-              <LuFingerprint aria-hidden="true" className="size-6" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold">
-                Acceso rápido con Huella o PIN
-              </p>
-              <p className="text-xs text-[#1550E0]">
-                Ingresa sin escribir la contraseña
-              </p>
-            </div>
-            <span
-              aria-label="Activado"
-              className="flex h-6 w-10 shrink-0 items-center justify-end rounded-full bg-[#1550E0] p-0.5"
-            >
-              <span className="size-5 rounded-full bg-white" />
-            </span>
-          </div>
         </section>
 
         {/* agregado (no está en el Figma): editar mis datos, cerrar todas las sesiones y dar de baja la cuenta */}
