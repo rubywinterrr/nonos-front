@@ -15,7 +15,7 @@ self.addEventListener("push", (evento) => {
     self.registration.showNotification(datos.title || "NONOS", {
       body: datos.body,
       data: datos.data || {},
-      icon: "/logo/icono-192.png",
+      icon: "/logo/isotipo-192.png",
     }),
   );
 });
