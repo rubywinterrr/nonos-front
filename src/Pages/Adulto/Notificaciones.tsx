@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { notificacionesService, type Notificacion } from "../../services/notificacionesService";
+import tiempoDesde from "../../utils/tiempoDesde";
 import {
   LuBatteryLow,
   LuHeart,
@@ -102,100 +106,177 @@ function TarjetaNotificacion({
   );
 }
 
+// elige el ícono según lo que dice el aviso (el back no manda de qué tipo es)
+function iconoDeAviso(aviso: Notificacion) {
+  const texto = `${aviso.titulo} ${aviso.mensaje}`
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase();
+
+  if (texto.includes("ayuda") || texto.includes("emergencia") || texto.includes("caida") || texto.includes("oxigeno") || texto.includes("pulso")) return "ayuda";
+  if (texto.includes("medic") || texto.includes("pastilla") || texto.includes("dosis")) return "medicacion";
+  if (texto.includes("bateria") || texto.includes("pulsera")) return "bateria";
+  if (texto.includes("pasos") || texto.includes("resumen")) return "pasos";
+  return "consulta";
+}
+
+// cada ícono va con su color del Figma
+function colorDeIcono(icono: TarjetaNotificacionProps["icono"]) {
+  if (icono === "ayuda") return "rojo";
+  if (icono === "bateria") return "gris";
+  if (icono === "pasos") return "verde";
+  return "azul";
+}
+
+// cuándo llegó el aviso: "Ahora", "Hace 2 min", "Ayer" o "28 de octubre"
+function momentoAviso(fecha: string) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const dia = new Date(fecha);
+  dia.setHours(0, 0, 0, 0);
+  const diasAtras = Math.round((hoy.getTime() - dia.getTime()) / (24 * 60 * 60 * 1000));
+
+  if (diasAtras === 1) return "Ayer";
+  if (diasAtras > 1) return dia.toLocaleDateString("es-AR", { day: "numeric", month: "long" });
+
+  const texto = tiempoDesde(fecha);
+  if (texto === "recién") return "Ahora";
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+// título del resumen de arriba, según cuántos avisos nuevos hay
+function tituloResumen(cantidad: number) {
+  if (cantidad === 0) return "No tenés avisos nuevos";
+  if (cantidad === 1) return "Tenés 1 aviso nuevo";
+  return `Tenés ${cantidad} avisos nuevos`;
+}
+
+// arma una tarjeta con los datos de un aviso del back
+function tarjetaDeAviso(aviso: Notificacion) {
+  const icono = iconoDeAviso(aviso);
+  return (
+    <TarjetaNotificacion
+      key={aviso.id}
+      momento={momentoAviso(aviso.enviadaEn)}
+      titulo={aviso.titulo}
+      detalle={aviso.mensaje}
+      color={colorDeIcono(icono)}
+      icono={icono}
+      nueva={!aviso.leida}
+    />
+  );
+}
+
 export default function Notificaciones() {
+  const { usuario } = useAuth();
+  const usuarioId = usuario?.id;
+  const [avisos, setAvisos] = useState<Notificacion[]>([]);
+  const [cargando, setCargando] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!usuarioId) return;
+    let activa = true;
+
+    // marca los avisos como leídos: en esta visita se siguen viendo como nuevos
+    // y la próxima vez aparecen en "Antes"; el Header actualiza el número de la campanita
+    const marcarLeidos = async (lista: Notificacion[]) => {
+      try {
+        for (const aviso of lista) {
+          if (!aviso.leida) await notificacionesService.marcarComoLeida(aviso.id);
+        }
+        window.dispatchEvent(new Event("nonos:notificaciones-actualizadas"));
+      } catch (err) {
+        // si falla, siguen sin leer y se vuelve a intentar la próxima vez
+        console.error(err);
+      }
+    };
+
+    // trae los avisos del usuario, del más nuevo al más viejo
+    const cargarAvisos = async () => {
+      try {
+        const data = await notificacionesService.getNotificaciones();
+        if (!activa) return;
+        setAvisos(data);
+        marcarLeidos(data);
+      } catch (err) {
+        console.error(err);
+        if (activa) setError("No se pudieron cargar tus avisos.");
+      } finally {
+        if (activa) setCargando(false);
+      }
+    };
+
+    cargarAvisos();
+
+    return () => {
+      activa = false;
+    };
+  }, [usuarioId]);
+
+  const nuevos = avisos.filter((aviso) => !aviso.leida);
+  const anteriores = avisos.filter((aviso) => aviso.leida);
+
   return (
     <main className="mainBody gap-4">
       <Header />
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32 text-[#16222C]">
         <VueltaAtras titulo="Notificaciones" compacto seccion="Mis avisos" />
 
-        <section
-          className="relative flex min-h-20 w-full items-center overflow-hidden rounded-3xl bg-linear-to-br from-[#144BD3] to-[#0E3494] px-5 py-4 text-white"
-          aria-label="Resumen de avisos"
-        >
-          <span
-            aria-hidden="true"
-            className="absolute -right-8 -top-12 size-40 rounded-full bg-white/10"
-          />
-          <h2 className="relative text-3xl font-bold leading-8">
-            Tenés 3 avisos nuevos
-          </h2>
-        </section>
+        {cargando && <p className="text-[#435059]">Cargando tus avisos...</p>}
+        {error && <p className="text-red-600">{error}</p>}
 
-        <section
-          className="flex w-full flex-col gap-3 pt-1.5"
-          aria-labelledby="avisos-atencion"
-        >
-          <h2
-            id="avisos-atencion"
-            className="text-sm font-bold leading-5 tracking-widest text-[#435059]"
+        {!cargando && !error && (
+          <section
+            className="relative flex min-h-20 w-full items-center overflow-hidden rounded-3xl bg-linear-to-br from-[#144BD3] to-[#0E3494] px-5 py-4 text-white"
+            aria-label="Resumen de avisos"
           >
-            REQUIERE TU ATENCIÓN
-          </h2>
-          <TarjetaNotificacion
-            momento="Ahora"
-            titulo="Es hora de tu medicación"
-            detalle="Losartán 50 mg."
-            color="azul"
-            icono="medicacion"
-            nueva
-          />
-        </section>
+            <span
+              aria-hidden="true"
+              className="absolute -right-8 -top-12 size-40 rounded-full bg-white/10"
+            />
+            <h2 className="relative text-3xl font-bold leading-8">
+              {tituloResumen(nuevos.length)}
+            </h2>
+          </section>
+        )}
 
-        <section
-          className="flex w-full flex-col gap-3 pt-1.5"
-          aria-labelledby="avisos-hoy"
-        >
-          <h2 id="avisos-hoy" className="sr-only">
-            Hoy
-          </h2>
-          <TarjetaNotificacion
-            momento="Hace 2 min"
-            titulo="Tu pedido de ayuda se envió"
-            color="rojo"
-            icono="ayuda"
-            nueva
-          />
-          <TarjetaNotificacion
-            momento="Hace 1 h"
-            titulo="Poca batería en tu pulsera"
-            color="gris"
-            icono="bateria"
-            nueva
-          />
-        </section>
-
-        <section
-          className="flex w-full flex-col gap-3 pt-1.5"
-          aria-labelledby="avisos-antes"
-        >
-          <h2
-            id="avisos-antes"
-            className="text-sm font-bold leading-5 tracking-widest text-[#435059]"
+        {nuevos.length > 0 && (
+          <section
+            className="flex w-full flex-col gap-3 pt-1.5"
+            aria-labelledby="avisos-atencion"
           >
-            ANTES
-          </h2>
-          <TarjetaNotificacion
-            momento="Ayer"
-            titulo="Llevás 2.450 pasos"
-            color="verde"
-            icono="pasos"
-          />
-          <TarjetaNotificacion
-            momento="Ayer"
-            titulo="Mañana tenés consulta"
-            detalle="Con el Dr. López, a las 10:00."
-            color="azul"
-            icono="consulta"
-          />
-        </section>
+            <h2
+              id="avisos-atencion"
+              className="text-sm font-bold leading-5 tracking-widest text-[#435059]"
+            >
+              REQUIERE TU ATENCIÓN
+            </h2>
+            {nuevos.map(tarjetaDeAviso)}
+          </section>
+        )}
 
-        <button
-          type="button"
+        {anteriores.length > 0 && (
+          <section
+            className="flex w-full flex-col gap-3 pt-1.5"
+            aria-labelledby="avisos-antes"
+          >
+            <h2
+              id="avisos-antes"
+              className="text-sm font-bold leading-5 tracking-widest text-[#435059]"
+            >
+              ANTES
+            </h2>
+            {anteriores.map(tarjetaDeAviso)}
+          </section>
+        )}
+
+        <Link
+          to={"../configuracion"}
           className="flex min-h-14 w-full cursor-pointer items-center justify-center rounded-2xl border border-[#B7C8F0] bg-[#E7EDFB] px-4 py-3 text-base font-semibold text-[#144BD3] hover:bg-[#D3E0F8] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
         >
           Ajustar notificaciones
-        </button>
+        </Link>
       </div>
     </main>
   );
