@@ -39,7 +39,6 @@ import {
   MdOutlineVolunteerActivism,
   MdPerson,
   MdQrCode2,
-  MdShield,
   MdWbSunny,
 } from "react-icons/md";
 
