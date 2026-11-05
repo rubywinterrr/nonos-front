@@ -343,18 +343,7 @@ export default function HomeFamilia() {
                 )}
               </div>
 
-              <div className="flex items-center justify-between gap-2 rounded-xl bg-[#EBF5FF] p-3.5">
-                <div className="flex min-w-0 items-center gap-3">
-                  <MdShield aria-hidden="true" className="size-10 shrink-0 rounded-xl bg-[#84F6E6]/40 p-2.5 text-[#006A61]" />
-                  <div>
-                    <h3 className="text-base font-bold leading-relaxed">Incidentes y caídas</h3>
-                    <p className="text-xs leading-relaxed text-[#424656]">{alertas72hs} {alertas72hs === 1 ? "alerta" : "alertas"} en las últimas 72 hs</p>
-                  </div>
-                </div>
-                {alertas72hs === 0 && (
-                  <MdCheck aria-hidden="true" className="size-7 shrink-0 rounded-full bg-white p-1.5 text-[#006A61] shadow-xs" />
-                )}
-              </div>
+              <p className="text-sm font-semibold leading-normal text-[#424656]">{alertas72hs} {alertas72hs === 1 ? "alerta" : "alertas"} en las últimas 72 hs</p>
             </section>
           </>
         )}
