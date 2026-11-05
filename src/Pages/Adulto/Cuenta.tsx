@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import MiPerfil from "../../components/MiPerfil";
+import CambiarPassword from "../../components/CambiarPassword";
 import Desplegable from "../../components/menuDesplegable";
 import PulseraConexion from "../../components/PulseraConexion";
 import AdultosVinculados from "../../components/AdultosVinculados";
@@ -36,6 +37,7 @@ function iniciales(nombre: string) {
 
 export default function PagCuenta() {
   const { usuario, logout } = useAuth();
+  const [cambiandoPassword, setCambiandoPassword] = useState(false);
   const esAdulto = usuario?.rol === "ADULTO_MAYOR";
   const [boton, setBoton] = useState<Dispositivo | null>(null);
   const [identificador, setIdentificador] = useState("");
@@ -195,9 +197,10 @@ export default function PagCuenta() {
           <span className="flex items-center gap-1 text-[#435059]">Español <LuChevronRight aria-hidden="true" className="size-4" /></span>
         </button>
 
-        <button type="button" title="La recuperación de contraseña todavía no está disponible" className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#D7DFE6] bg-white px-4 text-lg font-bold text-[#0049CC] transition-colors hover:bg-[#E7EDFB] active:bg-[#D7DFE6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
+        <button type="button" aria-expanded={cambiandoPassword} onClick={() => setCambiandoPassword(!cambiandoPassword)} className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#D7DFE6] bg-white px-4 text-lg font-bold text-[#0049CC] transition-colors hover:bg-[#E7EDFB] active:bg-[#D7DFE6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
           <LuPencil aria-hidden="true" className="size-4" /> Cambiar mi contraseña
         </button>
+        {cambiandoPassword && <CambiarPassword onCerrar={() => setCambiandoPassword(false)} />}
 
         {esAdulto && contactoApoyo && (
           <aside className="flex w-full items-start gap-3 rounded-2xl border border-[#BAEDD3] bg-[#E9EEF2] p-4">

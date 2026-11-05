@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import MiPerfil from "../../components/MiPerfil";
+import CambiarPassword from "../../components/CambiarPassword";
+import tiempoDesde from "../../utils/tiempoDesde";
 import { useAuth } from "../../hooks/useAuth";
 import calcularEdad from "../../utils/calcularEdad";
 import {
@@ -22,6 +24,7 @@ import { etiquetaRol } from "../../utils/etiquetaRol";
 // cuenta del familiar: sus datos, los adultos mayores con los que está vinculado y la sesión
 export default function CuentaFamilia() {
   const { usuario, logout } = useAuth();
+  const [cambiandoPassword, setCambiandoPassword] = useState(false);
   const [adultos, setAdultos] = useState<AdultoMayorVinculado[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -222,23 +225,29 @@ export default function CuentaFamilia() {
           <article className="rounded-xl bg-[#E9EEF2] p-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-xs font-semibold">Contraseña de acceso</h3>
-              {/* PENDIENTE BACK: no hay dato de cuándo se cambió la contraseña */}
-              <span className="rounded border border-[#D7DFE6] bg-white px-2 py-0.5 text-xs text-[#435059]">
-                Hace 3 meses
-              </span>
+              {usuario?.fechaUltimoCambioPassword && (
+                <span
+                  title="Última actualización de contraseña"
+                  className="rounded border border-[#D7DFE6] bg-white px-2 py-0.5 text-xs text-[#435059] first-letter:uppercase"
+                >
+                  {tiempoDesde(usuario.fechaUltimoCambioPassword)}
+                </span>
+              )}
             </div>
             <p className="mt-2 text-xs leading-5 text-[#1550E0]">
               Puedes cambiar tu contraseña o solicitar asistencia si no la
               recuerdas con claridad.
             </p>
-            {/* PENDIENTE BACK: no hay endpoint para cambiar o restablecer la contraseña */}
             <button
               type="button"
+              aria-expanded={cambiandoPassword}
+              onClick={() => setCambiandoPassword(!cambiandoPassword)}
               className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#9DAFBE] bg-white px-3 text-xs font-bold text-[#1550E0] hover:bg-[#E7EDFB] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
               <LuPencil aria-hidden="true" className="size-4" /> Restablecer mi
               contraseña
             </button>
+            {cambiandoPassword && <CambiarPassword onCerrar={() => setCambiandoPassword(false)} />}
           </article>
         </section>
 

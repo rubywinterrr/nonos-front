@@ -73,8 +73,13 @@ const leerRespuesta = async <T>(response: Response): Promise<T> => {
 };
 
 // función que usan todos los services
-export const apiFetch = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+// mensaje401 es para los pedidos donde un 401 NO es sesión vencida: muestra ese mensaje y no desloguea
+export const apiFetch = async <T>(endpoint: string, options: RequestInit = {}, mensaje401?: string): Promise<T> => {
   let response = await hacerPedido(endpoint, options);
+
+  if (response.status === 401 && mensaje401) {
+    throw new Error(mensaje401);
+  }
 
   // 401 = el token venció, intentamos renovarlo y repetimos el pedido
   if (response.status === 401) {
@@ -88,5 +93,5 @@ export const apiFetch = async <T>(endpoint: string, options: RequestInit = {}): 
     response = await hacerPedido(endpoint, options);
   }
 
-  return leerRespuesta<T>(response); //cumple promesa de t 
+  return leerRespuesta<T>(response); //cumple promesa de t
 };

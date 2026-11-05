@@ -5,12 +5,17 @@ interface PasswordInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  // nombre para lectores de pantalla, cuando hay más de una contraseña en la pantalla
+  etiqueta?: string;
+  autoComplete?: string;
 }
 
 export default function PasswordInput({
   value,
   onChange,
   placeholder,
+  etiqueta = "Contraseña",
+  autoComplete = "current-password",
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
 
@@ -27,8 +32,8 @@ export default function PasswordInput({
         onChange={(event) => onChange(event.target.value)}
         className="w-full h-12 bg-white shadow placeholder:text-xs focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1 pr-10"
         placeholder={placeholder}
-        aria-label="Contraseña"
-        autoComplete="current-password"
+        aria-label={etiqueta}
+        autoComplete={autoComplete}
       />
       <button
         type="button"

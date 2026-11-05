@@ -1,11 +1,13 @@
 import LogInForm from "../components/LogInForm";
 import RegisterForm from "../components/RegisterForm";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { FondoBlanco } from "../utils/funcionFondoBlanco";
 
 function IngresoContent() {
   const [hasAccount, setHasAccount] = useState(true);
+  const [searchParams] = useSearchParams();
 
   function toggleForm() {
     setHasAccount(!hasAccount);
@@ -28,6 +30,12 @@ function IngresoContent() {
           {hasAccount ? "Ingrese a NONOS" : "Registrese a NONOS"}
         </h2>
       </div>
+
+      {searchParams.get("password") === "cambiada" && (
+        <p role="status" className="w-80 rounded-xl bg-emerald-50 p-3 text-center text-sm font-semibold text-emerald-700">
+          Tu contraseña se cambió. Volvé a ingresar con la nueva.
+        </p>
+      )}
 
       <div className="group relative w-80 h-10">
         {/* Lo que se ve: tu diseño */}
