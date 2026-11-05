@@ -18,7 +18,7 @@ export default function Switch({
       aria-checked={checked}
       aria-label={ariaLabel}
       onClick={() => onChange?.(!checked)}
-      className={`relative flex h-7 w-13 cursor-pointer rounded-full p-0.5 ease-in-out focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${
+      className={`relative flex h-7 w-13 shrink-0 cursor-pointer rounded-full p-0.5 ease-in-out focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${
         checked ? "bg-blue-600" : "bg-gray-300"
       }`}
     >
