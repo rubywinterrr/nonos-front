@@ -156,6 +156,16 @@ export default function InfoAdulto() {
                 {datos?.domicilio || "Sin dato"}
               </dd>
             </div>
+            {datos?.sanatorioHabitual && (
+              <div className="border-b border-[#B7C8F0] p-3">
+                <dt className="text-xs leading-4 text-[#435059]">
+                  Sanatorio habitual
+                </dt>
+                <dd className="text-sm font-semibold leading-5">
+                  {datos.sanatorioHabitual}
+                </dd>
+              </div>
+            )}
             <div className="p-3">
               <dt className="text-xs leading-4 text-[#435059]">
                 Cobertura médica
@@ -164,10 +174,11 @@ export default function InfoAdulto() {
                 {datos?.obraSocial || "Sin dato"}
                 {datos?.carnetObraSocial && ` (N° ${datos.carnetObraSocial})`}
               </dd>
-              {/* PENDIENTE BACK: no hay dato del plan, queda el texto del diseño */}
-              <dd className="text-xs leading-4 text-[#435059]">
-                Plan Médico de Cabecera asignado
-              </dd>
+              {datos?.planObraSocial && (
+                <dd className="text-xs leading-4 text-[#435059]">
+                  Plan: {datos.planObraSocial}
+                </dd>
+              )}
             </div>
           </dl>
         </section>
@@ -282,7 +293,13 @@ export default function InfoAdulto() {
                 telefono={vinculo.familiar.telefono}
               />
             ))}
-            {/* PENDIENTE BACK: no hay dato del médico de cabecera ("Dr. Esteban Martínez") */}
+            {datos?.nombreMedicoCabecera && (
+              <ContactoVinculado
+                nombre={datos.nombreMedicoCabecera}
+                relacion="Médico de cabecera"
+                telefono={datos.telefonoMedicoCabecera}
+              />
+            )}
           </div>
         </section>
       </div>

@@ -22,7 +22,7 @@ import {
 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
+import { usuarioService, type AdultoMayorVinculado, type UsuarioById, type Vinculo } from "../../services/usuariosService";
 import { contactosService, type Contacto } from "../../services/contactosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
@@ -55,6 +55,8 @@ export default function ContactosFamilia() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
+  // sanatorio y médico de cabecera del adulto
+  const [datosAdulto, setDatosAdulto] = useState<UsuarioById | null>(null);
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [contactos, setContactos] = useState<Contacto[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -75,6 +77,7 @@ export default function ContactosFamilia() {
         if (!elegido) return;
         setVinculos(await usuarioService.getVinculos(elegido.id));
         setContactos(await contactosService.getContactos(elegido.id));
+        setDatosAdulto(await usuarioService.getUsuarioById(elegido.id));
       } catch (err) {
         console.error(err);
         setError("No se pudieron cargar los contactos.");
@@ -213,28 +216,14 @@ export default function ContactosFamilia() {
                 <LuPhone aria-hidden="true" className="size-5 shrink-0" />
                 Llamar al 107
               </a>
-              {/* PENDIENTE BACK: no hay dato de la guardia u hospital del adulto, queda la del diseño */}
-              <div className="flex flex-col gap-1 pt-2">
-                <p className="text-sm font-semibold leading-5">
-                  Guardia San Cayetano
-                </p>
-                <div className="flex items-end justify-between gap-2">
-                  <p className="min-w-0 text-sm leading-5 text-[#435059]">
-                    +54 11 4788-9900
+              {/* PENDIENTE BACK: el back manda solo el nombre del sanatorio; falta su teléfono para el número y el botón Llamar del diseño */}
+              {datosAdulto?.sanatorioHabitual && (
+                <div className="flex flex-col gap-1 pt-2">
+                  <p className="text-sm font-semibold leading-5">
+                    {datosAdulto.sanatorioHabitual}
                   </p>
-                  {/* HARDCODEADO: número fijo de Figma (Guardia San Cayetano) */}
-                  <a
-                    href="tel:+541147889900"
-                    className="flex min-h-12 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-lg border border-transparent bg-[#E7EDFB] px-3 text-sm font-semibold text-[#0D328B] hover:bg-[#D3E0F8] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
-                  >
-                    <LuPhone
-                      aria-hidden="true"
-                      className="size-4 text-[#AD4A00]"
-                    />
-                    Llamar
-                  </a>
                 </div>
-              </div>
+              )}
             </article>
           </section>
 
@@ -277,7 +266,16 @@ export default function ContactosFamilia() {
                 // PENDIENTE BACK: falta el horario del cuidador ("En domicilio de 8 a 14 hs")
                 />
               ))}
-              {/* PENDIENTE BACK: no hay dato del médico de cabecera ("Dr. Esteban Martínez") */}
+              {/* la tarjeta necesita un número para llamar, igual que la red */}
+              {datosAdulto?.nombreMedicoCabecera && datosAdulto.telefonoMedicoCabecera && (
+                <TarjetaContactos
+                  variante="familia"
+                  esMedico
+                  nombre={datosAdulto.nombreMedicoCabecera}
+                  vinculo="Médico de cabecera"
+                  telefono={datosAdulto.telefonoMedicoCabecera}
+                />
+              )}
             </div>
           </section>
 

@@ -38,6 +38,11 @@ export interface UsuarioById {
   grupoSanguineo: GrupoSanguineo | null;
   obraSocial: string | null;
   carnetObraSocial: string | null;
+  planObraSocial: string | null;
+  sanatorioHabitual: string | null;
+  nombreMedicoCabecera: string | null;
+  telefonoMedicoCabecera: string | null;
+  fechaUltimoCambioPassword: string | null;
 }
 
 export interface AdultoMayorVinculado {
@@ -76,6 +81,11 @@ export interface CambiosPerfil {
   grupoSanguineo?: GrupoSanguineo | null;
   obraSocial?: string | null; // máx. 100 caracteres
   carnetObraSocial?: string | null; // máx. 50 caracteres
+  planObraSocial?: string | null;
+  sanatorioHabitual?: string | null;
+  nombreMedicoCabecera?: string | null;
+  // mismo formato que telefono
+  telefonoMedicoCabecera?: string | null;
 }
 
 // interruptores de Configuración > Notificaciones (las del propio usuario sobre sí mismo)

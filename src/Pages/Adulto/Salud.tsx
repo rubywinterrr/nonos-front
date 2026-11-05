@@ -1,10 +1,11 @@
 import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { FaRegAddressCard } from "react-icons/fa";
-import { LuEye, LuTriangleAlert } from "react-icons/lu";
+import { LuEye, LuStethoscope, LuTriangleAlert } from "react-icons/lu";
 import { useAuth } from "../../hooks/useAuth";
 import {
   MdOutlineBloodtype,
+  MdOutlineLocalHospital,
   MdOutlineMedication,
   MdLockClock,
 } from "react-icons/md";
@@ -145,8 +146,34 @@ export default function Salud() {
                 {usuario?.carnetObraSocial && (
                   <p className="text-gray-600">N° {usuario.carnetObraSocial}</p>
                 )}
+                {usuario?.planObraSocial && (
+                  <p className="text-gray-600">Plan: {usuario.planObraSocial}</p>
+                )}
               </div>
             </div>
+            {usuario?.sanatorioHabitual && (
+              <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-center gap-5">
+                <MdOutlineLocalHospital className="text-gray-500 p-3 bg-gray-200/50 rounded-lg text-6xl" />
+                <div className="flex flex-col gap-1 items-start justify-start">
+                  {" "}
+                  <p className="text-gray-600">Sanatorio habitual</p>
+                  <h1 className="text-xl font-bold">{usuario.sanatorioHabitual}</h1>
+                </div>
+              </div>
+            )}
+            {usuario?.nombreMedicoCabecera && (
+              <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-center gap-5">
+                <LuStethoscope className="text-gray-500 p-3 bg-gray-200/50 rounded-lg size-15 shrink-0" />
+                <div className="flex flex-col gap-1 items-start justify-start">
+                  {" "}
+                  <p className="text-gray-600">Médico de cabecera</p>
+                  <h1 className="text-xl font-bold">{usuario.nombreMedicoCabecera}</h1>
+                  {usuario.telefonoMedicoCabecera && (
+                    <p className="text-gray-600">{usuario.telefonoMedicoCabecera}</p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* solo aparece si el usuario tiene alguna condición medica cargada (extra: antes vi que tenia alergia, pero el back no devuelve eso) */}
             {condiciones.length > 0 && (

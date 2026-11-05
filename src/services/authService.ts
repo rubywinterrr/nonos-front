@@ -21,6 +21,12 @@ export interface Usuario {
   grupoSanguineo: GrupoSanguineo | null;
   obraSocial: string | null;
   carnetObraSocial: string | null;
+  planObraSocial: string | null;
+  sanatorioHabitual: string | null;
+  nombreMedicoCabecera: string | null;
+  telefonoMedicoCabecera: string | null;
+  // solo lectura: la cambia el back cuando se cambia la contraseña
+  fechaUltimoCambioPassword: string | null;
   activo: boolean;
   createdAt: string;
   updatedAt: string;
@@ -114,6 +120,20 @@ export const authService = {
       localStorage.removeItem('nonos_refresh_token'); // <- Limpia el refreshToken
       window.location.href = '/ingresar';
     }
+  },
+
+  // PUT /auth/password (204 si salió bien, 401 si la actual es incorrecta; el back cierra todas las sesiones)
+  cambiarPassword: async (passwordActual: string, passwordNueva: string) => {
+    // este pedido renueva el token si venció: así un 401 de abajo solo puede ser la contraseña actual
+    await apiFetch('/auth/me');
+    await apiFetch<void>('/auth/password', {
+      method: 'PUT',
+      body: JSON.stringify({ passwordActual, passwordNueva }),
+    }, 'La contraseña actual no es correcta');
+
+    localStorage.removeItem('nonos_token');
+    localStorage.removeItem('nonos_refresh_token');
+    window.location.href = '/ingresar?password=cambiada';
   },
 
   // POST /auth/logout-all (cierra la sesión en TODOS los dispositivos; responde 204 sin contenido)

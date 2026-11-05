@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { LuCheck, LuLogOut, LuPencil, LuUserX, LuX } from "react-icons/lu";
 import { useAuth } from "../hooks/useAuth";
-import { usuarioService } from "../services/usuariosService";
+import { usuarioService, type CambiosPerfil } from "../services/usuariosService";
 import { authService } from "../services/authService";
 
 // fecha del back ("1946-05-12T00:00:00.000Z") en el formato del <input type="date"> ("1946-05-12")
@@ -18,6 +18,11 @@ export default function MiPerfil() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [nacimiento, setNacimiento] = useState("");
+  // estos cuatro son datos médicos: solo los edita el adulto mayor
+  const [plan, setPlan] = useState("");
+  const [sanatorio, setSanatorio] = useState("");
+  const [medico, setMedico] = useState("");
+  const [telefonoMedico, setTelefonoMedico] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [confirmandoBaja, setConfirmandoBaja] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,11 +30,17 @@ export default function MiPerfil() {
 
   if (!usuario) return null;
 
+  const esAdulto = usuario.rol === "ADULTO_MAYOR";
+
   // abre el formulario con los datos actuales
   const abrir = () => {
     setNombre(usuario.nombreCompleto);
     setTelefono(usuario.telefono ?? "");
     setNacimiento(fechaParaInput(usuario.fechaNacimiento));
+    setPlan(usuario.planObraSocial ?? "");
+    setSanatorio(usuario.sanatorioHabitual ?? "");
+    setMedico(usuario.nombreMedicoCabecera ?? "");
+    setTelefonoMedico(usuario.telefonoMedicoCabecera ?? "");
     setError(null);
     setMensaje(null);
     setEditando(true);
@@ -42,14 +53,25 @@ export default function MiPerfil() {
       setError("El nombre no puede quedar vacío.");
       return;
     }
+    if (telefonoMedico.trim() && !/^\+?[0-9\s-]{6,20}$/.test(telefonoMedico.trim())) {
+      setError("El teléfono del médico solo puede tener números, espacios y guiones (de 6 a 20).");
+      return;
+    }
     setGuardando(true);
     setError(null);
     try {
-      await usuarioService.actualizarPerfil(usuario.id, {
+      const cambios: CambiosPerfil = {
         nombreCompleto: nombre.trim(),
         telefono: telefono.trim() || null,
         fechaNacimiento: nacimiento || null,
-      });
+      };
+      if (esAdulto) {
+        cambios.planObraSocial = plan.trim() || null;
+        cambios.sanatorioHabitual = sanatorio.trim() || null;
+        cambios.nombreMedicoCabecera = medico.trim() || null;
+        cambios.telefonoMedicoCabecera = telefonoMedico.trim() || null;
+      }
+      await usuarioService.actualizarPerfil(usuario.id, cambios);
       await recargarUsuario();
       setEditando(false);
       setMensaje("¡Listo! Tus datos quedaron guardados.");
@@ -97,6 +119,26 @@ export default function MiPerfil() {
             Fecha de nacimiento
             <input type="date" value={nacimiento} onChange={(evento) => setNacimiento(evento.target.value)} className={clasesCampo} />
           </label>
+          {esAdulto && (
+            <>
+              <label className="flex flex-col gap-1 text-sm font-semibold">
+                Plan de la obra social
+                <input value={plan} onChange={(evento) => setPlan(evento.target.value)} className={clasesCampo} />
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-semibold">
+                Sanatorio habitual
+                <input value={sanatorio} onChange={(evento) => setSanatorio(evento.target.value)} className={clasesCampo} />
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-semibold">
+                Médico de cabecera
+                <input value={medico} onChange={(evento) => setMedico(evento.target.value)} className={clasesCampo} />
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-semibold">
+                Teléfono del médico
+                <input type="tel" value={telefonoMedico} onChange={(evento) => setTelefonoMedico(evento.target.value)} className={clasesCampo} />
+              </label>
+            </>
+          )}
           <div className="grid grid-cols-2 gap-2">
             <button type="submit" disabled={guardando} className="flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1550E0] font-semibold text-white hover:bg-[#1245BF] disabled:cursor-wait disabled:opacity-60">
               <LuCheck aria-hidden="true" className="size-4" />
