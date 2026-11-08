@@ -16,6 +16,7 @@ function textoTipo(tipo: TipoAlerta) {
   if (tipo === "SP02_BAJO") return "Oxígeno bajo";
   if (tipo === "MEDICACION_STOCK_BAJO") return "Quedan pocas pastillas";
   if (tipo === "CAMBIO_DE_RUTINA") return "Cambio en la rutina";
+  if (tipo === "QR_ESCANEADO") return "Escanearon el código";
   return "Logro";
 }
 

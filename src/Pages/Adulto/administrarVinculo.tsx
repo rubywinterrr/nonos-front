@@ -241,7 +241,7 @@ export default function AdmVinculo() {
                   <p id="detalle-auxilio" className="text-[#424656]">Primera en sonar si pulsás<br />botón rojo</p>
                 </div>
               </div>
-              {/* prendido = es contacto de emergencia (recibe el aviso del SOS) */}
+              {/* prendido = es contacto de emergencia (primero en la lista de llamadas; el aviso del SOS le llega a toda la red) */}
               <button
                 type="button"
                 role="switch"

@@ -76,9 +76,10 @@ export default function AvisosSalud({ alertas, onRespondida }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   // el SOS ya tiene su propia pantalla; acá solo van los avisos de los datos que todavía no respondió
-  // (si dijo "Necesito ayuda" el back la deja pendiente pero con confirmadaEn, y ya avisó a su familia)
+  // (si dijo "Necesito ayuda" el back la deja pendiente pero con confirmadaEn, y ya avisó a su familia).
+  // El escaneo del QR es un aviso para la red, no algo que el adulto tenga que responder
   const avisos = alertas.filter(
-    (a) => a.estado === "PENDIENTE" && a.tipo !== "SOS_DIRECTO" && a.confirmadaEn === null
+    (a) => a.estado === "PENDIENTE" && a.tipo !== "SOS_DIRECTO" && a.tipo !== "QR_ESCANEADO" && a.confirmadaEn === null
   );
 
   // le dice al back si está bien (se resuelve) o si necesita ayuda (se avisa a la familia)

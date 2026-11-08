@@ -36,8 +36,8 @@ export default function SOS() {
 
       try {
         const data = await usuarioService.getVinculos(usuario.id);
-        // solo los de emergencia, que son los que reciben el aviso del SOS
-        setVinculos(data.filter((vinculo) => vinculo.esContactoEmergencia));
+        // el aviso del SOS le llega a toda la red vinculada, no solo a los contactos de emergencia
+        setVinculos(data);
       } catch (err) {
         console.error(err);
         setError("Hubo un error al cargar los contactos notificados");

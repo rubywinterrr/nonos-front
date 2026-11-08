@@ -21,7 +21,7 @@ import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // todos los tipos de alerta del back (es lo que el back pone por defecto)
-const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "MEDICACION_STOCK_BAJO", "CAMBIO_DE_RUTINA", "LOGRO_POSITIVO"];
+const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "MEDICACION_STOCK_BAJO", "CAMBIO_DE_RUTINA", "LOGRO_POSITIVO", "QR_ESCANEADO"];
 
 // cómo arrancan los avisos (y a qué vuelven con "Restablecer").
 // "tipo" es el tipo de alerta del back que prende o apaga cada interruptor.
@@ -41,7 +41,7 @@ const avisosPorDefecto: { id: string; seccion: string; titulo: string; texto: st
     titulo: "Escaneo de QR de emergencia",
     texto: "Avisa inmediato si personal médico o ambulancia consulta datos en la pulsera.",
     activo: true,
-    tipo: null,
+    tipo: "QR_ESCANEADO",
   },
   {
     id: "esquema",

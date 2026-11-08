@@ -20,13 +20,13 @@ import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // todos los tipos de alerta del back (es lo que el back pone por defecto)
-const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "MEDICACION_STOCK_BAJO", "CAMBIO_DE_RUTINA", "LOGRO_POSITIVO"];
+const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "MEDICACION_STOCK_BAJO", "CAMBIO_DE_RUTINA", "LOGRO_POSITIVO", "QR_ESCANEADO"];
 // los urgentes, para "Solo urgencias"
-const TIPOS_URGENTES: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO"];
+const TIPOS_URGENTES: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "SP02_BAJO", "QR_ESCANEADO"];
 
 // pantalla del familiar: qué avisos recibe del adulto vinculado que mira.
-// Solo "Botón de emergencia" existe como alerta en el back (SOS_DIRECTO).
-// PENDIENTE BACK: QR escaneado, cambio de medicación, bitácora y batería no son alertas del back;
+// "Botón de emergencia" (SOS_DIRECTO) y "Escaneo de QR" (QR_ESCANEADO) son alertas del back.
+// PENDIENTE BACK: cambio de medicación, bitácora y batería no son alertas del back;
 // sus interruptores se ven pero no se guardan
 export default function ConfigFam() {
   const { usuario } = useAuth();
@@ -56,6 +56,7 @@ export default function ConfigFam() {
         const data = await usuarioService.getNotificacionesRecibidas(miId, elegido.id);
         setTiposGuardados(data.tipoNotificaciones);
         setBotonEmergencia(data.tipoNotificaciones.includes("SOS_DIRECTO"));
+        setEscaneoQr(data.tipoNotificaciones.includes("QR_ESCANEADO"));
       } catch (err) {
         console.error(err);
         setError("No se pudieron cargar tus avisos.");
@@ -105,8 +106,10 @@ export default function ConfigFam() {
     setGuardando(true);
     setMensaje(null);
     setError(null);
-    const sinBoton = tiposGuardados.filter((t) => t !== "SOS_DIRECTO");
-    const tipos: TipoAlerta[] = botonEmergencia ? [...sinBoton, "SOS_DIRECTO"] : sinBoton;
+    // se parte de lo guardado y se prende o apaga solo lo que tiene interruptor
+    let tipos: TipoAlerta[] = tiposGuardados.filter((t) => t !== "SOS_DIRECTO" && t !== "QR_ESCANEADO");
+    if (botonEmergencia) tipos = [...tipos, "SOS_DIRECTO"];
+    if (escaneoQr) tipos = [...tipos, "QR_ESCANEADO"];
     try {
       await usuarioService.editarNotificacionesRecibidas(usuario.id, adulto.id, { tipoNotificaciones: tipos });
       setTiposGuardados(tipos);

@@ -14,6 +14,7 @@ import {
 } from "react-icons/lu";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type AdultoMayorVinculado, type CodigoQR } from "../../services/usuariosService";
+import { alertasService } from "../../services/alertasService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 
 const DURACION_CODIGO = 30 * 60;
@@ -21,6 +22,14 @@ const DURACION_CODIGO = 30 * 60;
 // "987212" → "987 - 212", como en el diseño
 function codigoConGuion(codigo: string) {
   return `${codigo.slice(0, 3)} - ${codigo.slice(3)}`;
+}
+
+// último acceso al código: "12 de oct a las 17:40 hs"
+function textoAcceso(fecha: string) {
+  const d = new Date(fecha);
+  const mes = d.toLocaleDateString("es-AR", { month: "short" });
+  const hora = d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${d.getDate()} de ${mes} a las ${hora} hs`;
 }
 
 // pantalla del familiar/cuidador: el código de emergencia del adulto vinculado que mira
@@ -31,6 +40,8 @@ export default function CodigoEmergencia() {
   const [cargando, setCargando] = useState(true);
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [segundosRestantes, setSegundosRestantes] = useState(0);
+  // fecha del último escaneo del código (alerta QR_ESCANEADO); null si nunca lo escanearon
+  const [ultimoAcceso, setUltimoAcceso] = useState<string | null>(null);
 
   useEffect(() => {
     if (!usuario) return;
@@ -42,6 +53,14 @@ export default function CodigoEmergencia() {
         const elegido = await buscarAdultoSeleccionado(miId);
         setAdulto(elegido);
         if (!elegido) return;
+        // las alertas vienen de la más reciente a la más vieja: la primera QR_ESCANEADO es el último acceso
+        try {
+          const alertas = await alertasService.getAlertas(elegido.id);
+          const escaneo = alertas.find((alerta) => alerta.tipo === "QR_ESCANEADO");
+          setUltimoAcceso(escaneo ? escaneo.createdAt : null);
+        } catch (err) {
+          console.error(err);
+        }
         setQr(await usuarioService.getQR(elegido.id));
       } catch (err) {
         console.error(err);
@@ -292,9 +311,9 @@ export default function CodigoEmergencia() {
               <h3 className="text-xs font-semibold">
                 Último acceso registrado
               </h3>
-              {/* PENDIENTE BACK: el back no registra los accesos al código, queda el texto del diseño */}
+              {/* PENDIENTE BACK: el back registra cuándo se accedió pero no quién ("por Personal de ambulancia SAME") */}
               <p className="text-xs leading-4 text-[#435059]">
-                12 de Oct a las 17:40 hs por Personal de ambulancia SAME.
+                {ultimoAcceso ? `${textoAcceso(ultimoAcceso)}.` : "Todavía nadie accedió al código."}
               </p>
             </div>
           </div>

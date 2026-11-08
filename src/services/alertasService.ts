@@ -1,7 +1,7 @@
 import { apiFetch } from './api';
 import type { UsuarioPublico } from './invitacionesService';
 
-export type TipoAlerta = 'SOS_DIRECTO' | 'FC_ELEVADA' | 'FC_BAJA' | 'MEDICACION_STOCK_BAJO' | 'SP02_BAJO' | 'CAMBIO_DE_RUTINA' | 'LOGRO_POSITIVO';
+export type TipoAlerta = 'SOS_DIRECTO' | 'FC_ELEVADA' | 'FC_BAJA' | 'MEDICACION_STOCK_BAJO' | 'SP02_BAJO' | 'CAMBIO_DE_RUTINA' | 'LOGRO_POSITIVO' | 'QR_ESCANEADO';
 export type EstadoAlerta = 'PENDIENTE' | 'CANCELADA' | 'RESUELTA';
 export type CategoriaAlerta = 'CRITICO' | 'INFORMATIVO';
 
@@ -70,7 +70,7 @@ export const alertasService = {
         return await apiFetch<Feedback[]>(`/alertas/feedback/${alertaId}`);
     },
 
-    // PUT /alertas/:id/cancelar ("Fue una falsa alarma"; avisa a los contactos de emergencia)
+    // PUT /alertas/:id/cancelar ("Fue una falsa alarma"; avisa a la red vinculada)
     // 409 si la alerta ya no está PENDIENTE (ya cancelada o resuelta)
     cancelarAlerta: async (id: string) => {
         return await apiFetch<Alerta>(`/alertas/${id}/cancelar`, {
