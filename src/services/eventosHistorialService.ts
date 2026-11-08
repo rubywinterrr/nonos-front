@@ -5,6 +5,9 @@ export interface EventoHistorial {
   usuarioId: string;
   authorId: string;
   descripcion: string;
+  // null en los eventos viejos (ahí el tipo está al principio de la descripción)
+  tipo: string | null;
+  prioritaria: boolean;
   fecha: string;
   fechaFin: string | null;
   createdAt: string;
@@ -13,12 +16,17 @@ export interface EventoHistorial {
 export interface NuevoEventoHistorial {
   usuarioId: string;
   descripcion: string;
+  tipo?: string; // máx. 50 caracteres
+  // si es true, el back manda un push a toda la red
+  prioritaria?: boolean;
   fecha: string;
   fechaFin?: string;
 }
 
 export interface CambiosEventoHistorial {
   descripcion?: string;
+  tipo?: string;
+  prioritaria?: boolean;
   fecha?: string;
   fechaFin?: string | null;
 }

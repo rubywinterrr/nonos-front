@@ -69,7 +69,7 @@ const obtenerFechaHoraLocalParaInput = () => {
 type Filtro = "todos" | CategoriaHistorial;
 
 // tipos que se pueden elegir al registrar (más "Observación prioritaria", que es la cotidiana con el interruptor prendido).
-// PENDIENTE BACK: el evento no tiene campo tipo, así que se guarda al principio de la descripción ("Visita familiar: ...")
+// El tipo va en su propio campo; los eventos viejos lo tienen al principio de la descripción ("Visita familiar: ...")
 const TIPOS = ["Observación cotidiana", "Observación prioritaria", "Episodio/Incidente", "Visita familiar", "Cambio medicación"];
 
 // a qué filtro pertenece cada tipo
@@ -87,6 +87,14 @@ function leerDescripcion(descripcion: string) {
     }
   }
   return { tipo: "Observación cotidiana", texto: descripcion };
+}
+
+// tipo y texto de un evento: si el back manda el tipo se usa ese; si es un evento viejo (tipo null) se lee de la descripción
+function leerEvento(evento: EventoHistorial) {
+  if (evento.tipo) {
+    return { tipo: evento.tipo, texto: evento.descripcion };
+  }
+  return leerDescripcion(evento.descripcion);
 }
 
 // día del registro: "Hoy, 24 de octubre", "Ayer, 23 de octubre" o "20 de octubre"
@@ -129,6 +137,8 @@ export default function Historial() {
   const [error, setError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [errorGuardar, setErrorGuardar] = useState<string | null>(null);
+  // true después de guardar una observación prioritaria: muestra "Se avisó a la red"
+  const [avisoRed, setAvisoRed] = useState(false);
   // se suma 1 después de guardar, para volver a traer el historial
   const [recargar, setRecargar] = useState(0);
 
@@ -166,7 +176,7 @@ export default function Historial() {
 
   // los eventos del back pasados al formato de la tarjeta
   const registros = eventos.map((evento) => {
-    const { tipo, texto } = leerDescripcion(evento.descripcion);
+    const { tipo, texto } = leerEvento(evento);
     return {
       id: evento.id,
       fecha: diaDelRegistro(evento.fecha),
@@ -260,7 +270,7 @@ export default function Historial() {
 
   // abre el diálogo con los datos de un evento propio para corregirlo
   const abrirEdicion = (evento: EventoHistorial) => {
-    const { tipo, texto } = leerDescripcion(evento.descripcion);
+    const { tipo, texto } = leerEvento(evento);
     if (tipo === "Observación prioritaria") {
       setTipoSeleccionado("Observación cotidiana");
       setPrioritaria(true);
@@ -294,23 +304,30 @@ export default function Historial() {
     const fechaSuceso = new Date(momentoSuceso);
     if (Number.isNaN(fechaSuceso.getTime())) return;
     const tipo = prioritaria && tipoSeleccionado === "Observación cotidiana" ? "Observación prioritaria" : tipoSeleccionado;
+    // si es prioritaria, el back avisa por push a toda la red
+    const esPrioritaria = tipo === "Observación prioritaria";
     setGuardando(true);
     setErrorGuardar(null);
+    setAvisoRed(false);
     try {
-      // PENDIENTE BACK: "prioritaria" queda guardada en el texto, pero el back todavía no avisa a nadie
       if (editandoId) {
         // corrige un evento propio
         await eventosHistorialService.actualizarEvento(editandoId, {
-          descripcion: `${tipo}: ${nuevoDetalle.trim()}`,
+          descripcion: nuevoDetalle.trim(),
+          tipo: tipo,
+          prioritaria: esPrioritaria,
           fecha: fechaSuceso.toISOString(),
         });
       } else {
         await eventosHistorialService.crearEvento({
           usuarioId: adulto.id,
-          descripcion: `${tipo}: ${nuevoDetalle.trim()}`,
+          descripcion: nuevoDetalle.trim(),
+          tipo: tipo,
+          prioritaria: esPrioritaria,
           fecha: fechaSuceso.toISOString(),
         });
       }
+      setAvisoRed(esPrioritaria);
       setEditandoId(null);
       setNuevoDetalle("");
       setMomentoSuceso(obtenerFechaHoraLocalParaInput());
@@ -362,6 +379,7 @@ export default function Historial() {
           <section aria-label="Acontecimientos registrados" className="flex flex-col gap-4">
             {cargando && <p className="text-center text-sm text-[#435059]">Cargando historial…</p>}
             {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+            {avisoRed && <p role="status" className="flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-700"><LuCheck aria-hidden="true" className="size-4 shrink-0" />Observación prioritaria guardada. Se avisó a la red.</p>}
             {!cargando && !adulto && !error && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">Todavía no estás vinculado a ningún adulto mayor.</p>}
             {registrosVisibles.map((registro) => <TarjetaHistorial key={registro.id} fecha={registro.fecha} hora={registro.hora} tipo={registro.tipo} detalle={registro.detalle} autor={registro.autor} categoria={registro.categoria} onEditar={registro.esMio ? () => abrirEdicion(registro.original) : undefined} onBorrar={registro.esMio ? () => borrarEvento(registro.id) : undefined} />)}
             {!cargando && adulto && registrosVisibles.length === 0 && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">No hay registros en esta categoría.</p>}
@@ -460,7 +478,7 @@ export default function Historial() {
             </section>
 
             <button type="button" role="switch" aria-checked={prioritaria} onClick={() => setPrioritaria((actual) => !actual)} className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-[#7E8C97] bg-[#E9EEF2] p-3 text-left hover:bg-[#D3E0F8] active:bg-[#B7C8F0]">
-              <span className="flex min-w-0 items-center gap-3"><LuShieldAlert aria-hidden="true" className="size-9 shrink-0 rounded-xl bg-[#E7EDFB] p-2 text-[#1550E0]" /><span><span className="block text-xs font-bold">Marcar como observación prioritaria</span><span className="block text-xs leading-4 text-[#1550E0]">Notificará de inmediato a familiares.</span></span></span>
+              <span className="flex min-w-0 items-center gap-3"><LuShieldAlert aria-hidden="true" className="size-9 shrink-0 rounded-xl bg-[#E7EDFB] p-2 text-[#1550E0]" /><span><span className="block text-xs font-bold">Marcar como observación prioritaria</span><span className="block text-xs leading-4 text-[#1550E0]">Notificará de inmediato a toda su red.</span></span></span>
               <span className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${prioritaria ? "bg-[#1550E0]" : "bg-[#B7C8F0]"}`}><span className={`absolute top-0.5 size-5 rounded-full border border-[#B7C8F0] bg-white transition-transform ${prioritaria ? "translate-x-5" : "left-0.5"}`} />
               </span>
             </button>
