@@ -8,6 +8,7 @@ import { dispositivosService } from "../../services/dispositivosService";
 import { alertasService, type Alerta } from "../../services/alertasService";
 import { idDelAdultoQueSeMira } from "../../utils/adultoQueSeMira";
 import { horasYMinutos } from "../../utils/formatoSignos";
+import minutosDespierto from "../../utils/minutosDespierto";
 import {
   LuCheck,
   LuChevronRight,
@@ -25,13 +26,6 @@ const META_PASOS = 3000;
 const RANGO_PULSO_MIN = 60;
 const RANGO_PULSO_MAX = 100;
 const OXIGENO_MINIMO_HABITUAL = 95;
-
-function minutosDespierto(medicion: Medicion | null) {
-  const etapas = medicion?.metadata?.etapas ?? [];
-  return etapas.reduce((total, etapa) => (
-    etapa.tipo.toUpperCase().includes("AWAKE") ? total + etapa.minutos : total
-  ), 0);
-}
 
 function porcentajeSeguro(valor: number, maximo: number) {
   if (!Number.isFinite(valor) || maximo <= 0) return 0;
@@ -268,11 +262,10 @@ export default function SignosVitales() {
                 <span aria-hidden="true" className="h-full rounded-full bg-[#144BD3] transition-[width] duration-500" style={{ width: `${progresoSueno}%` }} />
               </span>
               <span className="text-base leading-5 text-[#435059]">
-                {!ultimoSueno
-                  ? "Todavía no hay registros de sueño."
-                  : minutosDespiertoSueno > 0
-                    ? `Estuviste despierto ${horasYMinutos(minutosDespiertoSueno)} durante la noche.`
-                    : "Dormiste sin interrupciones."}
+                {/* sin etapas de sueño en metadata no se sabe si se despertó: no se dice nada */}
+                {!ultimoSueno && "Todavía no hay registros de sueño."}
+                {ultimoSueno && minutosDespiertoSueno === 0 && "Dormiste sin interrupciones."}
+                {ultimoSueno && minutosDespiertoSueno !== null && minutosDespiertoSueno > 0 && `Estuviste despierto ${horasYMinutos(minutosDespiertoSueno)} durante la noche.`}
               </span>
             </Link>
           </>

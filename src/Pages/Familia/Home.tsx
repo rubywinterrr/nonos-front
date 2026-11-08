@@ -20,6 +20,7 @@ import ActivarAvisos from "../../components/ActivarAvisos";
 import LinkAvisos from "../../components/LinkAvisos";
 import AccesosRed from "../../components/AccesosRed";
 import { horasYMinutos } from "../../utils/formatoSignos";
+import minutosDespierto from "../../utils/minutosDespierto";
 import {
   MdArrowForward,
   MdCheck,
@@ -39,7 +40,6 @@ import {
   MdOutlineVolunteerActivism,
   MdPerson,
   MdQrCode2,
-  MdWbSunny,
 } from "react-icons/md";
 
 const SETENTA_Y_DOS_HORAS = 72 * 60 * 60 * 1000;
@@ -64,6 +64,8 @@ export default function HomeFamilia() {
   const [resumen, setResumen] = useState<ResumenMedicion[]>([]);
   const [pasosHoy, setPasosHoy] = useState<number | null>(null);
   const [suenoMinutos, setSuenoMinutos] = useState<number | null>(null);
+  // minutos despierto de la última noche (null si la pulsera no mandó etapas)
+  const [suenoDespierto, setSuenoDespierto] = useState<number | null>(null);
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   // tomas de hoy cuyo horario ya pasó, sobre el total (lo calcula el back)
   const [tomasDelDia, setTomasDelDia] = useState<{ hechas: number; total: number } | null>(null);
@@ -117,6 +119,7 @@ export default function HomeFamilia() {
         const hace24hs = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const sueno = await medicionesService.getMediciones(id, "SUENO", hace24hs.toISOString());
         setSuenoMinutos(sueno.length > 0 ? sueno[0].valor : null);
+        setSuenoDespierto(sueno.length > 0 ? minutosDespierto(sueno[0]) : null);
       } catch (err) {
         console.error(err);
       }
@@ -292,11 +295,7 @@ export default function HomeFamilia() {
                   <dd className="flex flex-wrap items-baseline gap-x-1 text-2xl font-bold leading-relaxed">{pasosHoy !== null ? pasosHoy.toLocaleString("es-AR") : "—"}
                     <span className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">pasos</span>
                   </dd>
-                  <dd className="flex items-center gap-1 text-xs leading-normal text-[#424656]">
-                    <MdWbSunny aria-hidden="true" className="size-3 shrink-0" />
-                    {/* PENDIENTE BACK: no hay dato de en qué momento caminó, queda el texto del Figma */}
-                    <span>Paseo matutino</span>
-                  </dd>
+                  {/* PENDIENTE BACK: no hay dato de en qué momento caminó; el diseño mostraba "Paseo matutino" */}
                 </div>
                 <div className="flex min-w-0 flex-col gap-1.5 rounded-xl bg-[#EBF5FF] p-3.5">
                   <dt className="flex items-center justify-between gap-1">
@@ -305,11 +304,19 @@ export default function HomeFamilia() {
                   </dt>
                   <dd className="flex flex-wrap items-baseline gap-x-1 text-2xl font-bold leading-relaxed">{suenoMinutos !== null ? horasYMinutos(suenoMinutos) : "—"}
                   </dd>
-                  {/* PENDIENTE BACK: el sueño llega como un total de minutos, sin interrupciones; queda el texto del Figma */}
-                  <dd className="flex items-center gap-1 text-xs leading-normal font-semibold text-[#006A61]">
-                    <MdCheck aria-hidden="true" className="size-3 shrink-0" />
-                    <span>Sin interrupciones</span>
-                  </dd>
+                  {/* sale de las etapas del sueño (metadata.etapas); si la pulsera no las mandó, no se muestra nada */}
+                  {suenoMinutos !== null && suenoDespierto === 0 && (
+                    <dd className="flex items-center gap-1 text-xs leading-normal font-semibold text-[#006A61]">
+                      <MdCheck aria-hidden="true" className="size-3 shrink-0" />
+                      <span>Sin interrupciones</span>
+                    </dd>
+                  )}
+                  {suenoMinutos !== null && suenoDespierto !== null && suenoDespierto > 0 && (
+                    <dd className="flex items-center gap-1 text-xs leading-normal text-[#424656]">
+                      <MdOutlineBedtime aria-hidden="true" className="size-3 shrink-0" />
+                      <span>Despierto {horasYMinutos(suenoDespierto)}</span>
+                    </dd>
+                  )}
                 </div>
               </dl>
 
