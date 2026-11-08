@@ -181,7 +181,7 @@ export default function PulseraConexion() {
         <>
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#EBF5FF] p-3">
             <div>
-              <p className="font-bold">Fitbit Air</p>
+              <p className="font-bold">Pulsera</p>
               <p className="text-sm text-slate-600">
                 {pulsera.ultimaSincronizacion
                   ? `Última sincronización ${tiempoDesde(pulsera.ultimaSincronizacion)}`
