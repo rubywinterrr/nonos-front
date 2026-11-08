@@ -20,6 +20,7 @@ export interface Invitacion {
   tipoCuidador: TipoCuidador | null;
   direccion: DireccionInvitacion;
   estado: EstadoInvitacion;
+  parentesco: string | null;
   expiraEn: string;
   createdAt: string;
   emisor?: UsuarioPublico;
@@ -31,10 +32,13 @@ export interface NuevaInvitacion {
   direccion: DireccionInvitacion;
   // es obligatorio si tipoVinculo es CUIDADOR, prohibido si es FAMILIAR
   tipoCuidador?: TipoCuidador;
+  // "Hijo", "Vecina"... máx. 50 caracteres
+  parentesco?: string;
 }
 
 export const invitacionesService = {
-  // POST /invitaciones (invita a alguien a vincularse, vence a los 7 días)
+  // POST /invitaciones (invita a alguien a vincularse, vence a los 7 días; no manda mail:
+  // la invitación le aparece a la persona cuando entra a NONOS con ese mail)
   crearInvitacion: async (data: NuevaInvitacion) => {
     return await apiFetch<Invitacion>('/invitaciones', {
       method: 'POST',

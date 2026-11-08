@@ -14,6 +14,10 @@ export interface Vinculo {
   familiar: UsuarioPublico;
   prioridadContacto: number | null;
   tipoNotificaciones: TipoAlerta[];
+  // "Hijo", "Vecina"... (null si no se cargó)
+  parentesco: string | null;
+  // "Lun a Vie 8:00 a 14:00" (null si no se cargó)
+  horarioCuidador: string | null;
 }
 
 export interface CodigoQR {
@@ -60,6 +64,8 @@ export interface CambiosVinculo {
   tipoVinculo: TipoVinculo;
   // obligatorio si tipoVinculo es CUIDADOR; si es FAMILIAR, el back lo borra
   tipoCuidador?: TipoCuidador;
+  // máx. 100 caracteres; null lo borra
+  horarioCuidador?: string | null;
 }
 
 export interface DatosContactoEmergencia {
