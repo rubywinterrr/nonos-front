@@ -13,7 +13,6 @@ import { medicamentosService, type Medicamento } from "../../services/medicament
 import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
-import { etiquetaRol } from "../../utils/etiquetaRol";
 import tiempoDesde from "../../utils/tiempoDesde";
 import ActivarAvisos from "../../components/ActivarAvisos";
 import LinkAvisos from "../../components/LinkAvisos";
@@ -185,11 +184,13 @@ export default function HomeFamilia() {
                   )}
                   <div>
                     <h2 id="persona-vinculada" className="text-lg font-bold leading-snug sm:text-xl">{adulto.nombreCompleto}</h2>
-                    {/* PENDIENTE BACK: el diseño muestra qué es el adulto para mí ("Papá"); el parentesco del vínculo
-                        describe a quien invitaron visto desde el adulto ("Hijo"), así que queda el rol */}
-                    <p className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">
-                      {etiquetaRol(adulto.rol)}{adulto.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
-                    </p>
+                    {/* PENDIENTE BACK: falta un campo con qué es el adulto para el familiar ("Papá") para mostrar como en el diseño.
+                        El parentesco del vínculo es el familiar visto desde el adulto ("Hijo"), así que acá va solo la edad */}
+                    {adulto.fechaNacimiento && (
+                      <p className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">
+                        {calcularEdad(adulto.fechaNacimiento)} años
+                      </p>
+                    )}
                   </div>
                 </div>
                 {hayAlertaPendiente ? (
