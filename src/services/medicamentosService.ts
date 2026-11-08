@@ -4,6 +4,8 @@ export interface Medicamento {
   id: string;
   usuarioId: string;
   nombre: string;
+  // "Presión arterial"... (null si no se cargó)
+  categoria: string | null;
   dosis: string;
   horariosDelDia: string[];
   diasSemana: number[];
@@ -16,6 +18,7 @@ export interface Medicamento {
 
 export interface NuevoMedicamento {
   nombre: string;
+  categoria?: string | null; // máx. 50 caracteres
   dosis: string;
   horariosDelDia: string[];
   diasSemana?: number[];
@@ -26,18 +29,25 @@ export interface NuevoMedicamento {
 
 export interface CambiosMedicamento {
   nombre?: string;
+  categoria?: string | null;
   dosis?: string;
   horariosDelDia?: string[];
   diasSemana?: number[];
   stockActual?: number;
   stockMinimo?: number;
+  // estos dos solo los guarda actualizarMedicamentoConHistorial, en el registro del cambio
+  profesionalQueIndico?: string; // máx. 100 caracteres
+  fechaComienzo?: string; // "2026-11-08"
 }
 
 export interface CambioMedicacion {
   id: string;
   medicamentoId: string;
   usuarioId: string;
+  // texto JSON con lo que cambió; el alta trae { accion: 'alta', ... } y la baja { accion: 'suspension', activo: false }
   cambio: string;
+  profesionalQueIndico: string | null;
+  fechaComienzo: string | null;
   fechaCambio: string;
 }
 
@@ -65,7 +75,8 @@ getMedicamentoById: async (id: string) => {
   return await apiFetch<Medicamento>(`/medicamentos/${id}`);
 },
 
-// POST /medicamentos/update/:id (actualizar un remedio y registrar quién lo cambió y cuándo)
+// POST /medicamentos/update/:id (actualizar un remedio y registrar quién lo cambió y cuándo;
+// el back avisa por push "Cambio de medicación" a la red)
 actualizarMedicamentoConHistorial: async (id: string, usuarioId: string, data: CambiosMedicamento) => {
   return await apiFetch<RespuestaActualizacion>(`/medicamentos/update/${id}`, {
     method: 'POST',
@@ -77,6 +88,11 @@ actualizarMedicamentoConHistorial: async (id: string, usuarioId: string, data: C
 getCambiosMedicamento: async (id: string) => {
   return await apiFetch<CambioMedicacion[]>(`/medicamentos/cambios/${id}`);
 },
+
+  // GET /medicamentos/tomas-del-dia?usuarioId=... (tomas de hoy cuyo horario ya pasó, sobre el total)
+  getTomasDelDia: async (usuarioId: string) => {
+    return await apiFetch<{ hechas: number; total: number }>(`/medicamentos/tomas-del-dia?usuarioId=${encodeURIComponent(usuarioId)}`);
+  },
 
   // DELETE /medicamentos/:id (da de baja un medicamento, activo:false)
   eliminarMedicamento: async (id: string) => {

@@ -15,7 +15,7 @@ export default function MedicamentoHabitual({ nombre, dosis, categoria, pauta }:
           <h3 className="text-lg font-semibold leading-6">{nombre}</h3>
           <p className="text-sm font-semibold leading-5 text-[#127A45]">Dosis: {dosis}</p>
         </div>
-        {/* la categoría no se muestra si viene vacía (el back todavía no la guarda) */}
+        {/* la categoría no se muestra si viene vacía (med.tsx manda "Otros" cuando el remedio no tiene) */}
         {categoria && (
           <span className="max-w-55 rounded-sm bg-[#E8FAF1] px-2 py-1 text-right text-sm font-semibold leading-5 text-[#0B4C2B]">{categoria}</span>
         )}

@@ -37,19 +37,39 @@ function fechaSinHora(fecha: string) {
   return new Date(fecha).toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-// el back guarda el cambio como texto JSON ({"dosis":"50 mg","horariosDelDia":["08:00"]}): se pasa a una frase
+// el back guarda el cambio como texto JSON ({"dosis":"50 mg","horariosDelDia":["08:00"]}): se pasa a una frase.
+// El alta viene con accion "alta" y la baja con accion "suspension"
 function textoDelCambio(remedio: string, cambio: string) {
   try {
     const datos = JSON.parse(cambio);
+    if (datos.accion === "suspension") return `Se suspendió ${remedio}.`;
+    if (datos.accion === "alta") {
+      if (datos.dosis) return `Se agregó ${remedio} · dosis ${datos.dosis}.`;
+      return `Se agregó ${remedio}.`;
+    }
     const partes: string[] = [];
     if (datos.dosis) partes.push(`dosis ${datos.dosis}`);
     if (datos.horariosDelDia) partes.push(`horarios ${datos.horariosDelDia.join(", ")} hs`);
     if (datos.nombre) partes.push(`nombre ${datos.nombre}`);
+    if (datos.categoria) partes.push(`categoría ${datos.categoria}`);
     if (partes.length === 0) return `${remedio}: se actualizó.`;
     return `${remedio}: ${partes.join(" · ")}.`;
   } catch {
     return `${remedio}: ${cambio}`;
   }
+}
+
+// fecha de comienzo de la indicación: "10 de noviembre de 2026" (el back la guarda a las 00:00 UTC, por eso se lee en UTC)
+function fechaComienzoTexto(fecha: string) {
+  return new Date(fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+// frase completa del historial: lo que cambió, quién lo indicó y desde cuándo
+function detalleDelRegistro(remedio: string, cambio: CambioMedicacion) {
+  let texto = textoDelCambio(remedio, cambio.cambio);
+  if (cambio.profesionalQueIndico) texto = `${texto} Según indicación de ${cambio.profesionalQueIndico}.`;
+  if (cambio.fechaComienzo) texto = `${texto} Desde el ${fechaComienzoTexto(cambio.fechaComienzo)}.`;
+  return texto;
 }
 
 // pauta para la tarjeta: "2 tomas por día · 08:00 · 21:00 hs"
@@ -82,6 +102,8 @@ export default function MedFam() {
   // id del remedio elegido, o "nuevo"
   const [medicamento, setMedicamento] = useState("");
   const [nombreNuevo, setNombreNuevo] = useState("");
+  // "Presión arterial"... (opcional; vacía = "Otros")
+  const [categoria, setCategoria] = useState("");
   const [detalle, setDetalle] = useState("");
   const [horarios, setHorarios] = useState<string[]>(["08:00"]);
   const [profesional, setProfesional] = useState("");
@@ -118,6 +140,8 @@ export default function MedFam() {
           const delRemedio = await medicamentosService.getCambiosMedicamento(remedio.id);
           for (const cambio of delRemedio) cambios.push({ cambio, remedio: remedio.nombre });
         }
+        // PENDIENTE BACK: GET /medicamentos solo trae los activos, así que el historial de un remedio
+        // suspendido ("Se suspendió") no aparece acá
         // del más nuevo al más viejo
         cambios.sort((a, b) => new Date(b.cambio.fechaCambio).getTime() - new Date(a.cambio.fechaCambio).getTime());
         setRegistros(cambios);
@@ -150,6 +174,7 @@ export default function MedFam() {
     setTipoCambio("");
     setMedicamento("");
     setNombreNuevo("");
+    setCategoria("");
     setDetalle("");
     setHorarios(["08:00"]);
     setProfesional("");
@@ -159,12 +184,13 @@ export default function MedFam() {
     dialogoCambio.current?.showModal();
   };
 
-  // al elegir un remedio, los horarios arrancan con los que ya tiene
+  // al elegir un remedio, los horarios y la categoría arrancan con los que ya tiene
   const elegirMedicamento = (valor: string) => {
     setMedicamento(valor);
     const elegido = medicamentos.find((m) => m.id === valor);
     if (elegido && elegido.horariosDelDia.length > 0) setHorarios(elegido.horariosDelDia);
     else setHorarios(["08:00"]);
+    setCategoria(elegido && elegido.categoria ? elegido.categoria : "");
   };
 
   // cambia un horario de la lista (posición i)
@@ -196,8 +222,9 @@ export default function MedFam() {
   const esNuevo = medicamento === "nuevo";
   const faltanDatos = !tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio || (esNuevo && !nombreNuevo.trim());
 
-  // guarda el cambio en el back según el tipo elegido
-  // PENDIENTE BACK: el profesional y la fecha de comienzo se piden pero el back no los guarda
+  // guarda el cambio en el back según el tipo elegido.
+  // PENDIENTE BACK: el profesional y la fecha de comienzo solo se guardan al modificar;
+  // POST /medicamentos y DELETE /medicamentos/:id no los aceptan (alta y suspensión)
   const registrarCambio = async () => {
     if (faltanDatos || !adulto) return;
     if (!suspende && horarios.length === 0) {
@@ -210,6 +237,7 @@ export default function MedFam() {
       if (esNuevo) {
         await medicamentosService.crearMedicamento({
           nombre: nombreNuevo.trim(),
+          categoria: categoria.trim() || null,
           dosis: detalle.trim(),
           horariosDelDia: horarios,
           usuarioId: adulto.id,
@@ -221,6 +249,9 @@ export default function MedFam() {
         await medicamentosService.actualizarMedicamentoConHistorial(medicamento, adulto.id, {
           dosis: detalle.trim(),
           horariosDelDia: horarios,
+          categoria: categoria.trim() || null,
+          profesionalQueIndico: profesional.trim(),
+          fechaComienzo: fechaInicio,
         });
       }
       cerrarDialogo();
@@ -291,8 +322,7 @@ export default function MedFam() {
                   key={remedio.id}
                   nombre={remedio.nombre}
                   dosis={remedio.dosis}
-                  // PENDIENTE BACK: el medicamento no tiene categoría ("Presión arterial")
-                  categoria=""
+                  categoria={remedio.categoria || "Otros"}
                   pauta={pautaDelRemedio(remedio)}
                 />
               ))}
@@ -321,8 +351,7 @@ export default function MedFam() {
                 <RegistroMedicacion
                   key={registro.cambio.id}
                   fecha={fechaLarga(registro.cambio.fechaCambio)}
-                  detalle={textoDelCambio(registro.remedio, registro.cambio.cambio)}
-                  // PENDIENTE BACK: falta "según indicación de <profesional>", el back no guarda el profesional
+                  detalle={detalleDelRegistro(registro.remedio, registro.cambio)}
                   autor={autorDelCambio(registro.cambio.usuarioId)}
                 />
               ))}
@@ -522,6 +551,21 @@ export default function MedFam() {
                   className="w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] p-3 text-sm leading-5 focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
                 />
               </div>
+              {!suspende && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold" htmlFor="categoria-cambio">
+                    Categoría (opcional)
+                  </label>
+                  <input
+                    id="categoria-cambio"
+                    maxLength={50}
+                    placeholder="Ej.: Presión arterial"
+                    value={categoria}
+                    onChange={(event) => setCategoria(event.target.value)}
+                    className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
+                  />
+                </div>
+              )}
               {/* agregado: el back guarda los horarios aparte, en formato "HH:MM" */}
               {!suspende && (
                 <div className="space-y-2">
@@ -569,6 +613,7 @@ export default function MedFam() {
                   id="profesional-cambio"
                   placeholder="Ej.: Dra. Valenzuela (cardióloga)"
                   required
+                  maxLength={100}
                   value={profesional}
                   onChange={(event) => setProfesional(event.target.value)}
                   className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
@@ -594,11 +639,11 @@ export default function MedFam() {
 
             <aside className="mt-5 rounded-2xl border border-[#B7C8F0] bg-[#EAF4FE] p-4">
               <h3 className="font-semibold">Registro clínico auditado</h3>
-              {/* PENDIENTE BACK: el back todavía no avisa a la red cuando cambia la medicación */}
+              {/* el back avisa a la red solo al modificar; PENDIENTE BACK: el alta y la suspensión no avisan */}
               <p className="mt-2 text-sm leading-5 text-[#435059]">
                 Esta actualización quedará asentada con tu firma digital (
                 {nombreUsuario})
-                {otrosDeLaRed.length > 0 && ` y notificará por alerta prioritaria a ${otrosDeLaRed.join(", ")}`}.
+                {!esNuevo && !suspende && otrosDeLaRed.length > 0 && ` y notificará por alerta prioritaria a ${otrosDeLaRed.join(", ")}`}.
               </p>
             </aside>
             {errorDialogo && (
