@@ -11,7 +11,7 @@ import {
 } from "react-icons/lu";
 
 interface Props {
-  // "vencido": el código caducó (410). "usado": ya se usó en este celular (el back lo invalida al entrar)
+  // "vencido": el código caducó (410). "usado": alguien ya entró con ese código hace menos de 5 minutos (409)
   motivo: "vencido" | "usado";
   onIngresarOtro: () => void;
 }

@@ -12,6 +12,7 @@ import {
   LuUserRound,
 } from "react-icons/lu";
 import type { FichaEmergencia as Ficha } from "../../services/fichaEmergenciaService";
+import type { GrupoSanguineo } from "../../services/authService";
 import type { Condicion } from "../../services/condicionesService";
 import { momentoDelDia } from "../../utils/tomasDeHoy";
 
@@ -51,6 +52,26 @@ function esAlergia(condicion: Condicion) {
 // "20 de octubre de 2026"
 function fechaLarga(fecha: string) {
   return new Date(fecha).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+}
+
+// fecha de nacimiento como "12/05/1946" (el back la guarda a las 00:00 UTC, por eso se lee en UTC)
+function fechaCorta(fecha: string) {
+  return new Date(fecha).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" });
+}
+
+// grupo sanguíneo como en el diseño: "0+ Positivo"
+function grupoSanguineoFicha(grupo: GrupoSanguineo | null) {
+  if (!grupo) return "Sin dato";
+  const [letra, factor] = grupo.split("_");
+  if (factor === "POSITIVO") return `${letra}+ Positivo`;
+  return `${letra}− Negativo`;
+}
+
+// cobertura como en el diseño: "PAMI · Afiliado N° 1502938492"
+function textoCobertura(obraSocial: string | null, carnet: string | null) {
+  if (!obraSocial) return "Sin dato";
+  if (!carnet) return obraSocial;
+  return `${obraSocial} · Afiliado N° ${carnet}`;
 }
 
 // primer nombre ("Sofía Gómez" → "Sofía")
@@ -101,31 +122,38 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
 
       <section className="flex flex-col gap-4 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="paciente">
         <div className="flex items-center gap-4">
-          <LuUserRound aria-hidden="true" className="size-16 shrink-0 rounded-full border-2 border-[#B7C8F0] bg-[#E7EDFB] p-3 text-[#1550E0]" />
+          {ficha.fotoUrl ? (
+            <img
+              src={ficha.fotoUrl}
+              alt={ficha.nombreCompleto}
+              className="size-16 shrink-0 rounded-full border-2 border-[#B7C8F0] object-cover"
+            />
+          ) : (
+            <LuUserRound aria-hidden="true" className="size-16 shrink-0 rounded-full border-2 border-[#B7C8F0] bg-[#E7EDFB] p-3 text-[#1550E0]" />
+          )}
           <div>
             <h2 id="paciente" className="text-2xl font-bold">{ficha.nombreCompleto}</h2>
             {ficha.edad !== null && <p className="text-base text-[#435059]">{ficha.edad} años</p>}
           </div>
         </div>
-        {/* PENDIENTE BACK: /qr/:id/acceder no devuelve DNI, nacimiento, grupo sanguíneo, cobertura ni sanatorio.
-            Por decisión del equipo quedan los datos del diseño hasta que el back los mande */}
         <dl className="flex flex-col divide-y divide-[#B7C8F0] rounded-xl border border-[#B7C8F0] bg-[#E7EDFB]">
           <div className="p-3">
             <dt className="text-xs text-[#435059]">Documento (DNI)</dt>
-            <dd className="font-bold">7.842.119</dd>
+            <dd className="font-bold">{ficha.dni ? ficha.dni.toLocaleString("es-AR") : "Sin dato"}</dd>
           </div>
           <div className="p-3">
             <dt className="text-xs text-[#435059]">Fecha de nacimiento</dt>
-            <dd className="font-bold">12/05/1946</dd>
+            <dd className="font-bold">{ficha.fechaNacimiento ? fechaCorta(ficha.fechaNacimiento) : "Sin dato"}</dd>
           </div>
           <div className="p-3">
             <dt className="text-xs text-[#435059]">Grupo sanguíneo</dt>
-            <dd className="font-bold">0+ Positivo</dd>
+            <dd className="font-bold">{grupoSanguineoFicha(ficha.grupoSanguineo)}</dd>
           </div>
           <div className="p-3">
             <dt className="text-xs text-[#435059]">Cobertura médica</dt>
-            <dd className="font-bold">PAMI · Afiliado N° 1502938492</dd>
+            <dd className="font-bold">{textoCobertura(ficha.obraSocial, ficha.carnetObraSocial)}</dd>
           </div>
+          {/* PENDIENTE BACK: /qr/:id/acceder todavía no devuelve el sanatorio habitual; queda el del diseño */}
           <div className="p-3">
             <dt className="text-xs text-[#435059]">Sanatorio habitual</dt>
             <dd className="font-bold">Sanatorio San Cayetano</dd>
@@ -164,7 +192,7 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
             </a>
           </article>
         ))}
-        {/* PENDIENTE BACK: no hay dato del médico de cabecera; queda el del diseño */}
+        {/* PENDIENTE BACK: /qr/:id/acceder todavía no devuelve el médico de cabecera; queda el del diseño */}
         <article className="flex flex-col gap-3 rounded-xl bg-[#E7EDFB] p-4">
           <div className="flex items-start justify-between gap-2">
             <div>
@@ -261,10 +289,10 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
             <span className="text-sm text-[#435059]">Cargado por Dra. Valenzuela</span>
           </span>
         </p>
-        {/* PENDIENTE BACK: el back no registra los accesos (ID de auditoría) ni manda el id de la pulsera */}
         <p className="flex flex-wrap justify-between gap-2 border-t border-[#D7DFE6] pt-3 text-xs text-[#435059]">
+          {/* PENDIENTE BACK: el back no manda un ID de auditoría del acceso; queda el del diseño */}
           <span>ID AUDITORÍA: #ACC-98721</span>
-          <span>Pulsera NFC: #RG-8830</span>
+          <span className="break-all">Pulsera NFC: {ficha.idDispositivo ? `#${ficha.idDispositivo}` : "Sin dato"}</span>
         </p>
       </section>
 

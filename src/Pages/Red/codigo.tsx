@@ -36,9 +36,7 @@ export default function CodigoEmergencia() {
     if (!usuario) return;
     const miId = usuario.id;
 
-    // trae el adulto y su código.
-    // PENDIENTE BACK: GET /usuarios/:id/qr solo deja entrar al propio adulto (requireSelf),
-    // así que a un familiar o cuidador hoy le responde error y el código no se puede mostrar
+    // trae el adulto y su código
     const cargar = async () => {
       try {
         const elegido = await buscarAdultoSeleccionado(miId);
@@ -77,7 +75,7 @@ export default function CodigoEmergencia() {
       setQr(await usuarioService.regenerarQR(adulto.id));
     } catch (err) {
       console.error(err);
-      setMensaje(`Por ahora el código nuevo solo lo puede generar ${primerNombre} desde su app.`);
+      setMensaje("No se pudo generar un código nuevo. Probá de nuevo en un rato.");
     }
   };
 
@@ -168,7 +166,7 @@ export default function CodigoEmergencia() {
           </p>
           {!cargando && !qr && (
             <p className="mt-3 text-center text-xs leading-4 text-[#E7EDFB]">
-              Por ahora el código solo se ve en la app de {primerNombre}.
+              No se pudo cargar el código. Probá generar uno nuevo.
             </p>
           )}
 

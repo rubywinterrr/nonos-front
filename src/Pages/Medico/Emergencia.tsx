@@ -16,30 +16,6 @@ function dosDigitos(numero: number) {
   return `${numero}`;
 }
 
-// clave donde este celular recuerda el último código que funcionó para esta pulsera.
-// El back invalida el código apenas se usa, así que si lo vuelven a escribir sabemos que es "ya utilizado"
-function claveCodigoUsado(qrId: string) {
-  return `nonos_codigo_usado_${qrId}`;
-}
-
-// lee el último código usado (null si no hay o si el navegador no deja)
-function leerCodigoUsado(qrId: string) {
-  try {
-    return sessionStorage.getItem(claveCodigoUsado(qrId));
-  } catch {
-    return null;
-  }
-}
-
-// guarda el código que acaba de funcionar
-function guardarCodigoUsado(qrId: string, codigo: string) {
-  try {
-    sessionStorage.setItem(claveCodigoUsado(qrId), codigo);
-  } catch {
-    // si no se puede guardar, solo se pierde el aviso de "ya utilizado"
-  }
-}
-
 // pantalla pública del médico: se abre al escanear el QR de la pulsera (/emergencia/:qrId).
 // Va pasando por: ingresar código → (incorrecto / vencido / usado) → verificado → ficha
 export default function Emergencia() {
@@ -59,22 +35,17 @@ export default function Emergencia() {
     if (!qrId) return;
     const codigo = digitos.join("");
     setError(null);
-
-    // si es el mismo código que ya funcionó en este celular, el back ya lo invalidó
-    if (leerCodigoUsado(qrId) === codigo) {
-      setPantalla("usado");
-      return;
-    }
-
     setValidando(true);
     try {
       const respuesta = await fichaEmergenciaService.accederFicha(qrId, codigo);
       if (respuesta.ficha) {
-        guardarCodigoUsado(qrId, codigo);
         setFicha(respuesta.ficha);
         setVence(Date.now() + TREINTA_MINUTOS);
         setSegundosRedireccion(3);
         setPantalla("verificado");
+      } else if (respuesta.estado === 409) {
+        // el back avisa que ese código ya se usó en los últimos 5 minutos
+        setPantalla("usado");
       } else if (respuesta.estado === 401) {
         setPantalla("incorrecto");
       } else if (respuesta.estado === 410) {
@@ -165,6 +136,7 @@ export default function Emergencia() {
         <PantallaVerificado
           nombre={ficha.nombreCompleto}
           edad={ficha.edad}
+          idDispositivo={ficha.idDispositivo}
           tiempoRestante={`${minutos} min ${segundos} seg`}
           segundosRedireccion={segundosRedireccion}
           onVerFicha={() => setPantalla("ficha")}

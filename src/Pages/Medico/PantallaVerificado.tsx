@@ -3,6 +3,8 @@ import { LuArrowRight, LuCheck, LuLockKeyhole, LuShield, LuShieldCheck, LuTimer,
 interface Props {
   nombre: string;
   edad: number | null;
+  // id de la pulsera que mandó el back (null si no vino)
+  idDispositivo: string | null;
   // lo que queda de los 30 minutos, ya armado ("29 min 59 seg")
   tiempoRestante: string;
   // segundos que faltan para pasar sola a la ficha (3, 2, 1)
@@ -11,7 +13,7 @@ interface Props {
 }
 
 // pantalla "Código verificado con éxito": se ve 3 segundos y después pasa sola a la ficha
-export default function PantallaVerificado({ nombre, edad, tiempoRestante, segundosRedireccion, onVerFicha }: Props) {
+export default function PantallaVerificado({ nombre, edad, idDispositivo, tiempoRestante, segundosRedireccion, onVerFicha }: Props) {
   const progreso = ((3 - segundosRedireccion) / 3) * 100;
 
   return (
@@ -60,9 +62,13 @@ export default function PantallaVerificado({ nombre, edad, tiempoRestante, segun
             <LuWatch aria-hidden="true" className="size-11 shrink-0 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
             <div>
               <dt className="text-xs uppercase tracking-wide text-[#435059]">Dispositivo de origen</dt>
-              {/* PENDIENTE BACK: el back no manda el id de la pulsera; queda el del diseño */}
               <dd className="flex items-center gap-2 text-lg font-bold">
-                Pulsera <span className="rounded bg-[#E7EDFB] px-1.5 font-mono text-sm">#RG-8830</span>
+                Pulsera{" "}
+                {idDispositivo ? (
+                  <span className="break-all rounded bg-[#E7EDFB] px-1.5 font-mono text-sm">#{idDispositivo}</span>
+                ) : (
+                  <span className="text-base font-normal text-[#435059]">sin dato</span>
+                )}
               </dd>
             </div>
           </div>
