@@ -6,8 +6,6 @@ import {
   LuCircleHelp,
   LuClock3,
   LuInfo,
-  LuMessageSquareText,
-  LuPhone,
   LuShieldCheck,
 } from "react-icons/lu";
 
@@ -65,39 +63,8 @@ export default function PantallaIngreso({ digitos, onCambiarDigitos, onValidar, 
             </div>
           </section>
 
-          {/* PENDIENTE BACK: sin el código correcto el back no devuelve ningún contacto.
-              Por decisión del equipo queda el contacto del diseño hasta que haya un endpoint */}
-          <article className="flex flex-col gap-4 rounded-2xl bg-white p-4 shadow-xs">
-            <div className="flex items-start gap-3">
-              <span aria-hidden="true" className="flex size-14 shrink-0 items-center justify-center rounded-full border border-[#B7C8F0] bg-[#E7EDFB] text-lg font-bold text-[#0D328B]">
-                SG
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-lg font-bold">Sofía Gómez</h3>
-                  <span className="rounded bg-[#BAEDD3] px-2 py-0.5 text-sm font-semibold">Principal</span>
-                </div>
-                <p className="text-sm font-semibold text-[#435059]">Familiar</p>
-                <p className="mt-1 text-base font-semibold">+54 11 4455-6677</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <a
-                href="tel:+541144556677"
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#1550E0] font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D]"
-              >
-                <LuPhone aria-hidden="true" className="size-5" />
-                Llamar
-              </a>
-              <a
-                href="sms:+541144556677"
-                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] font-semibold text-[#16222C] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"
-              >
-                <LuMessageSquareText aria-hidden="true" className="size-5 text-[#1550E0]" />
-                Mensaje
-              </a>
-            </div>
-          </article>
+          {/* PENDIENTE BACK: sin el código correcto el back no devuelve ningún contacto;
+              el diseño mostraba la tarjeta de "Sofía Gómez · Familiar · +54 11 4455-6677" con Llamar y Mensaje */}
 
           <section role="alert" className="rounded-xl border-2 border-[#C92A2A] bg-[#FBE9E9] p-4">
             <h2 className="flex items-center gap-2 text-lg font-bold">

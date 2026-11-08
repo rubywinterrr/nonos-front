@@ -14,8 +14,6 @@ export default function DetallePasosAdulto() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sinAdulto, setSinAdulto] = useState(false);
-  const [totalPaseo, setTotalPaseo] = useState<number | null>(null);
-  const [caidasHoy, setCaidasHoy] = useState<number | null>(null);
 
   useEffect(() => {
     if (!usuario) return;
@@ -32,14 +30,9 @@ export default function DetallePasosAdulto() {
         }
         const inicio = new Date();
         inicio.setHours(0, 0, 0, 0);
-        const [nuevas, resumen] = await Promise.all([
-          medicionesService.getMediciones(adultoId, "PASOS", inicio.toISOString()),
-          medicionesService.getMediciones(adultoId, "FRECUENCIA_CARDIACA", inicio.toISOString()),
-        ]);
+        const nuevas = await medicionesService.getMediciones(adultoId, "PASOS", inicio.toISOString());
         if (!activo) return;
         setMediciones(nuevas);
-        setTotalPaseo(null);
-        setCaidasHoy(resumen.length === 0 ? null : 0);
         setSinAdulto(false);
       } catch (err) {
         console.error(err);
@@ -79,17 +72,7 @@ export default function DetallePasosAdulto() {
                 <div aria-hidden="true" className="h-full rounded-full bg-[#144BD3] transition-[width] duration-500" style={{ width: `${progreso}%` }} />
               </div>
             </section>
-            <section aria-label="Actividad de hoy" className="flex flex-col gap-3.5 rounded-[28px] bg-white p-5 shadow-md">
-              <div className="flex flex-col gap-0.5 py-0.5">
-                <p className="text-xl leading-[26px] text-[#435059]">Paseo de la mañana</p>
-                <p className="text-2xl font-bold leading-[31px]">{totalPaseo === null ? "Sin datos" : `${totalPaseo} minutos`}</p>
-              </div>
-              <div aria-hidden="true" className="h-0.5 w-full bg-[#D7DFE6]" />
-              <div className="flex flex-col gap-0.5 py-0.5">
-                <p className="text-xl leading-[26px] text-[#435059]">Caídas hoy</p>
-                <p className="text-2xl font-bold leading-[31px]">{caidasHoy === null ? "Sin datos" : caidasHoy === 0 ? "Ninguna" : caidasHoy}</p>
-              </div>
-            </section>
+            {/* PENDIENTE BACK: no hay dato de paseos ni de caídas; el diseño mostraba "Paseo de la mañana · 30 minutos" y "Caídas hoy · Ninguna" */}
             <section aria-label="Información sobre tus pasos" className="flex items-center gap-3.5 rounded-[28px] bg-[#E7EDFB] p-5">
               <span className="flex size-12 shrink-0 items-center justify-center rounded-3xl bg-white text-[#144BD3]"><LuCircleHelp aria-hidden="true" className="size-6" /></span>
               <p className="text-xl font-semibold leading-tight text-[#16222C]">

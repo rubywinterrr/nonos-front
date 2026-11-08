@@ -3,7 +3,6 @@ import {
   LuCircleHelp,
   LuHourglass,
   LuLockKeyhole,
-  LuPhone,
   LuRectangleEllipsis,
   LuShieldAlert,
   LuShieldCheck,
@@ -123,14 +122,7 @@ export default function PantallaCodigoInvalido({ motivo, onIngresarOtro }: Props
           <LuRectangleEllipsis aria-hidden="true" className="size-5" />
           Ingresar nuevo código activo
         </button>
-        {/* PENDIENTE BACK: sin código válido no hay datos de la red. Queda el número del diseño (Sofía Gómez) */}
-        <a
-          href="tel:+541144556677"
-          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#E7EDFB] px-4 font-semibold text-[#16222C] shadow-sm hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"
-        >
-          <LuPhone aria-hidden="true" className="size-5" />
-          Llamar a la red de cuidado
-        </a>
+        {/* PENDIENTE BACK: sin código válido no hay datos de la red; el diseño mostraba "Llamar a la red de cuidado" con el número de Sofía Gómez */}
       </div>
 
       <p className="flex items-center justify-center gap-2 text-sm text-[#435059]">

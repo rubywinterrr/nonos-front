@@ -12,7 +12,7 @@ import {
   MdOutlinePersonRemove,
   MdOutlinePhone,
 } from "react-icons/md";
-import { LuAsterisk, LuCalendar, LuInfo, LuMail, LuPhoneMissed } from "react-icons/lu";
+import { LuAsterisk, LuCalendar, LuInfo, LuMail } from "react-icons/lu";
 
 // rol del vínculo como una sola opción: "FAMILIAR", "FISICO" o "DIGITAL"
 function rolDeVinculo(vinculo: Vinculo) {
@@ -212,27 +212,8 @@ export default function AdmVinculo() {
           </h2>
 
           <div className="flex flex-col gap-3 rounded-xl bg-white p-3 shadow-xs">
-            <div className="flex items-start justify-between gap-2 p-2">
-              <div className="flex min-w-0 flex-1 items-start gap-2">
-                <LuPhoneMissed aria-hidden="true" className="mt-1 size-5 shrink-0 text-[#007167]" />
-                <div className="min-w-0 text-base leading-relaxed">
-                  <h3 id="aviso-llamadas" className="font-normal">Aviso si no contestás<br />llamadas</h3>
-                  <p id="detalle-llamadas" className="text-[#424656]">Mensaje tras 2 llamadas sin atender</p>
-                </div>
-              </div>
-              {/* HARDCODEADO: el back todavía no tiene este aviso, el interruptor es solo visual */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked="true"
-                aria-labelledby="aviso-llamadas"
-                aria-describedby="detalle-llamadas"
-                className="flex h-7 w-12 shrink-0 cursor-pointer items-center justify-end self-center rounded-full bg-[#0049CC] p-1 hover:bg-blue-800 active:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0049CC]"
-              >
-                <span aria-hidden="true" className="size-5 rounded-full bg-white shadow-sm" />
-              </button>
-            </div>
-
+            {/* PENDIENTE BACK: no existe el aviso por llamadas sin contestar; el diseño mostraba
+                "Aviso si no contestás llamadas · Mensaje tras 2 llamadas sin atender" con un interruptor prendido */}
             <div className="flex items-start justify-between gap-2 p-2">
               <div className="flex min-w-0 flex-1 items-start gap-2">
                 <LuAsterisk aria-hidden="true" className="mt-1 size-5 shrink-0 text-[#AD2B00] stroke-3" />

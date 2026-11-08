@@ -249,10 +249,10 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
             )}
           </article>
         ))}
-        {/* PENDIENTE BACK: no se guarda quién indicó el esquema ("Dra. Valenzuela"), queda el texto del diseño */}
+        {/* PENDIENTE BACK: la ficha no trae quién indicó el esquema; el diseño mostraba "Esquema indicado por Dra. Valenzuela." */}
         <p className="flex items-start gap-2 rounded-xl bg-[#E7EDFB] p-3 text-sm leading-5">
           <LuInfo aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-[#1550E0]" />
-          Esquema indicado por Dra. Valenzuela. NONOS no certifica ingesta en tiempo real; refiere al esquema prescripto
+          NONOS no certifica ingesta en tiempo real; refiere al esquema prescripto
           registrado.
         </p>
       </section>
@@ -282,8 +282,7 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
           <LuShieldCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-[#1550E0]" />
           <span>
             <span className="block font-bold">Última actualización: {fechaLarga(ficha.fechaUltimaActualizacion)}</span>
-            {/* PENDIENTE BACK: no se sabe quién hizo la última carga */}
-            <span className="text-sm text-[#435059]">Cargado por Dra. Valenzuela</span>
+            {/* PENDIENTE BACK: la ficha no trae quién hizo la última carga; el diseño mostraba "Cargado por Dra. Valenzuela" */}
           </span>
         </p>
         {/* PENDIENTE BACK: el back no manda un ID de auditoría del acceso, así que no se muestra */}

@@ -3,11 +3,8 @@ import VueltaAtras from "../../components/vueltaAtras";
 import Header from "../../components/Header";
 import Switch from "../../components/switch";
 import {
-  LuBatteryLow,
   LuCheck,
-  LuClipboardList,
   LuInfo,
-  LuPill,
   LuRotateCcw,
   LuSiren,
   LuSlidersHorizontal,
@@ -25,8 +22,10 @@ const TODOS_LOS_TIPOS: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "
 
 // cómo arrancan los avisos (y a qué vuelven con "Restablecer").
 // "tipo" es el tipo de alerta del back que prende o apaga cada interruptor.
-// PENDIENTE BACK: los que tienen tipo null no existen como alerta en el back; el interruptor se ve pero no se guarda
-const avisosPorDefecto: { id: string; seccion: string; titulo: string; texto: string; activo: boolean; tipo: TipoAlerta | null }[] = [
+// PENDIENTE BACK: cambio de medicación, bitácora y batería no son alertas del back, así que no tienen interruptor;
+// el diseño mostraba "Modificación de esquema médico", "Observaciones y bitácora del día" y
+// "Batería baja de la pulsera (48 hs)", cada uno en su sección
+const avisosPorDefecto: { id: string; seccion: string; titulo: string; texto: string; activo: boolean; tipo: TipoAlerta }[] = [
   {
     id: "boton",
     seccion: "criticas",
@@ -43,38 +42,11 @@ const avisosPorDefecto: { id: string; seccion: string; titulo: string; texto: st
     activo: true,
     tipo: "QR_ESCANEADO",
   },
-  {
-    id: "esquema",
-    seccion: "medicacion",
-    titulo: "Modificación de esquema médico",
-    texto: "Cuando un médico o cuidador registra un ajuste de dosis o nuevo fármaco.",
-    activo: true,
-    tipo: null,
-  },
-  {
-    id: "bitacora",
-    seccion: "visitas",
-    titulo: "Observaciones y bitácora del día",
-    texto: "Notas cotidianas sobre estado de ánimo, alimentación o molestias leves.",
-    activo: false,
-    tipo: null,
-  },
-  {
-    id: "bateria",
-    seccion: "dispositivo",
-    titulo: "Batería baja de la pulsera",
-    texto: "Aviso con anticipación de 48 hs para recambio de batería.",
-    activo: true,
-    tipo: null,
-  },
 ];
 
-// títulos de cada grupo de avisos, en el orden en que se muestran
+// títulos de cada grupo de avisos, en el orden en que se muestran (las secciones sin avisos del back no van)
 const secciones = [
   { id: "criticas", titulo: "Alertas críticas", icono: <LuSiren />, porDefecto: true },
-  { id: "medicacion", titulo: "Cambios médicos y medicación", icono: <LuPill />, porDefecto: false },
-  { id: "visitas", titulo: "Registros de visitas y cuidado", icono: <LuClipboardList />, porDefecto: false },
-  { id: "dispositivo", titulo: "Estado del dispositivo", icono: <LuBatteryLow />, porDefecto: false },
 ];
 
 // pasa la modalidad del back ("FISICO"/"DIGITAL") a la de la pantalla ("fisico"/"digital")

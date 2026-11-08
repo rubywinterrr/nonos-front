@@ -8,7 +8,6 @@ import VueltaAtras from "../../components/vueltaAtras";
 import {
   MdQrCodeScanner,
   MdFullscreen,
-  MdVibration,
   MdOutlineTimer,
   MdFullscreenExit,
 } from "react-icons/md";
@@ -309,16 +308,7 @@ export default function Codigo() {
                 <span className="break-all text-xs text-gray-600">{window.location.origin}/emergencia/{codigo.id}</span>
               </Link>
             )}
-            {/* PENDIENTE BACK: el "sonido de ayuda" no existe todavía, queda el texto del diseño */}
-            <div className="w-full min-h-12 lg:w-80/100 bg-white rounded-xl text-xl flex items-center justify-between gap-2 p-3 pl-5 pr-5">
-              <div className="flex gap-2 items-center">
-                <MdVibration className="text-2xl" />
-                Sonido de ayuda
-              </div>
-              <span className="rounded-full bg-gray-300 text-sm p-2 font-semibold">
-                ACTIVO
-              </span>
-            </div>
+            {/* PENDIENTE BACK: el "sonido de ayuda" no existe; el diseño mostraba la fila "Sonido de ayuda · ACTIVO" */}
             <div className="rounded-xl lg:w-80/100 bg-white text-xl flex items-center w-full min-h-40 pt-4 pb-4 pr-0 pl-5 gap-4">
               <div className="min-h-40  w-8/100 flex justify-center">
                 <GoQuestion className="text-3xl mt-4 text-gray-600"></GoQuestion>

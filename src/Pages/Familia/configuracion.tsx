@@ -3,11 +3,8 @@ import VueltaAtras from "../../components/vueltaAtras";
 import Header from "../../components/Header";
 import Switch from "../../components/switch";
 import {
-  LuBatteryLow,
   LuCheck,
   LuCircleUserRound,
-  LuClipboardPenLine,
-  LuLink2,
   LuRotateCcw,
   LuShield,
   LuSiren,
@@ -26,16 +23,13 @@ const TIPOS_URGENTES: TipoAlerta[] = ["SOS_DIRECTO", "FC_ELEVADA", "FC_BAJA", "S
 
 // pantalla del familiar: qué avisos recibe del adulto vinculado que mira.
 // "Botón de emergencia" (SOS_DIRECTO) y "Escaneo de QR" (QR_ESCANEADO) son alertas del back.
-// PENDIENTE BACK: cambio de medicación, bitácora y batería no son alertas del back;
-// sus interruptores se ven pero no se guardan
+// PENDIENTE BACK: cambio de medicación, bitácora y batería no son alertas del back, así que no tienen interruptor
+// (el push de cambio de medicación y el de observación prioritaria llegan siempre)
 export default function ConfigFam() {
   const { usuario } = useAuth();
   const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
   const [botonEmergencia, setBotonEmergencia] = useState(true);
   const [escaneoQr, setEscaneoQr] = useState(true);
-  const [cambiosMedicos, setCambiosMedicos] = useState(true);
-  const [registrosCuidado, setRegistrosCuidado] = useState(false);
-  const [bateriaPulsera, setBateriaPulsera] = useState(true);
   // la lista completa de tipos guardada en el back (incluye los que no tienen interruptor)
   const [tiposGuardados, setTiposGuardados] = useState<TipoAlerta[]>(TODOS_LOS_TIPOS);
   const [cargando, setCargando] = useState(true);
@@ -71,9 +65,6 @@ export default function ConfigFam() {
   function activarTodas() {
     setBotonEmergencia(true);
     setEscaneoQr(true);
-    setCambiosMedicos(true);
-    setRegistrosCuidado(true);
-    setBateriaPulsera(true);
     setTiposGuardados(TODOS_LOS_TIPOS);
     setMensaje(null);
   }
@@ -82,9 +73,6 @@ export default function ConfigFam() {
   function soloUrgencias() {
     setBotonEmergencia(true);
     setEscaneoQr(true);
-    setCambiosMedicos(false);
-    setRegistrosCuidado(false);
-    setBateriaPulsera(false);
     setTiposGuardados(TIPOS_URGENTES);
     setMensaje(null);
   }
@@ -93,9 +81,6 @@ export default function ConfigFam() {
   function restablecer() {
     setBotonEmergencia(true);
     setEscaneoQr(true);
-    setCambiosMedicos(true);
-    setRegistrosCuidado(false);
-    setBateriaPulsera(true);
     setTiposGuardados(TODOS_LOS_TIPOS);
     setMensaje(null);
   }
@@ -156,20 +141,8 @@ export default function ConfigFam() {
           <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Escaneo de QR de emergencia</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Aviso inmediato si personal médico o ambulancia consulta datos en la pulsera.</p></div><Switch checked={escaneoQr} onChange={setEscaneoQr} mostrarEstado /></article>
         </section>
 
-        <section aria-labelledby="cambios-medicos" className="flex flex-col gap-2">
-          <h2 id="cambios-medicos" className="flex items-center gap-2 text-lg font-bold"><span className="flex size-8 items-center justify-center rounded-lg bg-[#E7EDFB] text-[#1550E0]"><LuLink2 aria-hidden="true" className="size-4" /></span>Cambios médicos y medicación</h2>
-          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Modificación de esquema médico</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Cuando un médico o cuidador registra un ajuste de dosis o nuevo fármaco.</p></div><Switch checked={cambiosMedicos} onChange={setCambiosMedicos} mostrarEstado /></article>
-        </section>
-
-        <section aria-labelledby="registros-cuidado" className="flex flex-col gap-2">
-          <h2 id="registros-cuidado" className="flex items-center gap-2 text-lg font-bold"><span className="flex size-8 items-center justify-center rounded-lg bg-[#E7EDFB] text-[#1550E0]"><LuClipboardPenLine aria-hidden="true" className="size-4" /></span>Registros de visitas y cuidado</h2>
-          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Observaciones y bitácora del día</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Notas cotidianas sobre estado de ánimo, alimentación o molestias leves.</p></div><Switch checked={registrosCuidado} onChange={setRegistrosCuidado} mostrarEstado /></article>
-        </section>
-
-        <section aria-labelledby="estado-dispositivo" className="flex flex-col gap-2">
-          <h2 id="estado-dispositivo" className="flex items-center gap-2 text-lg font-bold"><span className="flex size-8 items-center justify-center rounded-lg bg-[#E7EDFB] text-[#1550E0]"><LuBatteryLow aria-hidden="true" className="size-4" /></span>Estado del dispositivo</h2>
-          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Batería baja de la pulsera</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Aviso con anticipación de 48 hs para recambio de batería.</p></div><Switch checked={bateriaPulsera} onChange={setBateriaPulsera} mostrarEstado /></article>
-        </section>
+        {/* PENDIENTE BACK: no se pueden apagar estos avisos; el diseño mostraba "Modificación de esquema médico",
+            "Observaciones y bitácora del día" y "Batería baja de la pulsera (48 hs)", cada uno con su interruptor */}
 
         {mensaje && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">{mensaje}</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
