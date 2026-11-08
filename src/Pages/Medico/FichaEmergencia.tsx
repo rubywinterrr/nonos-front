@@ -146,11 +146,13 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
             <dt className="text-xs text-[#435059]">Cobertura médica</dt>
             <dd className="font-bold">{textoCobertura(ficha.obraSocial, ficha.carnetObraSocial)}</dd>
           </div>
-          {/* PENDIENTE BACK: /qr/:id/acceder todavía no devuelve el sanatorio habitual; queda el del diseño */}
-          <div className="p-3">
-            <dt className="text-xs text-[#435059]">Sanatorio habitual</dt>
-            <dd className="font-bold">Sanatorio San Cayetano</dd>
-          </div>
+          {/* PENDIENTE BACK: /qr/:id/acceder todavía no devuelve el sanatorio habitual; la fila se ve solo si viene */}
+          {ficha.sanatorioHabitual && (
+            <div className="p-3">
+              <dt className="text-xs text-[#435059]">Sanatorio habitual</dt>
+              <dd className="font-bold">{ficha.sanatorioHabitual}</dd>
+            </div>
+          )}
         </dl>
       </section>
 
@@ -185,23 +187,25 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
             </a>
           </article>
         ))}
-        {/* PENDIENTE BACK: /qr/:id/acceder todavía no devuelve el médico de cabecera; queda el del diseño */}
-        <article className="flex flex-col gap-3 rounded-xl bg-[#E7EDFB] p-4">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <h3 className="font-bold">Dr. Esteban Martínez</h3>
-              <p className="text-sm text-[#435059]">Médico de cabecera</p>
+        {/* PENDIENTE BACK: /qr/:id/acceder todavía no devuelve el médico de cabecera; la tarjeta se ve solo si viene con teléfono */}
+        {ficha.nombreMedicoCabecera && ficha.telefonoMedicoCabecera && (
+          <article className="flex flex-col gap-3 rounded-xl bg-[#E7EDFB] p-4">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="font-bold">{ficha.nombreMedicoCabecera}</h3>
+                <p className="text-sm text-[#435059]">Médico de cabecera</p>
+              </div>
+              <p className="text-sm">{ficha.telefonoMedicoCabecera}</p>
             </div>
-            <p className="text-sm">+54 11 4455- 8477</p>
-          </div>
-          <a
-            href="tel:+541144558477"
-            className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#435059] bg-white font-semibold text-[#16222C] hover:bg-[#E9EEF2]"
-          >
-            <LuPhone aria-hidden="true" className="size-5" />
-            Llamar a Esteban
-          </a>
-        </article>
+            <a
+              href={`tel:${ficha.telefonoMedicoCabecera}`}
+              className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#435059] bg-white font-semibold text-[#16222C] hover:bg-[#E9EEF2]"
+            >
+              <LuPhone aria-hidden="true" className="size-5" />
+              Llamar al médico
+            </a>
+          </article>
+        )}
       </section>
 
       <section className="flex flex-col gap-4 rounded-2xl bg-white p-4 shadow-xs" aria-labelledby="diagnosticos">
@@ -282,11 +286,12 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
             <span className="text-sm text-[#435059]">Cargado por Dra. Valenzuela</span>
           </span>
         </p>
-        <p className="flex flex-wrap justify-between gap-2 border-t border-[#D7DFE6] pt-3 text-xs text-[#435059]">
-          {/* PENDIENTE BACK: el back no manda un ID de auditoría del acceso; queda el del diseño */}
-          <span>ID AUDITORÍA: #ACC-98721</span>
-          <span className="break-all">Pulsera NFC: {ficha.idDispositivo ? `#${ficha.idDispositivo}` : "Sin dato"}</span>
-        </p>
+        {/* PENDIENTE BACK: el back no manda un ID de auditoría del acceso, así que no se muestra */}
+        {ficha.idDispositivo && (
+          <p className="border-t border-[#D7DFE6] pt-3 text-xs text-[#435059]">
+            <span className="break-all">Pulsera NFC: #{ficha.idDispositivo}</span>
+          </p>
+        )}
       </section>
 
       <button

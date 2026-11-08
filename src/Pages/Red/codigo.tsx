@@ -313,7 +313,7 @@ export default function CodigoEmergencia() {
               </h3>
               {/* PENDIENTE BACK: el back registra cuándo se accedió pero no quién ("por Personal de ambulancia SAME") */}
               <p className="text-xs leading-4 text-[#435059]">
-                {ultimoAcceso ? `${textoAcceso(ultimoAcceso)}.` : "Todavía nadie accedió al código."}
+                {ultimoAcceso ? `Acceso con el código de emergencia · ${textoAcceso(ultimoAcceso)}.` : "Todavía nadie accedió al código."}
               </p>
             </div>
           </div>

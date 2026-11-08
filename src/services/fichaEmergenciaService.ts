@@ -17,6 +17,10 @@ export interface FichaEmergencia {
   fotoUrl: string | null;
   // id de la pulsera desde la que se escaneó
   idDispositivo: string | null;
+  // PENDIENTE BACK: /qr/:id/acceder todavía no manda estos tres; la ficha los muestra solo si vienen
+  sanatorioHabitual?: string | null;
+  nombreMedicoCabecera?: string | null;
+  telefonoMedicoCabecera?: string | null;
   condiciones: Condicion[];
   medicacionActual: Medicamento[];
   // la red marcada como emergencia y también los contactos agendados marcados como emergencia
