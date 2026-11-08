@@ -224,7 +224,7 @@ export default function PagCuenta() {
           </summary>
           <div className="mt-4 flex flex-col gap-3">
             <MiPerfil />
-            {usuario?.rol !== "CUIDADOR" && <Desplegable />}
+            <Desplegable textoBoton={usuario?.rol === "CUIDADOR" ? "Invitar a un adulto mayor" : undefined} />
           </div>
         </details>
 

@@ -14,12 +14,16 @@ interface Props {
 }
 
 export default function Desplegable({ abiertoAlInicio = false, onInvitacionCreada, textoBoton = "Invitar a un nuevo acompañante", varianteBoton = "tarjeta" }: Props) {
+  const { usuario } = useAuth();
+  // el cuidador invita a un adulto mayor: elige su propia modalidad (físico o digital), no el rol del otro
+  const esCuidador = usuario?.rol === "CUIDADOR";
   const [isOpen, setIsOpen] = useState(abiertoAlInicio);
-  const [rolSeleccionado, setRolSeleccionado] = useState("familiar");
+  const [rolSeleccionado, setRolSeleccionado] = useState(esCuidador ? "fisico" : "familiar");
   const [nivelAcceso, setNivelAcceso] = useState("predeterminado");
   const [error, setError] = useState("");
-  const { usuario } = useAuth();
   const [email, setEmail] = useState("");
+  // "Hijo", "Vecina"... (opcional)
+  const [parentesco, setParentesco] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState("");
 
@@ -35,8 +39,11 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
     const datos: NuevaInvitacion = {
       emailDestino: email.trim(),
       tipoVinculo: "FAMILIAR",
-      direccion: usuario?.rol === "FAMILIAR" ? "EMISOR_ES_FAMILIAR" : "EMISOR_ES_ADULTO_MAYOR",
+      direccion: usuario?.rol === "ADULTO_MAYOR" ? "EMISOR_ES_ADULTO_MAYOR" : "EMISOR_ES_FAMILIAR",
     };
+    if (parentesco.trim()) {
+      datos.parentesco = parentesco.trim();
+    }
     if (rolSeleccionado === "fisico") {
       datos.tipoVinculo = "CUIDADOR";
       datos.tipoCuidador = "FISICO";
@@ -50,7 +57,8 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
       await invitacionesService.crearInvitacion(datos);
       setMensaje(`Invitación creada para ${email.trim()}. Vence en 7 días.`);
       setEmail("");
-      setRolSeleccionado("");
+      setParentesco("");
+      setRolSeleccionado(esCuidador ? "fisico" : "");
       onInvitacionCreada?.();
     } catch (err) {
       console.error(err);
@@ -79,7 +87,7 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
         )}
         <span className={varianteBoton === "primario" || varianteBoton === "suave" ? "min-w-0" : "min-w-0 flex-1"}>
           <span className={varianteBoton === "primario" || varianteBoton === "suave" ? "block leading-5" : "block text-sm font-bold leading-5"}>{textoBoton}</span>
-          {varianteBoton === "tarjeta" && <span className="mt-0.5 block text-xs font-normal leading-4 text-[#435059]">Le llegará un enlace por correo electrónico para vincularse.</span>}
+          {varianteBoton === "tarjeta" && <span className="mt-0.5 block text-xs font-normal leading-4 text-[#435059]">La invitación le va a aparecer cuando entre a NONOS con ese mail.</span>}
         </span>
         {varianteBoton === "tarjeta" && <LuChevronDown aria-hidden="true" className={`size-5 shrink-0 text-[#1550E0] transition-transform ${isOpen ? "" : "-rotate-90"}`} />}
         {varianteBoton === "suave" && <LuArrowRight aria-hidden="true" className="size-6 shrink-0" />}
@@ -92,13 +100,20 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
             <input id="email-invitacion" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ej: familiar@gmail.com" required className="mt-1.5 h-12 w-full rounded-xl border border-[#D7DFE6] bg-white px-4 text-sm shadow-xs outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]" />
           </div>
 
+          <div>
+            <label htmlFor="parentesco-invitacion" className="block text-sm font-bold leading-5">Vínculo (opcional)</label>
+            <input id="parentesco-invitacion" type="text" maxLength={50} value={parentesco} onChange={(e) => setParentesco(e.target.value)} placeholder="ej: Hijo, Vecina" className="mt-1.5 h-12 w-full rounded-xl border border-[#D7DFE6] bg-white px-4 text-sm shadow-xs outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]" />
+          </div>
+
           <fieldset className="flex flex-col gap-2.5">
-            <legend className="mb-2.5 text-sm font-bold">Elegí qué rol tendrá:</legend>
+            <legend className="mb-2.5 text-sm font-bold">{esCuidador ? "Elegí tu modalidad de cuidado:" : "Elegí qué rol tendrá:"}</legend>
+            {!esCuidador && (
             <button type="button" aria-pressed={rolSeleccionado === "familiar"} onClick={() => setRolSeleccionado("familiar")} className={`flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${rolSeleccionado === "familiar" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
               <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E7EDFB] text-[#1550E0]"><LuUsersRound aria-hidden="true" className="size-5" /></span>
               <span className="min-w-0 flex-1"><span className={`block text-sm font-bold ${rolSeleccionado === "familiar" ? "text-[#1550E0]" : ""}`}>Familiar</span><span className="block text-xs leading-4 text-[#435059]">Avisos de bienestar y alertas de emergencia</span></span>
               <span className={`flex size-5 shrink-0 items-center justify-center rounded-full ${rolSeleccionado === "familiar" ? "bg-[#1550E0] text-white" : "border border-[#B7C8F0] bg-[#E7EDFB]"}`}>{rolSeleccionado === "familiar" && <LuCheck aria-hidden="true" className="size-3" />}</span>
             </button>
+            )}
             <button type="button" aria-pressed={rolSeleccionado === "fisico"} onClick={() => setRolSeleccionado("fisico")} className={`flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-2xl border-2 p-3 text-left hover:bg-[#E3EBF8] active:bg-[#D1E0F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0] ${rolSeleccionado === "fisico" ? "border-[#1550E0] bg-[#E9EEF2]" : "border-white bg-white"}`}>
               <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#E9EEF2] text-[#435059]"><LuShieldCheck aria-hidden="true" className="size-5" /></span>
               <span className="min-w-0 flex-1"><span className={`block text-sm font-bold ${rolSeleccionado === "fisico" ? "text-[#1550E0]" : ""}`}>Cuidador físico</span><span className="block text-xs leading-4 text-[#435059]">Control del adulto mayor y registro de actividad</span></span>
@@ -111,6 +126,7 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
             </button>
           </fieldset>
 
+          {!esCuidador && (
           <fieldset className="flex flex-col gap-2.5">
             <legend className="text-sm font-bold leading-5">Nivel de acceso a los datos médicos y personales:</legend>
             <p className="-mt-1 text-xs leading-4 text-[#435059]">Definí cuánta información del adulto mayor podrá ver el cuidador al ingresar.</p>
@@ -123,6 +139,7 @@ export default function Desplegable({ abiertoAlInicio = false, onInvitacionCread
               <span className="mt-2 block text-xs leading-5 text-[#435059]">Acceso total a la ficha clínica: historial médico, medidas anticipadas, acceso a todos los contactos y demás.</span>
             </button>
           </fieldset>
+          )}
 
           <button type="submit" disabled={enviando} className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 text-base font-bold text-white hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"><LuCheck aria-hidden="true" className="size-5" />{enviando ? "Enviando..." : "Enviar invitación"}</button>
           {error && <p role="alert" className="text-sm text-red-700">{error}</p>}

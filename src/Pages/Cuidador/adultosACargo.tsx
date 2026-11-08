@@ -118,7 +118,7 @@ export default function AdultosACargo() {
           ))}
 
           <p className="text-center text-xs font-semibold text-[#424656]">
-            ¿Querés agregar un adulto mayor? Él deberá enviarte una invitación desde NONOS a tu mail.
+            ¿Querés agregar un adulto mayor? Invitalo con su mail desde Mi cuenta, o pedile que te invite desde NONOS.
           </p>
         </div>
       </main>

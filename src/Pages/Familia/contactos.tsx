@@ -29,8 +29,9 @@ import calcularEdad from "../../utils/calcularEdad";
 import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // texto del vínculo de alguien de la red
-// PENDIENTE BACK: el vínculo no guarda el parentesco ("Hija", "Hijo"), por eso va el rol
+// si no hay parentesco ("Hija", "Hijo") va el rol
 function textoRol(vinculo: Vinculo) {
+  if (vinculo.parentesco) return vinculo.parentesco;
   if (vinculo.tipoVinculo === "FAMILIAR") return "Familiar";
   if (vinculo.tipoCuidador === "DIGITAL") return "Cuidador digital";
   return "Cuidador en domicilio";
@@ -263,7 +264,7 @@ export default function ContactosFamilia() {
                   vinculo={textoRol(vinculo)}
                   telefono={vinculo.familiar.telefono ?? ""}
                   prioridad={vinculo.esContactoEmergencia ? textoPrioridad(posicion) : undefined}
-                // PENDIENTE BACK: falta el horario del cuidador ("En domicilio de 8 a 14 hs")
+                  horario={vinculo.horarioCuidador ?? undefined}
                 />
               ))}
               {/* la tarjeta necesita un número para llamar, igual que la red */}
@@ -474,7 +475,7 @@ export default function ContactosFamilia() {
 
             <p className="flex items-start gap-2 rounded-xl bg-[#E8FAF1] p-3 text-sm leading-5 text-[#006F49]">
               <LuShieldCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-              Se enviará una invitación directa con enlace temporal cifrado para sincronizar el perfil a {primerNombre}.
+              La invitación le va a aparecer cuando entre a NONOS con ese mail.
             </p>
 
             {mensajeInvitacion && (
@@ -489,7 +490,7 @@ export default function ContactosFamilia() {
                 className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
               >
                 <LuMail aria-hidden="true" className="size-5" />
-                Enviar invitación por Mail
+                Enviar invitación
               </button>
               <button
                 type="button"
