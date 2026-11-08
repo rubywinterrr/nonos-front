@@ -4,7 +4,7 @@ import VueltaAtras from "../../components/vueltaAtras";
 import MedicamentoHabitual from "../../components/MedicamentoHabitual";
 import RegistroMedicacion from "../../components/RegistroMedicacion";
 import { useAuth } from "../../hooks/useAuth";
-import { medicamentosService, type CambioMedicacion, type Medicamento } from "../../services/medicamentosService";
+import { medicamentosService, type CambioMedicacion, type CambiosMedicamento, type Medicamento } from "../../services/medicamentosService";
 import { usuarioService, type AdultoMayorVinculado, type Vinculo } from "../../services/usuariosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
@@ -19,9 +19,12 @@ import {
 } from "react-icons/lu";
 
 // un cambio del historial junto con el nombre del remedio al que pertenece
+// y, si lo hay, el profesional y la fecha del registro "Indicado por" que va pegado a un alta o una suspensión
 interface CambioConRemedio {
   cambio: CambioMedicacion;
   remedio: string;
+  profesional: string | null;
+  desde: string | null;
 }
 
 // fecha larga: "23 de octubre de 2026 · 18:30 hs"
@@ -65,11 +68,70 @@ function fechaComienzoTexto(fecha: string) {
 }
 
 // frase completa del historial: lo que cambió, quién lo indicó y desde cuándo
-function detalleDelRegistro(remedio: string, cambio: CambioMedicacion) {
-  let texto = textoDelCambio(remedio, cambio.cambio);
-  if (cambio.profesionalQueIndico) texto = `${texto} Según indicación de ${cambio.profesionalQueIndico}.`;
-  if (cambio.fechaComienzo) texto = `${texto} Desde el ${fechaComienzoTexto(cambio.fechaComienzo)}.`;
+function detalleDelRegistro(registro: CambioConRemedio) {
+  let texto = textoDelCambio(registro.remedio, registro.cambio.cambio);
+  if (registro.profesional) texto = `${texto} Indicado por ${registro.profesional}.`;
+  if (registro.desde) texto = `${texto} Desde el ${fechaComienzoTexto(registro.desde)}.`;
   return texto;
+}
+
+// lee la acción de un registro del historial ("alta", "suspension") o "" si es un cambio común
+function accionDelCambio(cambio: CambioMedicacion) {
+  try {
+    const datos = JSON.parse(cambio.cambio);
+    if (datos.accion) return datos.accion;
+    return "";
+  } catch {
+    return "";
+  }
+}
+
+// true si el registro es solo "Indicado por" (cambio = "{}" con profesional o fecha), no un cambio de dosis
+function esSoloIndicacion(cambio: CambioMedicacion) {
+  if (cambio.cambio.trim() !== "{}") return false;
+  return cambio.profesionalQueIndico !== null || cambio.fechaComienzo !== null;
+}
+
+// arma el historial de un remedio: los registros "Indicado por" se pegan al alta o a la suspensión de al lado.
+// Vienen del más nuevo al más viejo: al agregar, la indicación queda justo antes del alta;
+// al suspender, justo después de la suspensión
+function historialDelRemedio(cambios: CambioMedicacion[], remedio: string) {
+  const resultado: CambioConRemedio[] = [];
+  const usados: string[] = [];
+
+  for (let i = 0; i < cambios.length; i++) {
+    const cambio = cambios[i];
+    if (!esSoloIndicacion(cambio)) continue;
+    const anterior = cambios[i - 1];
+    const siguiente = cambios[i + 1];
+    if (anterior && accionDelCambio(anterior) === "suspension") {
+      usados.push(cambio.id);
+    } else if (siguiente && accionDelCambio(siguiente) === "alta") {
+      usados.push(cambio.id);
+    }
+  }
+
+  for (let i = 0; i < cambios.length; i++) {
+    const cambio = cambios[i];
+    if (usados.includes(cambio.id)) continue;
+    const registro: CambioConRemedio = {
+      cambio,
+      remedio,
+      profesional: cambio.profesionalQueIndico,
+      desde: cambio.fechaComienzo,
+    };
+    const accion = accionDelCambio(cambio);
+    // la indicación de una suspensión está justo después; la de un alta, justo antes
+    let indicacion: CambioMedicacion | undefined;
+    if (accion === "suspension") indicacion = cambios[i + 1];
+    if (accion === "alta") indicacion = cambios[i - 1];
+    if (indicacion && usados.includes(indicacion.id)) {
+      registro.profesional = indicacion.profesionalQueIndico;
+      registro.desde = indicacion.fechaComienzo;
+    }
+    resultado.push(registro);
+  }
+  return resultado;
 }
 
 // pauta para la tarjeta: "2 tomas por día · 08:00 · 21:00 hs"
@@ -117,6 +179,8 @@ export default function MedFam() {
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // aviso después de guardar que la recarga no borra (por ejemplo, si se creó el remedio pero falló el profesional)
+  const [avisoGuardado, setAvisoGuardado] = useState<string | null>(null);
   // se suma 1 cada vez que hay que volver a cargar (después de guardar un cambio)
   const [recargar, setRecargar] = useState(0);
 
@@ -138,7 +202,7 @@ export default function MedFam() {
         const cambios: CambioConRemedio[] = [];
         for (const remedio of lista) {
           const delRemedio = await medicamentosService.getCambiosMedicamento(remedio.id);
-          for (const cambio of delRemedio) cambios.push({ cambio, remedio: remedio.nombre });
+          for (const registro of historialDelRemedio(delRemedio, remedio.nombre)) cambios.push(registro);
         }
         // PENDIENTE BACK: GET /medicamentos solo trae los activos, así que el historial de un remedio
         // suspendido ("Se suspendió") no aparece acá
@@ -220,11 +284,17 @@ export default function MedFam() {
 
   const suspende = tipoCambio === "Suspender o finalizar toma";
   const esNuevo = medicamento === "nuevo";
-  const faltanDatos = !tipoCambio || !medicamento || !detalle.trim() || !profesional.trim() || !fechaInicio || (esNuevo && !nombreNuevo.trim());
+  // al modificar, el profesional y la fecha son obligatorios; al agregar o suspender son opcionales
+  const modifica = !esNuevo && !suspende;
+  const faltanDatos = !tipoCambio || !medicamento || !detalle.trim() || (modifica && (!profesional.trim() || !fechaInicio)) || (esNuevo && !nombreNuevo.trim());
+  // el back avisa a la red cada vez que se registra un cambio con historial
+  let avisaALaRed = modifica;
+  if (esNuevo && (profesional.trim() || fechaInicio)) avisaALaRed = true;
+  if (suspende && profesional.trim()) avisaALaRed = true;
 
   // guarda el cambio en el back según el tipo elegido.
-  // PENDIENTE BACK: el profesional y la fecha de comienzo solo se guardan al modificar;
-  // POST /medicamentos y DELETE /medicamentos/:id no los aceptan (alta y suspensión)
+  // POST /medicamentos y DELETE /medicamentos/:id no aceptan el profesional: se guarda aparte
+  // con POST /medicamentos/update/:id (cambio "{}"), que además avisa a la red
   const registrarCambio = async () => {
     if (faltanDatos || !adulto) return;
     if (!suspende && horarios.length === 0) {
@@ -233,16 +303,34 @@ export default function MedFam() {
     }
     setGuardando(true);
     setErrorDialogo(null);
+    setAvisoGuardado(null);
     try {
       if (esNuevo) {
-        await medicamentosService.crearMedicamento({
+        const creado = await medicamentosService.crearMedicamento({
           nombre: nombreNuevo.trim(),
           categoria: categoria.trim() || null,
           dosis: detalle.trim(),
           horariosDelDia: horarios,
           usuarioId: adulto.id,
         });
+        if (profesional.trim() || fechaInicio) {
+          const indicacion: CambiosMedicamento = {};
+          if (profesional.trim()) indicacion.profesionalQueIndico = profesional.trim();
+          if (fechaInicio) indicacion.fechaComienzo = fechaInicio;
+          try {
+            await medicamentosService.actualizarMedicamentoConHistorial(creado.id, adulto.id, indicacion);
+          } catch (err) {
+            // el remedio ya quedó creado: se cierra igual para no duplicarlo
+            console.error(err);
+            setAvisoGuardado("Se agregó el remedio, pero no se pudo guardar quién lo indicó.");
+          }
+        }
       } else if (suspende) {
+        if (profesional.trim()) {
+          await medicamentosService.actualizarMedicamentoConHistorial(medicamento, adulto.id, {
+            profesionalQueIndico: profesional.trim(),
+          });
+        }
         await medicamentosService.eliminarMedicamento(medicamento);
       } else {
         // este endpoint además guarda el cambio en el historial, con quién lo hizo y cuándo
@@ -284,6 +372,7 @@ export default function MedFam() {
 
           {cargando && <p className="text-center text-[#435059]">Cargando medicación…</p>}
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+          {avisoGuardado && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{avisoGuardado}</p>}
           {!cargando && !adulto && !error && (
             <p className="rounded-xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>
           )}
@@ -351,7 +440,7 @@ export default function MedFam() {
                 <RegistroMedicacion
                   key={registro.cambio.id}
                   fecha={fechaLarga(registro.cambio.fechaCambio)}
-                  detalle={detalleDelRegistro(registro.remedio, registro.cambio)}
+                  detalle={detalleDelRegistro(registro)}
                   autor={autorDelCambio(registro.cambio.usuarioId)}
                 />
               ))}
@@ -607,43 +696,46 @@ export default function MedFam() {
                   className="block text-sm font-semibold"
                   htmlFor="profesional-cambio"
                 >
-                  Profesional que autorizó el ajuste
+                  {modifica ? "Profesional que autorizó el ajuste" : "Profesional que lo indicó (opcional)"}
                 </label>
                 <input
                   id="profesional-cambio"
                   placeholder="Ej.: Dra. Valenzuela (cardióloga)"
-                  required
+                  required={modifica}
                   maxLength={100}
                   value={profesional}
                   onChange={(event) => setProfesional(event.target.value)}
                   className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
                 />
               </div>
-              <div className="space-y-2">
-                <label
-                  className="block text-sm font-semibold"
-                  htmlFor="fecha-cambio"
-                >
-                  Comienzo de la nueva indicación
-                </label>
-                <input
-                  id="fecha-cambio"
-                  type="date"
-                  required
-                  value={fechaInicio}
-                  onChange={(event) => setFechaInicio(event.target.value)}
-                  className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
-                />
-              </div>
+              {/* al suspender no se pide fecha: el back solo guarda el profesional */}
+              {!suspende && (
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold"
+                    htmlFor="fecha-cambio"
+                  >
+                    {modifica ? "Comienzo de la nueva indicación" : "Desde cuándo (opcional)"}
+                  </label>
+                  <input
+                    id="fecha-cambio"
+                    type="date"
+                    required={modifica}
+                    value={fechaInicio}
+                    onChange={(event) => setFechaInicio(event.target.value)}
+                    className="h-14 w-full rounded-xl border border-[#D7DFE6] bg-[#F6F8FA] px-4 text-sm focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
+                  />
+                </div>
+              )}
             </div>
 
             <aside className="mt-5 rounded-2xl border border-[#B7C8F0] bg-[#EAF4FE] p-4">
               <h3 className="font-semibold">Registro clínico auditado</h3>
-              {/* el back avisa a la red solo al modificar; PENDIENTE BACK: el alta y la suspensión no avisan */}
+              {/* el back avisa a la red al modificar, y al agregar o suspender si se cargó quién lo indicó */}
               <p className="mt-2 text-sm leading-5 text-[#435059]">
                 Esta actualización quedará asentada con tu firma digital (
                 {nombreUsuario})
-                {!esNuevo && !suspende && otrosDeLaRed.length > 0 && ` y notificará por alerta prioritaria a ${otrosDeLaRed.join(", ")}`}.
+                {avisaALaRed && otrosDeLaRed.length > 0 && ` y notificará por alerta prioritaria a ${otrosDeLaRed.join(", ")}`}.
               </p>
             </aside>
             {errorDialogo && (
