@@ -29,7 +29,7 @@ export default function CondicionMedica({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
           <h3 className="text-sm font-semibold leading-5">{titulo}</h3>
-          {/* el estado no se muestra si viene vacío (el back todavía no lo guarda) */}
+          {/* el estado no se muestra si viene vacío (no todas las condiciones lo tienen) */}
           {estado && (
             <span className="rounded border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-0.5 text-xs font-semibold text-[#0B4C2B]">
               {estado}

@@ -13,8 +13,8 @@ import {
 } from "react-icons/lu";
 import type { FichaEmergencia as Ficha } from "../../services/fichaEmergenciaService";
 import type { GrupoSanguineo } from "../../services/authService";
-import type { Condicion } from "../../services/condicionesService";
 import { momentoDelDia } from "../../utils/tomasDeHoy";
+import esAlergia from "../../utils/esAlergia";
 
 interface Props {
   ficha: Ficha;
@@ -40,13 +40,6 @@ function separarMedidas(texto: string) {
     decisiones: texto.slice(TEXTO_EVITAR.length, inicioAcompanante).trim(),
     internacion: texto.slice(inicioAtencion + TEXTO_ATENCION.length).trim(),
   };
-}
-
-// es una alergia si el nombre de la condición dice "alergia" o "alérgico"
-// PENDIENTE BACK: no hay un campo aparte para alergias
-function esAlergia(condicion: Condicion) {
-  const nombre = condicion.nombre.toLowerCase();
-  return nombre.includes("alergi") || nombre.includes("alérgi");
 }
 
 // "20 de octubre de 2026"

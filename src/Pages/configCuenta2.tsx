@@ -136,7 +136,7 @@ export default function ConfigCuenta2() {
     setMostrarCampo(false);
   }
 
-  // guarda las condiciones marcadas y las alergias (como una condición más) y va al home
+  // guarda las condiciones marcadas y las alergias (cada una como condición con esAlergia) y va al home
   const guardarFicha = async () => {
     if (!usuario) return;
     setError(null);
@@ -177,11 +177,16 @@ export default function ConfigCuenta2() {
         await condicionesService.crearCondicion({ nombre, usuarioId: usuario.id });
       }
       if (respuestaAlergias === "si") {
-        await condicionesService.crearCondicion({
-          nombre: "Alergias",
-          descripcion: alergias.trim(),
-          usuarioId: usuario.id,
-        });
+        // "penicilina, aspirinas" → una alergia por cada cosa separada por coma
+        for (const parte of alergias.split(",")) {
+          if (parte.trim()) {
+            await condicionesService.crearCondicion({
+              nombre: parte.trim(),
+              esAlergia: true,
+              usuarioId: usuario.id,
+            });
+          }
+        }
       }
       navigate("/adulto/home");
     } catch (err) {
@@ -306,7 +311,7 @@ export default function ConfigCuenta2() {
                 rows={3}
                 value={alergias}
                 onChange={(e) => setAlergias(e.target.value)}
-                placeholder="Ej: Alergia a la penicilina, aspirinas, mariscos, frutos secos..."
+                placeholder="Ej: Penicilina, aspirinas, mariscos, frutos secos..."
                 className="min-h-24 w-full resize-y rounded-2xl bg-[#E7EDFB] p-4 text-base leading-6 text-[#16222C] inset-shadow-sm placeholder:text-[#435059] focus-visible:outline-2 focus-visible:outline-[#144BD3]"
               />
             </div>

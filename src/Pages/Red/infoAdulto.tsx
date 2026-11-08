@@ -16,6 +16,7 @@ import { condicionesService, type Condicion } from "../../services/condicionesSe
 import type { GrupoSanguineo } from "../../services/authService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
+import esAlergia from "../../utils/esAlergia";
 import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // grupo sanguíneo como en el diseño: "0 Positivo (0+)"
@@ -39,13 +40,6 @@ function textoRelacion(vinculo: Vinculo) {
   else if (vinculo.tipoCuidador === "DIGITAL") rol = "Cuidador digital";
   if (vinculo.esContactoEmergencia) return `${rol} · Contacto prioritario`;
   return rol;
-}
-
-// es una alergia si el nombre de la condición dice "alergia" o "alérgico"
-// PENDIENTE BACK: no hay un campo aparte para alergias
-function esAlergia(condicion: Condicion) {
-  const nombre = condicion.nombre.toLowerCase();
-  return nombre.includes("alergi") || nombre.includes("alérgi");
 }
 
 // pantalla del familiar/cuidador: la ficha del adulto vinculado que mira
@@ -241,8 +235,7 @@ export default function InfoAdulto() {
                 key={condicion.id}
                 icono={<LuActivity aria-hidden="true" className="size-4" />}
                 titulo={condicion.nombre}
-                // PENDIENTE BACK: la condición no tiene estado ("Bajo control")
-                estado=""
+                estado={condicion.estado || ""}
                 descripcion={condicion.descripcion || ""}
               />
             ))}

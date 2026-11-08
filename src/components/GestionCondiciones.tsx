@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LuCheck, LuPencil, LuPlus, LuTrash2, LuX } from "react-icons/lu";
 import { condicionesService, type Condicion } from "../services/condicionesService";
+import esAlergia from "../utils/esAlergia";
 
 interface Props {
   adultoId: string;
@@ -11,13 +12,15 @@ interface Props {
 }
 
 // editor de las condiciones médicas y alergias del adulto (agregar, editar, borrar).
-// Para que algo cuente como alergia, el nombre tiene que decir "alergia" (ej: "Alergia a la penicilina").
+// Las alergias se marcan con el checkbox "Es una alergia" (esAlergia en el back).
 // No está en el Figma: sigue el estilo de las tarjetas de NONOS
 export default function GestionCondiciones({ adultoId, condiciones, onCambio, onCerrar }: Props) {
   // "nuevo" = agregando; un id = editando esa condición; null = sin formulario
   const [editando, setEditando] = useState<string | null>(null);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [estado, setEstado] = useState("");
+  const [alergia, setAlergia] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [borrandoId, setBorrandoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,10 +33,14 @@ export default function GestionCondiciones({ adultoId, condiciones, onCambio, on
       setEditando(condicion.id);
       setNombre(condicion.nombre);
       setDescripcion(condicion.descripcion ?? "");
+      setEstado(condicion.estado ?? "");
+      setAlergia(esAlergia(condicion));
     } else {
       setEditando("nuevo");
       setNombre("");
       setDescripcion("");
+      setEstado("");
+      setAlergia(false);
     }
   };
 
@@ -48,9 +55,20 @@ export default function GestionCondiciones({ adultoId, condiciones, onCambio, on
     setError(null);
     try {
       if (editando === "nuevo") {
-        await condicionesService.crearCondicion({ nombre: nombre.trim(), descripcion: descripcion.trim() || undefined, usuarioId: adultoId });
+        await condicionesService.crearCondicion({
+          nombre: nombre.trim(),
+          descripcion: descripcion.trim() || undefined,
+          estado: estado.trim() || undefined,
+          esAlergia: alergia,
+          usuarioId: adultoId,
+        });
       } else if (editando) {
-        await condicionesService.actualizarCondicion(editando, { nombre: nombre.trim(), descripcion: descripcion.trim() });
+        await condicionesService.actualizarCondicion(editando, {
+          nombre: nombre.trim(),
+          descripcion: descripcion.trim(),
+          estado: estado.trim(),
+          esAlergia: alergia,
+        });
       }
       setEditando(null);
       onCambio();
@@ -82,7 +100,26 @@ export default function GestionCondiciones({ adultoId, condiciones, onCambio, on
         <input
           value={nombre}
           onChange={(evento) => setNombre(evento.target.value)}
-          placeholder="Ej: Hipertensión o Alergia a la penicilina"
+          placeholder="Ej: Hipertensión o Penicilina"
+          className="h-12 rounded-lg border border-[#D7DFE6] bg-white px-3 text-base font-normal focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
+        />
+      </label>
+      <label className="flex min-h-12 cursor-pointer items-center gap-3 text-sm font-semibold">
+        <input
+          type="checkbox"
+          checked={alergia}
+          onChange={(evento) => setAlergia(evento.target.checked)}
+          className="size-5 cursor-pointer accent-[#1550E0]"
+        />
+        Es una alergia
+      </label>
+      <label className="flex flex-col gap-1 text-sm font-semibold">
+        Estado (opcional)
+        <input
+          value={estado}
+          maxLength={50}
+          onChange={(evento) => setEstado(evento.target.value)}
+          placeholder="Ej: Bajo control"
           className="h-12 rounded-lg border border-[#D7DFE6] bg-white px-3 text-base font-normal focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]"
         />
       </label>
@@ -120,7 +157,6 @@ export default function GestionCondiciones({ adultoId, condiciones, onCambio, on
           Listo
         </button>
       </div>
-      <p className="text-sm text-[#435059]">Para que figure como alergia, escribí "Alergia a…" en el nombre.</p>
 
       {condiciones.length === 0 && editando !== "nuevo" && <p className="text-sm">No hay nada cargado todavía.</p>}
 
