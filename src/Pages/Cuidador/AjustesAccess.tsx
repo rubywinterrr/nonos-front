@@ -88,6 +88,8 @@ export default function AjustesCuidador() {
   const { usuario } = useAuth();
   const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
   const [modalidad, setModalidad] = useState("fisico");
+  // "Lun a Vie 8:00 a 14:00" (se guarda en el vínculo; vacío = sin horario)
+  const [horario, setHorario] = useState("");
   const [avisos, setAvisos] = useState(avisosPorDefecto);
   // la lista completa de tipos que tiene guardada en el back (incluye los que no tienen interruptor)
   const [tiposGuardados, setTiposGuardados] = useState<TipoAlerta[]>(TODOS_LOS_TIPOS);
@@ -108,6 +110,7 @@ export default function AjustesCuidador() {
         if (!elegido) return;
         const vinculo = await usuarioService.getVinculo(elegido.id, miId);
         setModalidad(modalidadDeLaPantalla(vinculo.tipoCuidador));
+        setHorario(vinculo.horarioCuidador ?? "");
         const data = await usuarioService.getNotificacionesRecibidas(miId, elegido.id);
         setTiposGuardados(data.tipoNotificaciones);
         // los interruptores con tipo arrancan como están en el back
@@ -145,6 +148,7 @@ export default function AjustesCuidador() {
       await usuarioService.actualizarVinculo(adulto.id, usuario.id, {
         tipoVinculo: "CUIDADOR",
         tipoCuidador: modalidad === "digital" ? "DIGITAL" : "FISICO",
+        horarioCuidador: horario.trim() || null,
       });
       await usuarioService.editarNotificacionesRecibidas(usuario.id, adulto.id, { tipoNotificaciones: tipos });
       setTiposGuardados(tipos);
@@ -237,6 +241,20 @@ export default function AjustesCuidador() {
                 </span>
               )}
             </p>
+
+            <div>
+              <label htmlFor="horario-cuidador" className="block text-sm font-bold leading-5">Horario (opcional)</label>
+              <input
+                id="horario-cuidador"
+                type="text"
+                maxLength={100}
+                value={horario}
+                onChange={(evento) => setHorario(evento.target.value)}
+                placeholder="ej: Lun a Vie 8:00 a 14:00"
+                className="mt-1.5 h-12 w-full rounded-xl border border-[#D7DFE6] bg-white px-4 text-sm shadow-xs outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]"
+              />
+              <p className="mt-1 text-xs text-[#424656]">Lo ve el resto de la red de {adulto?.nombreCompleto}.</p>
+            </div>
           </section>
 
           {secciones.map((seccion) => (

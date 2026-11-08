@@ -32,14 +32,16 @@ function fechaNacimiento(fecha: string) {
   return new Date(fecha).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" });
 }
 
-// rol de alguien de la red: "Familiar · Contacto prioritario", "Cuidador presencial"...
-// PENDIENTE BACK: falta el parentesco ("Hija") y los horarios del cuidador ("Lun a Vie 8:00 a 14:00")
+// rol de alguien de la red: "Hija · Contacto prioritario", "Cuidador presencial · Lun a Vie 8:00 a 14:00"...
+// si no hay parentesco cargado va el rol
 function textoRelacion(vinculo: Vinculo) {
-  let rol = "Cuidador presencial";
-  if (vinculo.tipoVinculo === "FAMILIAR") rol = "Familiar";
-  else if (vinculo.tipoCuidador === "DIGITAL") rol = "Cuidador digital";
-  if (vinculo.esContactoEmergencia) return `${rol} · Contacto prioritario`;
-  return rol;
+  let texto = "Cuidador presencial";
+  if (vinculo.tipoVinculo === "FAMILIAR") texto = "Familiar";
+  else if (vinculo.tipoCuidador === "DIGITAL") texto = "Cuidador digital";
+  if (vinculo.parentesco) texto = vinculo.parentesco;
+  if (vinculo.esContactoEmergencia) texto = `${texto} · Contacto prioritario`;
+  if (vinculo.horarioCuidador) texto = `${texto} · ${vinculo.horarioCuidador}`;
+  return texto;
 }
 
 // pantalla del familiar/cuidador: la ficha del adulto vinculado que mira

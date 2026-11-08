@@ -16,7 +16,7 @@ import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
 import { etiquetaRol } from "../../utils/etiquetaRol";
 import tiempoDesde from "../../utils/tiempoDesde";
-import { tomasDeHoy, proximaToma, momentoDelDia, yaPaso } from "../../utils/tomasDeHoy";
+import { tomasDeHoy, proximaToma, momentoDelDia } from "../../utils/tomasDeHoy";
 import ActivarAvisos from "../../components/ActivarAvisos";
 import LinkAvisos from "../../components/LinkAvisos";
 import AccesosRed from "../../components/AccesosRed";
@@ -66,6 +66,8 @@ export default function HomeFamilia() {
   const [pasosHoy, setPasosHoy] = useState<number | null>(null);
   const [suenoMinutos, setSuenoMinutos] = useState<number | null>(null);
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+  // tomas de hoy cuyo horario ya pasó, sobre el total (lo calcula el back)
+  const [tomasDelDia, setTomasDelDia] = useState<{ hechas: number; total: number } | null>(null);
   const [vinculos, setVinculos] = useState<Vinculo[]>([]);
   const [cargando, setCargando] = useState(true);
   // se suma 1 cuando se acepta una invitación, para volver a cargar todo
@@ -122,6 +124,7 @@ export default function HomeFamilia() {
 
       try {
         setMedicamentos(await medicamentosService.getMedicamentos(id));
+        setTomasDelDia(await medicamentosService.getTomasDelDia(id));
       } catch (err) {
         console.error(err);
       }
@@ -146,7 +149,6 @@ export default function HomeFamilia() {
   const oxigeno = resumen.find((r) => r.tipo === "SPO2");
   const tomas = tomasDeHoy(medicamentos);
   const proxima = proximaToma(tomas);
-  const tomasQueYaPasaron = tomas.filter((t) => yaPaso(t.horario)).length;
   const otraPersona = usuario ? otraPersonaParaLlamar(vinculos, usuario.id) : null;
 
   let textoSincronizado = "Todavía no se sincronizó";
@@ -184,6 +186,8 @@ export default function HomeFamilia() {
                   )}
                   <div>
                     <h2 id="persona-vinculada" className="text-lg font-bold leading-snug sm:text-xl">{adulto.nombreCompleto}</h2>
+                    {/* PENDIENTE BACK: el diseño muestra qué es el adulto para mí ("Papá"); el parentesco del vínculo
+                        describe a quien invitaron visto desde el adulto ("Hijo"), así que queda el rol */}
                     <p className="text-sm font-semibold leading-normal tracking-wide text-[#424656]">
                       {etiquetaRol(adulto.rol)}{adulto.fechaNacimiento && ` · ${calcularEdad(adulto.fechaNacimiento)} años`}
                     </p>
@@ -338,8 +342,8 @@ export default function HomeFamilia() {
                   </div>
                 </div>
                 {/* cuenta los horarios que ya pasaron: el back no registra si la toma se hizo */}
-                {tomas.length > 0 && (
-                  <span className="shrink-0 rounded-full bg-[#84F6E6]/40 px-2 py-1 text-xs font-bold leading-normal text-[#006A61] sm:px-2.5">{tomasQueYaPasaron} de {tomas.length} tomas</span>
+                {tomasDelDia && tomasDelDia.total > 0 && (
+                  <span className="shrink-0 rounded-full bg-[#84F6E6]/40 px-2 py-1 text-xs font-bold leading-normal text-[#006A61] sm:px-2.5">{tomasDelDia.hechas} de {tomasDelDia.total} tomas</span>
                 )}
               </div>
 
