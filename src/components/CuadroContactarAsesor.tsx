@@ -11,9 +11,10 @@ export default function CuadroAsesor() {
           </p>
         </div>
       </div>
-      <button className="bg-blue-600 shadow-md hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer">
+      {/* llama al teléfono de asistencia de NONOS (el mismo de la pantalla del SOS) */}
+      <a href="tel:+5491130285858" className="bg-blue-600 shadow-md hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer flex items-center justify-center">
         Contactate con un asesor humano
-      </button>
+      </a>
     </div>
   );
 }

@@ -163,7 +163,7 @@ export default function ContactosFamilia() {
                   </p>
                 </div>
               </div>
-              {/* HARDCODEADO: número fijo de Figma */}
+              {/* 107: número público de emergencias médicas (SAME) */}
               <a
                 href="tel:107"
                 className="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#C92A2A] px-4 text-xl font-bold text-white hover:bg-[#AF2424] active:bg-[#8C1D1D] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C92A2A]"
