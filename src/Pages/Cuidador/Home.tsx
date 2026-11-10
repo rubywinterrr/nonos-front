@@ -20,6 +20,7 @@ import AccesosRed from "../../components/AccesosRed";
 import { tomasDeHoy, proximaToma, momentoDelDia } from "../../utils/tomasDeHoy";
 import { horasYMinutos } from "../../utils/formatoSignos";
 import minutosDespierto from "../../utils/minutosDespierto";
+import CartelSOS from "../../components/CartelSOS";
 import {
   MdArrowForward,
   MdCheck,
@@ -165,6 +166,8 @@ export default function HomeFamilia() {
           <p className="text-base leading-relaxed text-[#424656]">{obtenerFechaActual()}</p>
         </div>
 
+        {/* agregado: cartel si el adulto apretó SOS y sigue pendiente */}
+        {adulto && <CartelSOS nombreAdulto={adulto.nombreCompleto} alertas={alertas} />}
         <InvitacionesPendientes onAceptada={() => setRecargar(recargar + 1)} />
         {/* agregado (no está en el Figma): activar los avisos push y ver los recibidos */}
         <ActivarAvisos />
