@@ -13,15 +13,15 @@ export function permisoActual() {
 }
 
 // la clave VAPID viene en base64 "para URL"; el navegador la pide como bytes
-function claveABytes(clave: string) {
-  const relleno = "=".repeat((4 - (clave.length % 4)) % 4);
-  const base64 = (clave + relleno).replaceAll("-", "+").replaceAll("_", "/");
-  const texto = atob(base64);
-  const bytes = new Uint8Array(texto.length);
-  for (let i = 0; i < texto.length; i++) {
-    bytes[i] = texto.charCodeAt(i);
+function urlB64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replaceAll("-", "+").replaceAll("_", "/");
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
   }
-  return bytes;
+  return outputArray;
 }
 
 // true si este celular ya está suscripto
@@ -36,40 +36,44 @@ export async function estaSuscripto() {
 // pide el permiso, suscribe este celular y le pasa la suscripción al back.
 // Tiene que llamarse desde un toque en un botón (el navegador no deja pedir el permiso solo)
 export async function activarPush() {
-  if (!soportaPush()) throw new Error("Este navegador no permite notificaciones.");
+  if (!("Notification" in window)) throw new Error("Este navegador no permite notificaciones.");
 
-  const permiso = await Notification.requestPermission();
-  if (permiso !== "granted") throw new Error("No se dio permiso para las notificaciones.");
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") throw new Error("No se dio permiso para las notificaciones.");
 
-  const registro = await navigator.serviceWorker.register("/sw.js");
-  await navigator.serviceWorker.ready;
-
-  // si ya había una suscripción se reutiliza; si no, se crea con la clave pública del back
-  let suscripcion = await registro.pushManager.getSubscription();
-  if (!suscripcion) {
-    const { publicKey } = await pushTokenService.getVapidPublicKey();
-    suscripcion = await registro.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: claveABytes(publicKey),
-    });
-  }
-
-  // el back guarda endpoint + claves para poder mandarle avisos a este celular
-  const datos = suscripcion.toJSON();
-  await pushTokenService.crearSuscripcion({
-    plataforma: "web",
-    endpoint: suscripcion.endpoint,
-    keys: { p256dh: datos.keys?.p256dh ?? "", auth: datos.keys?.auth ?? "" },
-  });
+  await subscribeUser();
 }
 
-// da de baja la suscripción de este celular (en el navegador y en el back)
-export async function desactivarPush() {
-  if (!soportaPush()) return;
-  const registro = await navigator.serviceWorker.getRegistration("/sw.js");
-  if (!registro) return;
-  const suscripcion = await registro.pushManager.getSubscription();
-  if (!suscripcion) return;
-  await pushTokenService.eliminarSuscripcion(suscripcion.endpoint);
-  await suscripcion.unsubscribe();
+// usa el service worker si ya estaba registrado; si no, lo registra
+async function subscribeUser() {
+  if (!("serviceWorker" in navigator)) throw new Error("Este navegador no permite notificaciones.");
+
+  const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+  if (registration) {
+    await generateSubscribeEndPoint(registration);
+  } else {
+    const newRegistration = await navigator.serviceWorker.register("/sw.js");
+    // espera a que el service worker quede activo, si no subscribe falla la primera vez
+    await navigator.serviceWorker.ready;
+    await generateSubscribeEndPoint(newRegistration);
+  }
+}
+
+// suscribe este celular con la clave pública del back y le pasa la suscripción al back
+async function generateSubscribeEndPoint(newRegistration: ServiceWorkerRegistration) {
+  const { publicKey } = await pushTokenService.getVapidPublicKey();
+  const applicationServerKey = urlB64ToUint8Array(publicKey);
+  const options = {
+    applicationServerKey,
+    userVisibleOnly: true, // solo avisos visibles (Chrome no permite avisos silenciosos)
+  };
+  const subscription = await newRegistration.pushManager.subscribe(options);
+
+  // el back guarda endpoint + claves para poder mandarle avisos a este celular
+  const datos = subscription.toJSON();
+  await pushTokenService.crearSuscripcion({
+    plataforma: "web",
+    endpoint: subscription.endpoint,
+    keys: { p256dh: datos.keys?.p256dh ?? "", auth: datos.keys?.auth ?? "" },
+  });
 }
