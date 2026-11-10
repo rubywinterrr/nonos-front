@@ -77,3 +77,14 @@ async function generateSubscribeEndPoint(newRegistration: ServiceWorkerRegistrat
     keys: { p256dh: datos.keys?.p256dh ?? "", auth: datos.keys?.auth ?? "" },
   });
 }
+
+// da de baja la suscripción de este celular (en el navegador y en el back)
+export async function desactivarPush() {
+  if (!soportaPush()) return;
+  const registro = await navigator.serviceWorker.getRegistration("/sw.js");
+  if (!registro) return;
+  const suscripcion = await registro.pushManager.getSubscription();
+  if (!suscripcion) return;
+  await pushTokenService.eliminarSuscripcion(suscripcion.endpoint);
+  await suscripcion.unsubscribe();
+}
