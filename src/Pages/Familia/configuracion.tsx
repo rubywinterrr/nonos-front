@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import VueltaAtras from "../../components/vueltaAtras";
-import Header from "../../components/Header";
 import Switch from "../../components/switch";
 import {
   LuCheck,
@@ -108,12 +107,11 @@ export default function ConfigFam() {
   }
 
   return (
-    <main className="mainBody gap-4">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Ajustes de accesibilidad" compacto />
 
-        {cargando && <p className="text-center text-sm text-[#435059]">Cargando…</p>}
+        {cargando && <p role="status" className="text-center text-sm text-[#435059]">Cargando…</p>}
         {!cargando && !adulto && !error && (
           <p className="rounded-2xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>
         )}
@@ -137,8 +135,8 @@ export default function ConfigFam() {
 
         <section aria-labelledby="alertas-criticas" className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-3"><h2 id="alertas-criticas" className="flex items-center gap-2 text-lg font-bold"><span className="flex size-8 items-center justify-center rounded-lg bg-[#FFE0DF] text-[#B52A2A]"><LuSiren aria-hidden="true" className="size-4" /></span>Alertas críticas</h2><span className="rounded-md bg-[#F9E9E9] px-2 py-0.5 text-xs font-semibold tracking-wide text-[#7D1A1A]">POR DEFECTO</span></div>
-          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Botón de emergencia presionado</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Notificación sonora urgente y vibración persistente.</p></div><Switch checked={botonEmergencia} onChange={setBotonEmergencia} mostrarEstado /></article>
-          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Escaneo de QR de emergencia</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Aviso inmediato si personal médico o ambulancia consulta datos en la pulsera.</p></div><Switch checked={escaneoQr} onChange={setEscaneoQr} mostrarEstado /></article>
+          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Botón de emergencia presionado</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Notificación sonora urgente y vibración persistente.</p></div><Switch ariaLabel="Botón de emergencia presionado" checked={botonEmergencia} onChange={setBotonEmergencia} mostrarEstado /></article>
+          <article className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-xs"><div className="min-w-0"><h3 className="text-sm font-bold">Escaneo de QR de emergencia</h3><p className="mt-1 text-xs leading-4 text-[#435059]">Aviso inmediato si personal médico o ambulancia consulta datos en la pulsera.</p></div><Switch ariaLabel="Escaneo de QR de emergencia" checked={escaneoQr} onChange={setEscaneoQr} mostrarEstado /></article>
         </section>
 
         {/* PENDIENTE BACK: no se pueden apagar estos avisos; el diseño mostraba "Modificación de esquema médico",

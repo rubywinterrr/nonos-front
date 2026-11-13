@@ -7,22 +7,18 @@ interface Props {
   idDispositivo: string | null;
   // lo que queda de los 30 minutos, ya armado ("29 min 59 seg")
   tiempoRestante: string;
-  // segundos que faltan para pasar sola a la ficha (3, 2, 1)
-  segundosRedireccion: number;
   onVerFicha: () => void;
 }
 
-// pantalla "Código verificado con éxito": se ve 3 segundos y después pasa sola a la ficha
-export default function PantallaVerificado({ nombre, edad, idDispositivo, tiempoRestante, segundosRedireccion, onVerFicha }: Props) {
-  const progreso = ((3 - segundosRedireccion) / 3) * 100;
-
+// La confirmación queda visible hasta que se elige abrir la ficha.
+export default function PantallaVerificado({ nombre, edad, idDispositivo, tiempoRestante, onVerFicha }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6 text-[#16222C]">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="flex items-center gap-3 text-lg font-semibold">
+        <p className="flex items-center gap-3 text-lg font-semibold">
           <LuLockKeyhole aria-hidden="true" className="size-9 rounded-full bg-[#E7EDFB] p-2" />
           Ficha Médica
-        </h1>
+        </p>
         <span className="flex items-center gap-1 rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-3 py-1 text-sm font-semibold text-[#0B4C2B]">
           <LuShieldCheck aria-hidden="true" className="size-4" />
           Segura
@@ -36,48 +32,39 @@ export default function PantallaVerificado({ nombre, edad, idDispositivo, tiempo
         <p className="rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#0B4C2B]">
           Autenticación correcta
         </p>
-        <h2 className="text-2xl font-bold" role="status">Código verificado con éxito</h2>
+        <h1 className="text-2xl font-bold">Código verificado con éxito</h1>
         <p className="text-sm text-[#435059]">Acceso médico temporal habilitado por 30 minutos.</p>
       </div>
 
       <section className="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-xs" aria-labelledby="credencial">
         <div className="flex items-center justify-between border-b border-[#D7DFE6] pb-3">
-          <h3 id="credencial" className="text-xs font-bold uppercase tracking-wide text-[#435059]">Credencial autorizada</h3>
+          <h2 id="credencial" className="text-xs font-bold uppercase tracking-wide text-[#435059]">Credencial autorizada</h2>
           <span className="flex items-center gap-1 rounded border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-0.5 text-xs font-semibold text-[#0B4C2B]">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-[#0B6D3C]" />
             Activo
           </span>
         </div>
         <dl className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <LuUserRound aria-hidden="true" className="size-11 shrink-0 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-[#435059]">Paciente identificado</dt>
-              <dd className="text-lg font-bold">
-                {nombre} {edad !== null && <span className="text-base font-normal">({edad} años)</span>}
-              </dd>
-            </div>
+          <div className="relative min-h-11 pl-14">
+            <dt className="text-xs uppercase tracking-wide text-[#435059]"><LuUserRound aria-hidden="true" className="absolute left-0 top-0 size-11 shrink-0 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-2.5 text-[#1550E0]" />Paciente identificado</dt>
+            <dd className="text-lg font-bold">
+              {nombre} {edad !== null && <span className="text-base font-normal">({edad} años)</span>}
+            </dd>
           </div>
-          <div className="flex items-center gap-3">
-            <LuWatch aria-hidden="true" className="size-11 shrink-0 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-2.5 text-[#1550E0]" />
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-[#435059]">Dispositivo de origen</dt>
-              <dd className="flex items-center gap-2 text-lg font-bold">
-                Pulsera{" "}
-                {idDispositivo ? (
-                  <span className="break-all rounded bg-[#E7EDFB] px-1.5 font-mono text-sm">#{idDispositivo}</span>
-                ) : (
-                  <span className="text-base font-normal text-[#435059]">sin dato</span>
-                )}
-              </dd>
-            </div>
+          <div className="relative min-h-11 pl-14">
+            <dt className="text-xs uppercase tracking-wide text-[#435059]"><LuWatch aria-hidden="true" className="absolute left-0 top-0 size-11 shrink-0 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-2.5 text-[#1550E0]" />Dispositivo de origen</dt>
+            <dd className="flex items-center gap-2 text-lg font-bold">
+              Pulsera{" "}
+              {idDispositivo ? (
+                <span className="break-all rounded bg-[#E7EDFB] px-1.5 font-mono text-sm">#{idDispositivo}</span>
+              ) : (
+                <span className="text-base font-normal text-[#435059]">sin dato</span>
+              )}
+            </dd>
           </div>
-          <div className="flex items-center gap-3">
-            <LuTimer aria-hidden="true" className="size-11 shrink-0 rounded-xl border border-[#BAEDD3] bg-[#E8FAF1] p-2.5 text-[#1550E0]" />
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-[#435059]">Tiempo de consulta disponible</dt>
-              <dd className="text-lg font-bold text-[#0B6D3C]">{tiempoRestante}</dd>
-            </div>
+          <div className="relative min-h-11 pl-14">
+            <dt className="text-xs uppercase tracking-wide text-[#435059]"><LuTimer aria-hidden="true" className="absolute left-0 top-0 size-11 shrink-0 rounded-xl border border-[#BAEDD3] bg-[#E8FAF1] p-2.5 text-[#1550E0]" />Tiempo de consulta disponible</dt>
+            <dd className="text-lg font-bold text-[#0B6D3C]">{tiempoRestante}</dd>
           </div>
         </dl>
         <p className="flex items-start gap-2 rounded-xl border border-[#B7C8F0] bg-[#E7EDFB] p-4 text-sm font-semibold leading-6">
@@ -85,19 +72,6 @@ export default function PantallaVerificado({ nombre, edad, idDispositivo, tiempo
           Aviso clínico: Uso estrictamente confidencial para asistencia de salud y auxilio de guardia.
         </p>
       </section>
-
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="flex items-center gap-2 text-[#435059]">
-            <span aria-hidden="true" className="size-2 rounded-full bg-[#0B6D3C]" />
-            Redirección automática
-          </span>
-          <span className="font-semibold">{segundosRedireccion}s</span>
-        </div>
-        <div aria-hidden="true" className="h-2 w-full overflow-hidden rounded-full bg-white/70">
-          <div className="h-full rounded-full bg-[#1550E0] transition-[width] duration-1000" style={{ width: `${progreso}%` }} />
-        </div>
-      </div>
 
       <button
         type="button"

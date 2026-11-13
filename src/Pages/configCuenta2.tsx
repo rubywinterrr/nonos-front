@@ -198,7 +198,7 @@ export default function ConfigCuenta2() {
   };
 
   return (
-    <main className="mainBody">
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
           <img src="/logo/isotipo-cuadrado.png" alt="" className="size-9" />
@@ -252,7 +252,7 @@ export default function ConfigCuenta2() {
           aria-labelledby="alergias-conocidas"
           className="flex w-full flex-col gap-4 rounded-3xl bg-white p-5 shadow-xs"
         >
-          <button
+          <h2
             id="alergias-conocidas"
             className="flex items-center gap-2.5 text-xl font-semibold leading-7"
           >
@@ -261,10 +261,10 @@ export default function ConfigCuenta2() {
               className="size-9 shrink-0 rounded-xl bg-[#F9E9E9] p-2 text-[#B3261E]"
             />
             Alergias conocidas
-          </button>
+          </h2>
           <p className="text-base leading-6">
             ¿Tenés alergia a algún medicamento o alimento?{" "}
-            <span aria-hidden="true" className="text-red-600">
+            <span aria-hidden="true" className="text-red-800">
               *
             </span>
           </p>
@@ -301,7 +301,7 @@ export default function ConfigCuenta2() {
                 className="text-sm font-semibold leading-5 text-[#435059]"
               >
                 Escribí tus alergias para que figuren destacadas:{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>
@@ -322,7 +322,7 @@ export default function ConfigCuenta2() {
           aria-labelledby="condiciones-medicas"
           className="flex w-full flex-col gap-4 rounded-3xl bg-white p-5 shadow-xs"
         >
-          <button
+          <h2
             id="condiciones-medicas"
             className="flex items-center gap-2.5 text-xl font-semibold leading-7"
           >
@@ -331,7 +331,7 @@ export default function ConfigCuenta2() {
               className="size-9 shrink-0 rounded-xl bg-[#E7EDFB] p-2 text-[#144BD3]"
             />
             Condiciones médicas
-          </button>
+          </h2>
           <p className="text-base leading-6">
             Selecciona si tenés alguna de estas condiciones:
           </p>
@@ -397,7 +397,7 @@ export default function ConfigCuenta2() {
                 className="text-sm font-semibold text-[#435059]"
               >
                 Nueva condición médica{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>
@@ -436,7 +436,7 @@ export default function ConfigCuenta2() {
           </h2>
           <p className="text-base leading-6">
             ¿Tomás alguna medicación o pastilla todos los días?{" "}
-            <span aria-hidden="true" className="text-red-600">
+            <span aria-hidden="true" className="text-red-800">
               *
             </span>
           </p>
@@ -473,7 +473,7 @@ export default function ConfigCuenta2() {
                 className="text-sm font-semibold leading-5 text-[#435059]"
               >
                 Escribí los medicamentos y los mg para que figuren destacadas:{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>

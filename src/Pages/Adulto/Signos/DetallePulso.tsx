@@ -4,7 +4,6 @@ import { useAuth } from "../../../hooks/useAuth";
 import { medicionesService, type Medicion } from "../../../services/medicionesService";
 import { idDelAdultoQueSeMira } from "../../../utils/adultoQueSeMira";
 import { diaYHora } from "../../../utils/formatoSignos";
-import Header from "../../../components/Header";
 import VueltaAtras from "../../../components/vueltaAtras";
 
 const DIA_MS = 24 * 60 * 60 * 1000;
@@ -63,8 +62,7 @@ export default function DetallePulsoAdulto() {
   const normal = ultimo !== null && ultimo.valor >= PULSO_MINIMO && ultimo.valor <= PULSO_MAXIMO;
 
   return (
-    <main className="mainBody text-[#16222C]">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody text-[#16222C]">
       <VueltaAtras titulo="Mi corazón" seccion="Mi salud" compacto />
 
       <div className="mx-auto flex w-full max-w-xl flex-col gap-4 pb-32">
@@ -75,7 +73,7 @@ export default function DetallePulsoAdulto() {
         {!cargando && !sinAdulto && (
           <>
             <section aria-label="Valor actual del pulso" className="flex flex-col gap-3.5 rounded-[28px] bg-white p-5 shadow-md">
-              <div className="flex items-end gap-2.5 whitespace-nowrap">
+              <div className="flex flex-wrap items-end gap-2.5">
                 <p className="text-6xl font-bold leading-none">{ultimo ? Math.round(ultimo.valor) : "—"}</p>
                 <p className="pb-1 text-xl text-[#435059]">lpm</p>
               </div>

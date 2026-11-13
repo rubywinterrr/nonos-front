@@ -4,7 +4,6 @@ import { useAuth } from "../../../hooks/useAuth";
 import { medicionesService, type Medicion } from "../../../services/medicionesService";
 import { idDelAdultoQueSeMira } from "../../../utils/adultoQueSeMira";
 import { hora } from "../../../utils/formatoSignos";
-import Header from "../../../components/Header";
 import VueltaAtras from "../../../components/vueltaAtras";
 
 const DIA_MS = 24 * 60 * 60 * 1000;
@@ -58,8 +57,7 @@ export default function DetalleSuenoAdulto() {
   const horaDespertar = ultima ? hora(new Date(new Date(ultima.timestamp).getTime() + ultima.valor * 60_000).toISOString()) : null;
 
   return (
-    <main className="mainBody text-[#16222C]">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody text-[#16222C]">
       <VueltaAtras titulo="Mi descanso" seccion="Mi salud" compacto />
       <div className="mx-auto flex w-full max-w-xl flex-col gap-4 pb-32">
         {cargando && <p role="status" className="text-center text-[#435059]">Cargando tus datos de sueño…</p>}
@@ -68,11 +66,11 @@ export default function DetalleSuenoAdulto() {
         {!cargando && !sinAdulto && (
           <>
             <section aria-label="Duración del descanso" className="flex flex-col gap-3.5 rounded-[28px] bg-white p-5 shadow-md">
-              <div className="flex items-end gap-2.5 whitespace-nowrap">
+              <div className="flex flex-wrap items-end gap-2.5">
                 <p className="text-6xl font-bold leading-none">{ultima ? `${Math.floor(totalMinutos / 60)} h ${String(totalMinutos % 60).padStart(2, "0")}` : "—"}</p>
                 <p className="pb-1 text-xl text-[#435059]">de sueño</p>
               </div>
-              <div role="progressbar" aria-label="Progreso hacia ocho horas de descanso" aria-valuemin={0} aria-valuemax={META_SUENO} aria-valuenow={Math.min(totalMinutos, META_SUENO)} className="h-4 w-full overflow-hidden rounded-full bg-[#E7EDFB]">
+              <div role="progressbar" aria-label="Progreso hacia ocho horas de descanso" aria-valuemin={0} aria-valuemax={META_SUENO} aria-valuenow={Math.min(totalMinutos, META_SUENO)} aria-valuetext={`${totalMinutos} minutos de una meta de ${META_SUENO} minutos`} className="h-4 w-full overflow-hidden rounded-full bg-[#E7EDFB]">
                 <div aria-hidden="true" className="h-full rounded-full bg-[#144BD3] transition-[width] duration-500" style={{ width: `${progreso}%` }} />
               </div>
             </section>

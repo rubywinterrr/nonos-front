@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import MiPerfil from "../../components/MiPerfil";
 import CambiarPassword from "../../components/CambiarPassword";
@@ -13,7 +12,6 @@ import { usuarioService, type Vinculo } from "../../services/usuariosService";
 import { etiquetaRolVinculo } from "../../utils/etiquetaRol";
 import {
   LuCircleDot,
-  LuChevronRight,
   LuLanguages,
   LuLogOut,
   LuMail,
@@ -95,8 +93,7 @@ export default function PagCuenta() {
   };
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <VueltaAtras titulo="Mi cuenta" compacto seccion="Mi cuenta" />
 
       <div className="mx-auto flex w-full max-w-lg flex-col gap-3.5">
@@ -119,11 +116,11 @@ export default function PagCuenta() {
 
           <dl className="flex flex-col gap-2 pt-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <LuMail aria-hidden="true" className="size-4 shrink-0 text-[#1550E0]" />
+              <dt><span className="sr-only">Correo electrónico</span><LuMail aria-hidden="true" className="size-4 shrink-0 text-[#1550E0]" /></dt>
               <dd className="min-w-0 break-all text-base font-semibold leading-6 text-[#16222C]">{usuario?.email ?? "Sin correo registrado"}</dd>
             </div>
             <div className="flex items-center gap-2.5">
-              <LuPhone aria-hidden="true" className="size-4 shrink-0 text-[#1550E0]" />
+              <dt><span className="sr-only">Teléfono</span><LuPhone aria-hidden="true" className="size-4 shrink-0 text-[#1550E0]" /></dt>
               <dd className="text-base font-semibold leading-6 text-[#16222C]">{usuario?.telefono || "Sin teléfono registrado"}</dd>
             </div>
           </dl>
@@ -192,15 +189,15 @@ export default function PagCuenta() {
           </section>
         )}
 
-        <button type="button" className="flex min-h-13 w-full cursor-pointer items-center justify-between rounded-2xl border border-[#D7DFE6] bg-white px-4 text-base transition-colors hover:bg-[#F3F7FC] active:bg-[#E7EDFB] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
+        <div className="flex min-h-13 w-full items-center justify-between rounded-2xl border border-[#D7DFE6] bg-white px-4 text-base transition-colors">
           <span className="flex items-center gap-2 font-semibold text-[#16222C]"><LuLanguages aria-hidden="true" className="size-4" /> Idioma</span>
-          <span className="flex items-center gap-1 text-[#435059]">Español <LuChevronRight aria-hidden="true" className="size-4" /></span>
-        </button>
+          <span className="flex items-center gap-1 text-[#435059]">Español</span>
+        </div>
 
-        <button type="button" aria-expanded={cambiandoPassword} onClick={() => setCambiandoPassword(!cambiandoPassword)} className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#D7DFE6] bg-white px-4 text-lg font-bold text-[#0049CC] transition-colors hover:bg-[#E7EDFB] active:bg-[#D7DFE6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
+        <button type="button" id="abrir-cambiar-password" aria-expanded={cambiandoPassword} aria-controls={cambiandoPassword ? "cambiar-password" : undefined} onClick={() => setCambiandoPassword(!cambiandoPassword)} className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#D7DFE6] bg-white px-4 text-lg font-bold text-[#0049CC] transition-colors hover:bg-[#E7EDFB] active:bg-[#D7DFE6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]">
           <LuPencil aria-hidden="true" className="size-4" /> Cambiar mi contraseña
         </button>
-        {cambiandoPassword && <CambiarPassword onCerrar={() => setCambiandoPassword(false)} />}
+        {cambiandoPassword && <CambiarPassword onCerrar={() => { setCambiandoPassword(false); document.getElementById("abrir-cambiar-password")?.focus(); }} />}
 
         {esAdulto && contactoApoyo && (
           <aside className="flex w-full items-start gap-3 rounded-2xl border border-[#BAEDD3] bg-[#E9EEF2] p-4">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { MdDirectionsWalk } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
 import { medicionesService, type Medicion } from "../../services/medicionesService";
@@ -7,6 +7,7 @@ import { DIA_MS, claveDelDia, diaCorto, diasDelPeriodo, ultimosDias } from "../.
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
 import GloboGrafico from "../../components/GloboGrafico";
+import DatosDelGrafico from "../../components/DatosDelGrafico";
 
 // meta de pasos diaria (fija hasta que el back permita guardarla por persona)
 const META_PASOS = 3000;
@@ -109,6 +110,11 @@ export default function DetallePasos() {
     if (barraElegida !== null && barra.clave === barraElegida) indiceMostrado = i;
   });
   if (indiceMostrado === -1 && masActiva) indiceMostrado = barras.indexOf(masActiva);
+  const elegirPorPosicion = (evento: MouseEvent<HTMLDivElement>) => {
+    const { left, width } = evento.currentTarget.getBoundingClientRect();
+    const indice = Math.min(barras.length - 1, Math.max(0, Math.floor((evento.clientX - left) * barras.length / width)));
+    if (barras[indice]) setBarraElegida(barras[indice].clave);
+  };
   const barraMostrada = indiceMostrado >= 0 ? barras[indiceMostrado] : null;
   const alturaMostrada = barraMostrada && maximo > 0 ? Math.max(2, (barraMostrada.pasos / maximo) * 100) : 2;
   // hora actual, para la línea "Ahora" del gráfico de hoy
@@ -175,16 +181,16 @@ export default function DetallePasos() {
           <>
             {/* barras: la altura de cada una es su porcentaje respecto de la más alta */}
             <div className="relative mt-12">
-              <div role="group" aria-label={esHoy ? "Pasos por hora de hoy" : `Pasos por día de los últimos ${dias} días`} className="flex h-40 items-end gap-0.5 border-b border-[#D4E4F3]">
+              <div
+                aria-hidden="true"
+                className="flex h-40 cursor-pointer items-end gap-0.5 border-b border-[#D4E4F3]"
+                onPointerMove={(evento) => { if (evento.pointerType === "mouse") elegirPorPosicion(evento); }}
+                onClick={elegirPorPosicion}
+              >
                 {barras.map((barra, i) => (
-                  <button
-                    type="button"
+                  <span
                     key={barra.clave}
-                    aria-label={`${barra.etiqueta}: ${barra.pasos} pasos`}
-                    aria-pressed={i === indiceMostrado}
-                    onClick={() => setBarraElegida(barra.clave)}
-                    onPointerEnter={() => setBarraElegida(barra.clave)}
-                    className={`min-w-0 flex-1 cursor-pointer rounded-t ${i === indiceMostrado ? "bg-[#1550E0]" : "bg-[#B9D2FF] hover:bg-[#93B8F5]"}`}
+                    className={`min-w-0 flex-1 rounded-t ${i === indiceMostrado ? "bg-[#1550E0]" : "bg-[#B9D2FF]"}`}
                     style={{ height: `${maximo > 0 ? Math.max(2, (barra.pasos / maximo) * 100) : 2}%` }}
                   />
                 ))}
@@ -213,6 +219,7 @@ export default function DetallePasos() {
               ))}
             </div>
             <p className="text-xs text-[#424656]">Tocá una barra para ver sus pasos.</p>
+            <DatosDelGrafico periodo={esHoy ? "Hora" : "Día"} medida="Pasos" filas={barras.map((barra) => ({ etiqueta: esHoy ? `${barra.etiqueta} h` : diaCorto(barra.fecha), valor: barra.pasos.toLocaleString("es-AR") }))} />
           </>
         )}
       </section>

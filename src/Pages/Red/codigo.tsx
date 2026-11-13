@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import VueltaAtras from "../../components/vueltaAtras";
-import Header from "../../components/Header";
 import {
   LuCircleHelp,
   LuClipboard,
@@ -136,8 +135,7 @@ export default function CodigoEmergencia() {
   if (vigente) textoCodigo = codigoConGuion(qr.codigo);
 
   return (
-    <main className="mainBody gap-4">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Código de emergencia" compacto />
 
@@ -178,10 +176,11 @@ export default function CodigoEmergencia() {
           </div>
 
           <p className="mt-5 text-center text-sm font-semibold leading-5">
-            Se debe scanear el QR de la pulsera e ingresá este código:
+            Escaneá el QR de la pulsera e ingresá este código:
           </p>
           <p className="mt-5 rounded-lg bg-[#E7EDFB] px-4 py-5 text-center text-3xl font-bold tracking-widest text-[#143C94]">
-            {textoCodigo}
+            <span aria-hidden="true">{textoCodigo}</span>
+            <span className="sr-only">{vigente ? `Código de emergencia: ${Array.from(qr.codigo).join(", ")}.` : cargando ? "Cargando código…" : "No hay un código activo."}</span>
           </p>
           {!cargando && !qr && (
             <p className="mt-3 text-center text-xs leading-4 text-[#E7EDFB]">
@@ -204,7 +203,8 @@ export default function CodigoEmergencia() {
               aria-label="Tiempo restante del código"
               aria-valuemin={0}
               aria-valuemax={DURACION_CODIGO}
-              aria-valuenow={segundosRestantes}
+              aria-valuenow={Math.min(segundosRestantes, DURACION_CODIGO)}
+              aria-valuetext={`${minutos} minutos y ${segundos} segundos`}
               className="relative mt-2 h-2 w-full overflow-hidden rounded-full bg-linear-to-r from-red-500 to-green-500"
             >
               <div

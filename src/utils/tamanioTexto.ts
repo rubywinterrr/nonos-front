@@ -15,11 +15,11 @@ export function leerTamanioGuardado(): TamanioTexto {
 // cambia el tamaño de letra de toda la app y lo guarda para la próxima vez
 export function aplicarTamanioTexto(tamanio: TamanioTexto) {
   if (tamanio === "normal") {
-    document.documentElement.style.fontSize = "15px";
+    document.documentElement.style.fontSize = "93.75%";
   } else if (tamanio === "grande") {
-    document.documentElement.style.fontSize = "16px";
+    document.documentElement.style.fontSize = "100%";
   } else if (tamanio === "muy_grande") {
-    document.documentElement.style.fontSize = "17px";
+    document.documentElement.style.fontSize = "106.25%";
   }
   localStorage.setItem(CLAVE_TAMANIO, tamanio);
 }

@@ -1,9 +1,8 @@
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type CodigoQR } from "../../services/usuariosService";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import {
   MdQrCodeScanner,
@@ -21,6 +20,8 @@ const TIMER_DURATION_SECONDS = 30 * 60;
 export default function Codigo() {
   const { usuario } = useAuth();
   const emergencyCardRef = useRef<HTMLDivElement>(null);
+  const abrirPantallaCompleta = useRef<HTMLButtonElement>(null);
+  const salirPantallaCompleta = useRef<HTMLButtonElement>(null);
   const [ahora, setAhora] = useState(() => Date.now());
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [codigo, setCodigo] = useState<CodigoQR | null>(null);
@@ -60,14 +61,39 @@ export default function Codigo() {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isFullscreen) return;
+    const tarjeta = document.getElementById("tarjeta-codigo-emergencia");
+    const disparador = abrirPantallaCompleta.current;
+    if (!tarjeta) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    // También funciona en navegadores sin API de pantalla completa.
+    const apartados: HTMLElement[] = [];
+    for (let actual: HTMLElement | null = tarjeta; actual?.parentElement && actual !== document.body; actual = actual.parentElement) {
+      for (const hermano of actual.parentElement.children) {
+        if (hermano instanceof HTMLElement && hermano !== actual && !hermano.inert) {
+          hermano.inert = true;
+          apartados.push(hermano);
+        }
+      }
+    }
+    salirPantallaCompleta.current?.focus();
+    const cerrarConEscape = (evento: KeyboardEvent) => {
+      if (evento.key === "Escape" && document.fullscreenElement !== tarjeta) {
+        evento.preventDefault();
+        setIsFullscreen(false);
+      }
+    };
+    document.addEventListener("keydown", cerrarConEscape);
+
     return () => {
+      document.removeEventListener("keydown", cerrarConEscape);
+      for (const apartado of apartados) apartado.inert = false;
       document.body.style.overflow = previousOverflow;
+      disparador?.focus({ preventScroll: true });
     };
   }, [isFullscreen]);
 
@@ -183,26 +209,30 @@ export default function Codigo() {
 
   return (
     <>
-      <main className="mainBody gap-7">
-        <Header />
-        <div className="flex flex-col gap-3">
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-7">
+        <div className="flex w-full flex-col gap-3">
           <VueltaAtras titulo="Código de emergencia" />
-          <h1 className="bg-gray-200 font-semibold text-md text-gray-500 p-3 rounded-full h-10 flex gap-2 items-center w-fit">
+          <p className="bg-gray-200 font-semibold text-md text-gray-700 p-3 rounded-full min-h-10 flex gap-2 items-center w-fit">
             <IoAlertCircle className="text-xl" />
             EMERGENCIA ACTIVA
-          </h1>
+          </p>
         </div>
         <section className="w-full flex flex-col lg:flex-row justify-center gap-5 items-center lg:gap-0">
           <div
             ref={emergencyCardRef}
-            className={`emergency-code-card bg-black rounded-2xl lg:w-60/100 flex flex-col items-center gap-10 w-full p-7 ${isFullscreen ? "is-fullscreen" : ""}`}
+            id="tarjeta-codigo-emergencia"
+            role={isFullscreen ? "dialog" : undefined}
+            aria-modal={isFullscreen || undefined}
+            aria-label={isFullscreen ? "Código de emergencia en pantalla completa" : undefined}
+            className={`emergency-code-card bg-black rounded-2xl lg:w-60/100 flex flex-col items-center gap-10 w-full p-[min(1.75rem,28px)] ${isFullscreen ? "is-fullscreen" : ""}`}
           >
             {isFullscreen && (
               <button
+                ref={salirPantallaCompleta}
                 type="button"
                 onClick={() => void toggleFullscreen()}
                 aria-label="Salir de pantalla completa"
-                className="self-end text-white bg-[#1A1A1A] rounded-full p-2"
+                className="flex size-11 shrink-0 items-center justify-center self-end rounded-full bg-[#1A1A1A] text-white"
               >
                 <MdFullscreenExit className="text-2xl" />
               </button>
@@ -211,17 +241,23 @@ export default function Codigo() {
               <div className="bg-[#1A1A1A] p-4 rounded-full h-16 w-16 text-4xl flex items-center justify-center text-white">
                 <MdQrCodeScanner />
               </div>
-              <h1 className="font-semibold text-white text-2xl text-center">
+              <h2 className="font-semibold text-white text-2xl text-center">
                 Escaneá el QR de tu pulsera e ingresá este código:
-              </h1>
+              </h2>
             </div>
             <div className="w-full flex flex-col gap-7">
-              <div className="bg-white rounded-xl text-5xl text-black p-10 w-full text-center">
-                {loading && "..."}
-                {error && <span className="text-red-700 text-xl">{error}</span>}
-                {vigente && codigo?.codigo}
-                {vencido && <p className="text-xl">Tu código venció.</p>}
-                {apagado && <p className="text-xl">Tu código está apagado.</p>}
+              <div className="bg-white rounded-xl text-5xl text-black px-4 py-10 sm:px-10 w-full text-center">
+                {loading && <p role="status" className="text-xl">Cargando código…</p>}
+                {error && <p role="alert" className="text-red-800 text-xl">{error}</p>}
+                <p role="status" className="empty:hidden">
+                  {vigente && codigo ? (
+                    <>
+                      <span className="break-all" aria-hidden="true">{codigo.codigo}</span>
+                      <span className="sr-only">Código de emergencia: {Array.from(codigo.codigo).join(", ")}.</span>
+                    </>
+                  ) : vencido ? <span className="text-xl">Tu código venció.</span>
+                    : apagado ? <span className="text-xl">Tu código está apagado.</span> : null}
+                </p>
                 {(vencido || apagado) && !loading && (
                   <button
                     type="button"
@@ -242,11 +278,11 @@ export default function Codigo() {
                 )}
               </div>
               <div className="border-gray-700 border bg-[#101A21] w-full gap-5 min-h-40 rounded-2xl flex flex-col p-6">
-                <div className="flex w-full justify-between">
-                  <h1 className="flex items-center text-white gap-2">
+                <div className="flex w-full flex-wrap justify-between gap-2">
+                  <p className="flex items-center text-white gap-2">
                     <MdOutlineTimer className="text-[#E8491D] text-3xl" />
                     Vence en:
-                  </h1>
+                  </p>
                   <p className="text-[#E8491D] tabular-nums">
                     {minutes} min {String(seconds).padStart(2, "0")} s
                   </p>
@@ -257,22 +293,26 @@ export default function Codigo() {
                   aria-label="Tiempo restante del código"
                   aria-valuemin={0}
                   aria-valuemax={TIMER_DURATION_SECONDS}
-                  aria-valuenow={secondsRemaining}
+                  aria-valuenow={Math.min(secondsRemaining, TIMER_DURATION_SECONDS)}
+                  aria-valuetext={`${minutes} minutos y ${seconds} segundos`}
                 >
                   <div
                     className="absolute inset-y-0 right-0 bg-gray-700 transition-[width] duration-1000"
                     style={{ width: `${100 - progress}%` }}
                   />
                 </div>
-                <h2 className="text-white">
+                <p className="text-white">
                   Este código temporal se renueva cada 30 minutos por seguridad.
-                </h2>
+                </p>
               </div>
             </div>
           </div>
           <div className="w-full flex flex-col items-center justify-center gap-5">
             <button
+              ref={abrirPantallaCompleta}
               type="button"
+              aria-controls="tarjeta-codigo-emergencia"
+              aria-haspopup="dialog"
               onClick={() => void toggleFullscreen()}
               className="w-full min-h-12 lg:w-80/100 bg-[#DEE3EB] rounded-xl text-lg flex items-center justify-center gap-2 p-1 cursor-pointer"
             >
@@ -290,7 +330,7 @@ export default function Codigo() {
             {codigo && (
               <div className="w-full lg:w-80/100 bg-white rounded-xl flex flex-col items-center gap-3 p-5 text-center">
                 <h2 className="text-lg font-semibold">QR de tu pulsera</h2>
-                <QRCodeSVG value={`${window.location.origin}/emergencia/${codigo.id}`} size={180} level="M" title="QR de la pulsera" />
+                <QRCodeSVG value={`${window.location.origin}/emergencia/${codigo.id}`} size={180} className="h-auto max-w-full" level="M" title="QR de la pulsera" />
                 <p className="text-sm text-gray-600">Este es el código que va grabado en tu pulsera. El médico lo escanea y después escribe los 6 números.</p>
               </div>
             )}
@@ -314,9 +354,9 @@ export default function Codigo() {
                 <GoQuestion className="text-3xl mt-4 text-gray-600"></GoQuestion>
               </div>
               <div className="flex flex-col justify-center items-center max-w-80/100 h-full gap-2 ">
-                <h1 className="font-semibold w-full">
+                <h2 className="font-semibold w-full">
                   ¿Cómo funciona la pulsera?
-                </h1>
+                </h2>
                 <p className="text-gray-600 text-sm w-full">
                   Cualquier ambulancia o profesional de la salud puede apuntar
                   con su teléfono al código QR grabado en tu muñeca e ingresar

@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import { RxCross2 } from "react-icons/rx";
 import {
   MdOutlinePhone,
@@ -86,35 +85,34 @@ export default function SOS() {
 
   return (
     <>
-      <main className="mainBody gap-7">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-7">
         <section className="w-full flex flex-col lg:flex-row items-baseline gap-3 lg:items-center lg:gap-25">
           <section className="w-full flex flex-col lg:w-50/100 gap-8">
             <VueltaAtras titulo="Estado de alerta" />
             <div className="w-full flex justify-center items-center">
-              <h1 className="bg-[#D6E0F1] rounded-full w-65/100 xl:w-45/100 h-10 flex justify-center items-center text-1xl font-semibold shadow-lg gap-3">
+              <p className="bg-[#D6E0F1] rounded-full w-fit min-h-10 px-3 text-center flex justify-center items-center text-1xl font-semibold shadow-lg gap-3">
                 <FaCheckCircle className="text-xl" />
                 EMERGENCIA ENVIADA
-              </h1>
+              </p>
             </div>
             <div className="w-full flex flex-col justify-center items-center">
               <div className="flex flex-col items-center justify-center w-80/100 gap-3">
                 <div className="flex items-center justify-center bg-red-200 rounded-full h-20 aspect-square text-red-800 text-5xl">
                   <MdNotificationsActive />
                 </div>
-                <h1 className="text-2xl font-semibold">Ya pediste ayuda</h1>
-                <p className="font-semibold text-xl text-gray-500 text-center">
-                  Avisamos a {nombresFormateados}
+                <h2 className="text-2xl font-semibold">Ya pediste ayuda</h2>
+                <p role="status" className="font-semibold text-xl text-gray-700 text-center">
+                  {loading ? "Cargando los contactos de tu red…" : error ? "" : nombresFormateados ? `Avisamos a ${nombresFormateados}` : "No hay contactos vinculados para avisar."}
                 </p>
               </div>
             </div>
             <div className="w-full p-5 gap-5 flex flex-col rounded-2xl bg-white">
               <div className="bg-white shadow-lg rounded-2xl min-h-40 w-full flex flex-col items-center gap-3 p-5">
-                <div className="flex justify-between items-center w-full">
-                  <h1 className="font-semibold text-lg flex items-center">
+                <div className="flex flex-wrap justify-between items-center gap-2 w-full">
+                  <h2 className="font-semibold text-lg flex items-center">
                     <MdOutlinePeopleAlt className="mr-2 size-6 text-blue-800" />
                     Contactos notificados
-                  </h1>
+                  </h2>
                   <p className="text-blue-800 bg-blue-50 border border-blue-100 p-1 px-3 text-xs rounded-full font-semibold ">
                     {vinculos.length} de {vinculos.length}
                   </p>
@@ -122,18 +120,17 @@ export default function SOS() {
                 <div className="w-full">
                   <div className="border-t border-gray-200 w-full rounded-full"></div>
                 </div>
-                <ol className="w-full flex flex-col gap-2 p-3 lg:flex-row flex-wrap">
-                  {loading && <p>Cargando contactos...</p>}
-                  {error && <p className="text-red-600">{error}</p>}
+                {error && <p role="alert" className="text-red-800">{error}</p>}
+                <ul className="w-full flex flex-col gap-2 p-3 lg:flex-row flex-wrap">
                   {vinculos.map((vinculo) => (
                     <li
                       key={vinculo.id}
-                      className="bg-[#EFF4FC] rounded-lg h-20 w-full p-3 lg:w-49/100"
+                      className="bg-[#EFF4FC] rounded-lg min-h-20 w-full p-3 lg:w-49/100"
                     >
                       {vinculo.familiar.nombreCompleto}
                     </li>
                   ))}
-                </ol>
+                </ul>
               </div>
               <div className="bg-blue-50 border border-blue-100 rounded-2xl min-h-18 w-full flex gap-3 justify-start items-start p-5">
                 <MdOutlineShield className="size-12 md:size-10 lg:size-8 p-1.5 text-blue-800 rounded-full bg-blue-100" />
@@ -146,20 +143,16 @@ export default function SOS() {
           </section>
           <section className="w-full flex flex-col  lg:w-40/100 gap-10 lg:gap-25 lg:mt-10">
             <div className="flex flex-col gap-3 w-full">
-              <a
-                href="tel:+5491130285858"
-                className="bg-red-600 rounded-2xl w-full  h-18 flex items-center justify-center text-lg p-5 gap-3 text-white font-semibold cursor-pointer"
-              >
-                {" "}
-                <MdOutlinePhone className="text-3xl" /> Llamar al 107
-                (Emergencias Médicas)
-              </a>
+              <p className="bg-red-600 rounded-2xl w-full min-h-18 flex items-center justify-center text-center text-lg p-[min(1.25rem,20px)] gap-3 text-white font-semibold">
+                <MdOutlinePhone aria-hidden="true" className="text-3xl" />
+                Emergencias médicas: 107
+              </p>
               <button
                 type="button"
                 onClick={cancelarSOS}
                 disabled={cancelando}
                 aria-busy={cancelando}
-                className="bg-[#E9EEF6] rounded-2xl w-full  h-18 flex items-center justify-center text-lg p-5 gap-3 font-semibold cursor-pointer hover:bg-[#DCE3EE] active:bg-[#CBD5E3] disabled:cursor-wait disabled:opacity-60"
+                className="bg-[#E9EEF6] rounded-2xl w-full min-h-18 flex items-center justify-center text-center text-lg p-[min(1.25rem,20px)] gap-3 font-semibold cursor-pointer hover:bg-[#DCE3EE] active:bg-[#CBD5E3] disabled:cursor-wait disabled:opacity-60"
               >
                 {" "}
                 <RxCross2 className="text-3xl" />

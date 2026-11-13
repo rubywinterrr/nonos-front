@@ -1,12 +1,14 @@
 import { useEffect, useRef } from "react";
 
 interface Props {
+  etiqueta: string;
   placeholder?: string;
   editable: boolean;
   value: string;
   onChange: (texto: string) => void;
 }
 export default function InputCuidados({
+  etiqueta,
   placeholder = "Escriba aquí.",
   editable,
   value,
@@ -23,6 +25,7 @@ export default function InputCuidados({
   return (
     <textarea
       ref={textareaRef}
+      aria-label={etiqueta}
       readOnly={!editable}
       value={value}
       onChange={(e) => onChange(e.target.value)}

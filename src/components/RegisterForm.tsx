@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { authService } from "../services/authService";
 import rutaSegunRol from "../utils/rutaSegunRol";
@@ -25,6 +25,9 @@ export default function RegisterForm() {
 
   const [opcionRol, setOpcionRol] = useState("");
   const [tipoCuidador, setTipoCuidador] = useState("");
+  const [passwordInvalida, setPasswordInvalida] = useState(false);
+  const primerRol = useRef<HTMLButtonElement>(null);
+  const primeraModalidad = useRef<HTMLButtonElement>(null);
 
   const passwordRequirements = [
     { label: "Mínimo 8 caracteres", met: password.length >= 8 },
@@ -39,15 +42,19 @@ export default function RegisterForm() {
   const handleRegister = async () => {
     setError("");
     if (!passwordRequirements.every((requirement) => requirement.met)) {
+      setPasswordInvalida(true);
       setError("La contraseña no cumple todos los requisitos.");
+      document.getElementById("register-password")?.focus();
       return;
     }
     if (!opcionRol) {
       setError("Por favor, selecciona un rol para continuar.");
+      primerRol.current?.focus();
       return;
     }
     if (opcionRol === "Cuidador" && !tipoCuidador) {
       setError("Por favor, especifica el tipo de cuidador.");
+      primeraModalidad.current?.focus();
       return;
     }
 
@@ -82,29 +89,37 @@ export default function RegisterForm() {
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <label className="text-lg flex items-center gap-2">
-            <FaUser />
+          <label htmlFor="register-nombre" className="text-lg flex items-center gap-2">
+            <FaUser aria-hidden="true" />
             Nombre completo
-            <span className="font-bold text-red-500">*</span>
+            <span aria-hidden="true" className="font-bold text-red-700">*</span>
           </label>
           <input
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
+            id="register-nombre"
+            name="name"
+            autoComplete="name"
+            aria-describedby="register-nombre-ayuda"
             placeholder="Ej: Juan Carlos Cruz"
             value={nombreCompleto}
             onChange={(e) => setNombreCompleto(e.target.value)}
             required
           />
-          <span className="text-xs text-gray-500">
+          <span id="register-nombre-ayuda" className="text-xs text-gray-700">
             Ingrese su nombre completo.
           </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <label className="text-lg flex items-center gap-2">
-            <MdMailOutline />
+          <label htmlFor="register-email" className="text-lg flex items-center gap-2">
+            <MdMailOutline aria-hidden="true" />
             Correo electrónico
-            <span className="font-bold text-red-500">*</span>
+            <span aria-hidden="true" className="font-bold text-red-700">*</span>
           </label>
           <input
+            id="register-email"
+            name="email"
+            autoComplete="username"
+            aria-describedby="register-email-ayuda"
             type="email"
             value={email}
             required
@@ -112,72 +127,60 @@ export default function RegisterForm() {
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: nonos@gmail.com"
           />
-          <span className="text-xs text-gray-500">
-            Solo el correo. Sin espacios ni guiones.
+          <span id="register-email-ayuda" className="text-xs text-gray-700">
+            Ingresá tu correo electrónico completo, sin espacios.
           </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
-          <label className="text-lg flex items-center gap-2">
-            <MdLock />
+          <label htmlFor="register-password" className="text-lg flex items-center gap-2">
+            <MdLock aria-hidden="true" />
             Contraseña
-            <span className="font-bold text-red-500">*</span>
+            <span aria-hidden="true" className="font-bold text-red-700">*</span>
           </label>
           <PasswordInput
+            id="register-password"
             value={password}
-            onChange={setPassword}
+            onChange={(valor) => { setPassword(valor); setPasswordInvalida(false); }}
+            autoComplete="new-password"
+            descripcion="register-password-requisitos"
+            invalida={passwordInvalida}
             placeholder="Ej: Nonos1234!"
           />
-          <span className="text-xs text-gray-500">
-            La contraseña debe contener:
-          </span>
-          {password.length === 0 ? (
-            <>
-              <span className="text-xs text-gray-500">Mínimo 8 caracteres</span>
-              <span className="text-xs text-gray-500">
-                Mínimo 8 caracteres
-              </span>
-              <span className="text-xs text-gray-500">
-                Al menos una mayúscula
-              </span>
-              <span className="text-xs text-gray-500">
-                Al menos un caracter especial (! @ # $ % & * ? etc.)
-              </span>
-            </>
-          ) : (
-            <ul className="flex flex-col gap-1" aria-live="polite">
+          <div id="register-password-requisitos" className="flex flex-col gap-1">
+            <p className="text-xs text-gray-700">La contraseña debe contener:</p>
+            <ul className="flex flex-col gap-1">
               {passwordRequirements.map((requirement) => (
                 <li
                   key={requirement.label}
-                  className={`flex items-center gap-1 text-xs ${requirement.met ? "text-green-700" : "text-red-600"}`}
+                  className={`flex items-center gap-1 text-xs ${!password ? "text-gray-700" : requirement.met ? "text-green-800" : "text-red-800"}`}
                 >
-                  {requirement.met ? (
-                    <MdCheckCircle aria-hidden="true" />
-                  ) : (
-                    <MdCancel aria-hidden="true" />
-                  )}
+                  {password && (requirement.met ? <MdCheckCircle aria-hidden="true" /> : <MdCancel aria-hidden="true" />)}
+                  {password && <span className="sr-only">{requirement.met ? "Cumplido: " : "Pendiente: "}</span>}
                   {requirement.label}
                 </li>
               ))}
             </ul>
-          )}
+          </div>
         </div>
         <div className="flex flex-col gap-5 mt-2 w-80/100 ">
           <div className="flex flex-col gap-1">
             <div className="flex flex-col gap-1">
-              <label className="text-lg font-bold">
+              <p id="register-rol" className="text-lg font-bold">
                 Selecciona tu rol{" "}
-                <span className="font-bold text-red-500">*</span>
-              </label>
-              <span className="text-sm text-gray-500">
+                <span aria-hidden="true" className="font-bold text-red-700">*</span>
+              </p>
+              <span className="text-sm text-gray-700">
                 Elegí en función de tu usuario
               </span>
             </div>
 
-            <div className="flex flex-row justify-between gap-2 mt-2">
+            <div role="group" aria-labelledby="register-rol" className="flex flex-wrap justify-between gap-2 mt-2">
               {["Adulto mayor", "Familiar", "Cuidador"].map((opcion) => (
                 <button
                   type="button"
                   key={opcion}
+                  ref={opcion === "Adulto mayor" ? primerRol : undefined}
+                  aria-pressed={opcionRol === opcion}
                   onClick={() => setOpcionRol(opcion)}
                   className={`flex-1 p-3 border rounded-lg cursor-pointer text-center font-bold text-sm transition-all ${opcionRol === opcion
                     ? "border-black bg-gray-300 text-black shadow-inner"
@@ -192,23 +195,25 @@ export default function RegisterForm() {
           {opcionRol === "Cuidador" && (
             <div className="flex flex-col gap-5 w-full">
               <div>
-                <p className="font-bold text-lg text-gray-800">
+                <p id="register-modalidad" className="font-bold text-lg text-gray-800">
                   En el caso de ser cuidador
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-700">
                   Especifique su rol específico
                 </p>
               </div>
-              <div className="flex justify-around">
+              <div role="group" aria-labelledby="register-modalidad" className="flex flex-wrap justify-around gap-2">
                 {["Cuidador Físico", "Cuidador Digital"].map((tipo) => (
                   <button
-                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm w-40/100  ${tipoCuidador === tipo
+                    className={`border rounded-lg p-2 cursor-pointer font-semibold text-sm min-w-fit w-40/100  ${tipoCuidador === tipo
                       ? "bg-gray-300"
                       : "hover:bg-gray-100 bg-white"
                       }`}
                     onClick={() => setTipoCuidador(tipo)}
                     type="button"
                     key={tipo}
+                    ref={tipo === "Cuidador Físico" ? primeraModalidad : undefined}
+                    aria-pressed={tipoCuidador === tipo}
                   >
                     {tipo}
                   </button>
@@ -222,13 +227,13 @@ export default function RegisterForm() {
           type="submit"
           disabled={cargando}
         >
-          <p className="flex gap-3 items-center text-md transition-none!">
+          <span className="flex gap-3 items-center text-md transition-none!">
             {" "}
-            <MdLogin />
-            {cargando ? "Entrando..." : "Ingresar"}
-          </p>
+            <MdLogin aria-hidden="true" />
+            {cargando ? "Entrando..." : "Registrarme"}
+          </span>
         </button>
-        {error && <p className="text-red-600 text-sm">{error}</p>}{" "}
+        <p role="alert" className={error ? "text-red-800 text-sm" : "sr-only"}>{error}</p>
       </form>
     </>
   );

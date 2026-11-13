@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import MiPerfil from "../../components/MiPerfil";
 import CambiarPassword from "../../components/CambiarPassword";
@@ -7,7 +6,6 @@ import tiempoDesde from "../../utils/tiempoDesde";
 import { useAuth } from "../../hooks/useAuth";
 import calcularEdad from "../../utils/calcularEdad";
 import {
-  LuChevronRight,
   LuGlobe,
   LuLockKeyhole,
   LuLogOut,
@@ -54,8 +52,7 @@ export default function CuentaFamilia() {
   if (adultos.some((a) => a.id === elegido)) idTitular = elegido;
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Mi cuenta" compacto />
 
@@ -143,7 +140,7 @@ export default function CuentaFamilia() {
               {adultos.length} {adultos.length === 1 ? "asignado" : "asignados"}
             </span>
           </div>
-          {cargando && <p className="text-center text-sm text-[#435059]">Cargando…</p>}
+          {cargando && <p role="status" className="text-center text-sm text-[#435059]">Cargando…</p>}
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
           {!cargando && !error && adultos.length === 0 && (
             <p className="rounded-2xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>
@@ -240,35 +237,30 @@ export default function CuentaFamilia() {
             </p>
             <button
               type="button"
-              aria-expanded={cambiandoPassword}
+              id="abrir-cambiar-password" aria-expanded={cambiandoPassword} aria-controls={cambiandoPassword ? "cambiar-password" : undefined}
               onClick={() => setCambiandoPassword(!cambiandoPassword)}
               className="mt-2 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#9DAFBE] bg-white px-3 text-xs font-bold text-[#1550E0] hover:bg-[#E7EDFB] active:border-[#1550E0] active:bg-[#B7C8F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
               <LuPencil aria-hidden="true" className="size-4" /> Restablecer mi
               contraseña
             </button>
-            {cambiandoPassword && <CambiarPassword onCerrar={() => setCambiandoPassword(false)} />}
+            {cambiandoPassword && <CambiarPassword onCerrar={() => { setCambiandoPassword(false); document.getElementById("abrir-cambiar-password")?.focus(); }} />}
           </article>
         </section>
 
         {/* agregado (no está en el Figma): editar mis datos, cerrar todas las sesiones y dar de baja la cuenta */}
         <MiPerfil />
 
-        <button
-          type="button"
-          className="flex min-h-12 w-full cursor-pointer items-center justify-between rounded-2xl border border-[#D7DFE6] bg-white px-4 text-xs hover:bg-[#E9EEF2] active:bg-[#D7DFE6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+        <div
+          className="flex min-h-12 w-full items-center justify-between rounded-2xl border border-[#D7DFE6] bg-white px-4 text-xs"
         >
           <span className="flex items-center gap-2 font-semibold">
             <LuGlobe aria-hidden="true" className="size-4" /> Idioma
           </span>
           <span className="flex items-center gap-1 text-[#435059]">
             Español{" "}
-            <LuChevronRight
-              aria-hidden="true"
-              className="size-4 text-[#1550E0]"
-            />
           </span>
-        </button>
+        </div>
         <div className="flex flex-col items-center gap-3 pb-4">
           <button
             type="button"

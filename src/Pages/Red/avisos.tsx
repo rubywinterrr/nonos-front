@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
 import { notificacionesService, type Notificacion } from "../../services/notificacionesService";
@@ -229,8 +228,7 @@ export default function Avisos() {
   ));
 
   return (
-    <main className="mainBody gap-4">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32 text-[#16222C]">
         <VueltaAtras titulo="Notificaciones" compacto seccion="Ficha de consulta" />
 
@@ -251,7 +249,7 @@ export default function Avisos() {
           <button type="button" aria-pressed={filtro === "SALUD"} onClick={() => setFiltro("SALUD")} className={`min-h-9 min-w-0 flex-1 cursor-pointer rounded-xl px-2 text-xs font-semibold transition-colors ${filtro === "SALUD" ? "bg-white text-[#0F389D] shadow-xs" : "text-[#435059] hover:bg-white/60 active:bg-white"}`}>Salud</button>
         </div>
 
-        {cargando && <p className="py-3 text-center text-sm text-[#435059]">Cargando avisos…</p>}
+        {cargando && <p role="status" className="py-3 text-center text-sm text-[#435059]">Cargando avisos…</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
 
         {!cargando && !error && (
@@ -296,7 +294,7 @@ export default function Avisos() {
 
         <Link
           to={rutaConfiguracion}
-          className="flex min-h-14 w-full cursor-pointer items-center justify-center rounded-2xl border border-[#1550E0] px-4 py-3 text-base font-semibold text-[#1550E0] hover:bg-[#E7EDFB] active:bg-[#D3E0F8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
+          className="flex min-h-14 w-full cursor-pointer items-center justify-center rounded-2xl border border-[#1550E0] px-4 py-3 text-base font-semibold text-[#0D328B] hover:bg-[#E7EDFB] active:bg-[#D3E0F8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
         >
           Ajustar notificaciones
         </Link>

@@ -24,7 +24,7 @@ export default function GloboGrafico({ izquierda, arriba, titulo, detalle }: Pro
 
   return (
     <div
-      role="status"
+      aria-hidden="true"
       className={`pointer-events-none absolute z-10 -translate-y-[calc(100%+12px)] ${correr}`}
       style={{ left: `${izquierda}%`, top: `${arriba}%` }}
     >

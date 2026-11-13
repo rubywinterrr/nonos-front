@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { IoMdHeart } from "react-icons/io";
 import { MdLock, MdCheck, MdOutlineEdit, MdOutlinePeopleAlt } from "react-icons/md";
@@ -45,10 +44,12 @@ function TarjetaIndicacion({ titulo, valor, onEditar }: { titulo: string; valor:
         <h2 className="max-w-80/100 text-lg font-semibold">{titulo}</h2>
       </div>
       <p className="min-h-12 whitespace-pre-wrap text-[#435059]">
-        {valor.trim() ? `“${valor}”` : <span className="text-gray-400">Todavía no agregaste una indicación.</span>}
+        {valor.trim() ? `“${valor}”` : <span className="text-gray-600">Todavía no agregaste una indicación.</span>}
       </p>
       <button
         type="button"
+        aria-label={`Editar indicación: ${titulo}`}
+        aria-haspopup="dialog"
         onClick={onEditar}
         className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg bg-[#E9EEF6] p-4 text-lg font-medium hover:bg-gray-200 active:bg-gray-300"
       >
@@ -244,19 +245,18 @@ export default function Cuidados() {
 
   return (
     <>
-      <main className="mainBody">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody">
         <VueltaAtras titulo="Mis voluntades y cuidados" />
         <section className="flex w-full flex-col gap-4">
           <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-200 bg-gray-100 p-5 pr-0">
             <div className="flex w-full items-start justify-start gap-3">
               <IoMdHeart aria-hidden="true" className="size-12 rounded-xl border border-gray-200 bg-white p-2 text-[#4A7FBF]" />
               <div className="flex max-w-75/100 flex-col items-start justify-start">
-                <h1 className="text-lg font-semibold">Mis deseos en caso de emergencia</h1>
-                <h2 className="text-[#4A7FBF]">Medidas anticipadas de atención</h2>
+                <h2 className="text-lg font-semibold">Mis deseos en caso de emergencia</h2>
+                <h2 className="text-[#295C99]">Medidas anticipadas de atención</h2>
               </div>
             </div>
-            <p className="pr-5 text-gray-500">
+            <p className="pr-5 text-gray-700">
               Aquí podés dejar indicaciones simples para que tu familia y el equipo médico sepan qué preferís en caso de emergencia. Podés modificarlas o actualizarlas cuando quieras.
             </p>
           </div>
@@ -282,7 +282,7 @@ export default function Cuidados() {
             Tu familia puede ver estas indicaciones desde su aplicación autorizada para respetarlas y comunicarlas ante cualquier atención médica.
           </p>
         </div>
-        {error && <p className="text-red-600">{error}</p>}
+        {error && <p role="alert" className="text-red-800">{error}</p>}
         {mensaje && <p className="text-green-700">{mensaje}</p>}
         <button
           type="button"
@@ -309,16 +309,11 @@ export default function Cuidados() {
         onClick={(event) => { if (event.target === event.currentTarget) cerrarDialogo(); }}
         onAnimationEnd={(event) => { if (cerrandoDialogo && event.animationName === "popup-bajar") finalizarCierreDialogo(); }}
         aria-labelledby="titulo-dialogo-indicacion"
-        className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 h-auto max-h-90/100 w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoDialogo ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
+        className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 h-auto max-h-90/100 w-93/100 max-w-lg -translate-x-1/2 overflow-y-auto rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoDialogo ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
       >
-        <section role="document" className="flex max-h-90/100 flex-col overflow-y-auto rounded-t-3xl">
+        <section className="flex max-h-90/100 flex-col overflow-y-auto rounded-t-3xl">
           <div className="shrink-0 px-5 pb-4 pt-3">
-            <button
-              type="button"
-              aria-label="Cerrar diálogo"
-              onClick={cerrarDialogo}
-              className="mx-auto mb-3 block h-1.5 w-12 cursor-pointer rounded-full bg-[#D7DFE6] hover:bg-[#B7C8F0] active:bg-[#8EA9D4]"
-            />
+            <div aria-hidden="true" className="mx-auto mb-3 block h-1.5 w-12 rounded-full bg-[#D7DFE6]" />
             <div className="flex items-center justify-between gap-3 border-b border-[#D7DFE6] pb-3">
               <h2 id="titulo-dialogo-indicacion" className="text-lg font-bold leading-6">
                 {campoActivo === "extra" ? "AGREGAR INDICACIÓN" : "EDITAR INDICACIÓN"}
@@ -346,9 +341,9 @@ export default function Cuidados() {
                 placeholder={campoActual.placeholder}
                 maxLength={5000}
                 rows={5}
-                className="min-h-32 w-full resize-y rounded-xl border border-[#B7C8F0] bg-white p-4 text-base outline-none placeholder:text-[#77848F] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]"
+                className="min-h-32 w-full resize-y rounded-xl border border-[#B7C8F0] bg-white p-4 text-base outline-none placeholder:text-[#435059] focus:border-[#1550E0] focus:ring-2 focus:ring-[#B7C8F0]"
               />
-              {errorDialogo && <p role="alert" className="text-sm text-red-600">{errorDialogo}</p>}
+              {errorDialogo && <p role="alert" className="text-sm text-red-800">{errorDialogo}</p>}
               <button
                 type="button"
                 disabled={guardando}
@@ -381,16 +376,17 @@ export default function Cuidados() {
           }
         }}
         aria-labelledby="titulo-restablecer-indicaciones"
-        className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoRestablecer ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
+        aria-describedby="descripcion-restablecer-indicaciones"
+        className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 max-h-dvh w-93/100 max-w-lg -translate-x-1/2 overflow-y-auto rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoRestablecer ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
       >
         <section className="flex flex-col gap-4 p-5 pb-7">
-          <button type="button" aria-label="Cerrar confirmación" onClick={cerrarRestablecer} className="mx-auto h-1.5 w-12 cursor-pointer rounded-full bg-[#D7DFE6] hover:bg-[#B7C8F0] active:bg-[#8EA9D4]" />
-          <h2 id="titulo-restablecer-indicaciones" className="text-lg font-bold">¿Restablecer las indicaciones?</h2>
-          <p className="text-sm leading-6 text-[#435059]">Se borrarán las indicaciones que escribiste y volverán a mostrarse los ejemplos como texto de ayuda. Esta acción no se puede deshacer.</p>
+          <div aria-hidden="true" className="mx-auto h-1.5 w-12 rounded-full bg-[#D7DFE6]" />
+          <h2 id="titulo-restablecer-indicaciones" tabIndex={-1} className="text-lg font-bold">¿Restablecer las indicaciones?</h2>
+          <p id="descripcion-restablecer-indicaciones" className="text-sm leading-6 text-[#435059]">Se borrarán las indicaciones que escribiste y volverán a mostrarse los ejemplos como texto de ayuda. Esta acción no se puede deshacer.</p>
           <button type="button" onClick={confirmarRestablecer} disabled={guardando} className="w-full cursor-pointer rounded-xl bg-[#1550E0] px-5 py-4 font-semibold text-white hover:bg-[#1245C6] active:bg-[#0D328B] disabled:opacity-60">
             {guardando ? "Restableciendo..." : "Sí, restablecer"}
           </button>
-          <button type="button" onClick={cerrarRestablecer} className="w-full cursor-pointer rounded-xl border border-[#D7DFE6] bg-white px-5 py-3 font-semibold hover:bg-[#F6F8FA] active:bg-[#E7EDFB]">Cancelar</button>
+          <button type="button" onClick={cerrarRestablecer} autoFocus className="w-full cursor-pointer rounded-xl border border-[#D7DFE6] bg-white px-5 py-3 font-semibold hover:bg-[#F6F8FA] active:bg-[#E7EDFB]">Cancelar</button>
         </section>
       </dialog>
     </>

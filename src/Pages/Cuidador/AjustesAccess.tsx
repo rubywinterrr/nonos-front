@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import VueltaAtras from "../../components/vueltaAtras";
-import Header from "../../components/Header";
 import Switch from "../../components/switch";
 import {
   LuCheck,
@@ -149,12 +148,11 @@ export default function AjustesCuidador() {
 
   return (
     <>
-      <main className="mainBody text-[#0E1D28]">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody text-[#0E1D28]">
         <VueltaAtras titulo="Ajustes de accesibilidad" compacto />
 
         <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
-          {cargando && <p className="text-center text-[#424656]">Cargando…</p>}
+          {cargando && <p role="status" className="text-center text-[#424656]">Cargando…</p>}
           {!cargando && !adulto && !error && (
             <p className="rounded-2xl bg-white p-5">Todavía no estás vinculado a ningún adulto mayor.</p>
           )}
@@ -255,7 +253,7 @@ export default function AjustesCuidador() {
                     </div>
                     {/* shrink-0: que el switch no se achique cuando el texto es largo */}
                     <div className="shrink-0">
-                      <Switch checked={aviso.activo} onChange={(activo) => cambiarAviso(aviso.id, activo)} />
+                      <Switch ariaLabel={aviso.titulo} checked={aviso.activo} onChange={(activo) => cambiarAviso(aviso.id, activo)} />
                     </div>
                   </div>
                 ))}

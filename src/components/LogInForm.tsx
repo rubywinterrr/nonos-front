@@ -38,11 +38,15 @@ export default function LogInForm() {
         }}
       >
         <div className="h-25/100 w-80/100 flex flex-col gap-1">
-          <label className="text-lg flex items-center gap-2">
-            <MdMailOutline />
-            Correo electrónico <span className="font-bold text-red-500">*</span>
+          <label htmlFor="login-email" className="text-lg flex items-center gap-2">
+            <MdMailOutline aria-hidden="true" />
+            Correo electrónico <span aria-hidden="true" className="font-bold text-red-700">*</span>
           </label>
           <input
+            id="login-email"
+            name="email"
+            autoComplete="username"
+            aria-describedby="login-email-ayuda"
             type="email"
             required
             value={email}
@@ -50,16 +54,17 @@ export default function LogInForm() {
             className="w-full h-12 bg-white shadow placeholder:text-[.75rem] focus:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 pl-1"
             placeholder="Ej: nonos@gmail.com"
           />
-          <span className="text-xs text-gray-500">
-            Solo el correo. Sin espacios ni guiones.
+          <span id="login-email-ayuda" className="text-xs text-gray-700">
+            Ingresá tu correo electrónico completo, sin espacios.
           </span>
         </div>
         <div className="h-25/100 w-80/100 flex flex-col gap-1 ">
-          <label className="text-lg flex items-center gap-2">
-            <MdLock />
-            Contraseña <span className="font-bold text-red-500">*</span>
+          <label htmlFor="login-password" className="text-lg flex items-center gap-2">
+            <MdLock aria-hidden="true" />
+            Contraseña <span aria-hidden="true" className="font-bold text-red-700">*</span>
           </label>
           <PasswordInput
+            id="login-password"
             value={password}
             onChange={setPassword}
             placeholder="Ej: Nonos1234!"
@@ -70,13 +75,13 @@ export default function LogInForm() {
           type="submit"
           disabled={cargando}
         >
-          <p className="flex gap-3 items-center text-md transition-none!">
+          <span className="flex gap-3 items-center text-md transition-none!">
             {" "}
-            <MdLogin />
+            <MdLogin aria-hidden="true" />
             {cargando ? "Entrando..." : "Ingresar"}
-          </p>
+          </span>
         </button>
-        {error && <p className="text-red-600 text-xs">{error}</p>}
+        <p role="alert" className={error ? "text-red-800 text-sm" : "sr-only"}>{error}</p>
       </form>
     </>
   );

@@ -7,11 +7,11 @@ interface Props {
 export default function BotonSiguiente({ siguientePaso, texto }: Props) {
   return (
     <Link
-      className="bg-blue-600 font-semibold items-center justify-center flex gap-3 hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer"
+      className="bg-blue-600 font-semibold items-center justify-center flex gap-3 hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full min-h-16 px-3 py-2 text-center cursor-pointer"
       to={siguientePaso}
     >
       Siguiente: {texto}
-      <MdArrowForward className="text-3xl" />
+      <MdArrowForward aria-hidden="true" className="text-3xl" />
     </Link>
   );
 }

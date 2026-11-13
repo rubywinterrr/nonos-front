@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import TarjetaHistorial, { type CategoriaHistorial } from "../../components/TarjetaHistorial";
 import { useAuth } from "../../hooks/useAuth";
@@ -358,8 +357,7 @@ export default function Historial() {
 
   return (
     <>
-      <main className="mainBody gap-4">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
         <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
           <VueltaAtras titulo="Historial de cuidados" compacto />
           <section aria-label="Descripción del historial" className="flex flex-col gap-2">
@@ -377,7 +375,7 @@ export default function Historial() {
           </div>
 
           <section aria-label="Acontecimientos registrados" className="flex flex-col gap-4">
-            {cargando && <p className="text-center text-sm text-[#435059]">Cargando historial…</p>}
+            {cargando && <p role="status" className="text-center text-sm text-[#435059]">Cargando historial…</p>}
             {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
             {avisoRed && <p role="status" className="flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-700"><LuCheck aria-hidden="true" className="size-4 shrink-0" />Observación prioritaria guardada. Se avisó a la red.</p>}
             {!cargando && !adulto && !error && <p className="rounded-xl bg-white p-5 text-center text-sm text-[#435059]">Todavía no estás vinculado a ningún adulto mayor.</p>}
@@ -398,14 +396,14 @@ export default function Historial() {
         className="fixed top-auto bottom-0 left-1/2 z-70 m-0 h-90/100 max-h-dvh w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70"
       >
         <section
-          role="document"
+
           onAnimationEnd={(evento) => { if (cerrandoDialogo && evento.animationName === "popup-bajar") finalizarCierre(); }}
           className={`flex h-full flex-col ${cerrandoDialogo ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
         >
           <div className="shrink-0 px-4 pt-3">
-            <button type="button" aria-label="Cerrar" onClick={cerrarDialogo} className="mx-auto block h-6 w-full cursor-pointer" >
+            <div aria-hidden="true" className="mx-auto block h-6 w-full">
               <span className="mx-auto block h-1.5 w-12 rounded-full bg-[#B7C8F0]" />
-            </button>
+            </div>
             <div className="flex h-16 items-center justify-between gap-2">
               <h2 id="titulo-nuevo-registro" className="text-xl font-bold tracking-tight sm:text-2xl">{editandoId ? "Editar observación" : "Registrar observación"}</h2>
               <button type="button" aria-label="Cerrar" onClick={cerrarDialogo} className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E7EDFB] text-[#1550E0] hover:bg-[#D3E0F8] active:bg-[#B7C8F0]"><LuX aria-hidden="true" className="size-5" /></button>
@@ -448,10 +446,11 @@ export default function Historial() {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
                   <label htmlFor="detalle-nuevo-registro" className="text-xs font-bold uppercase tracking-wide">¿Qué ocurrió o qué observaste?</label>
-                  <span aria-live="polite" className="shrink-0 text-xs text-[#1550E0]">{nuevoDetalle.length} / 400</span>
+                  <span aria-hidden="true" className="shrink-0 text-xs text-[#1550E0]">{nuevoDetalle.length} / 400</span>
                 </div>
                 <div className="relative">
-                  <textarea id="detalle-nuevo-registro" maxLength={400} rows={5} value={nuevoDetalle} onChange={(evento) => setNuevoDetalle(evento.target.value)} placeholder="Describí brevemente el estado de ánimo, molestias, alimentación o novedades de la jornada..." className="w-full resize-y rounded-xl border border-[#7E8C97] bg-[#F6F8FA] p-3 pr-12 text-sm leading-5 placeholder:text-[#435059] focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]" />
+                  <span id="limite-nuevo-registro" className="sr-only">Hasta 400 caracteres.</span>
+                  <textarea id="detalle-nuevo-registro" aria-describedby="limite-nuevo-registro" maxLength={400} rows={5} value={nuevoDetalle} onChange={(evento) => setNuevoDetalle(evento.target.value)} placeholder="Describí brevemente el estado de ánimo, molestias, alimentación o novedades de la jornada..." className="w-full resize-y rounded-xl border border-[#7E8C97] bg-[#F6F8FA] p-3 pr-12 text-sm leading-5 placeholder:text-[#435059] focus:border-[#1550E0] focus:outline-none focus:ring-2 focus:ring-[#B7C8F0]" />
                   <button type="button" aria-label={dictando ? "Detener dictado" : "Dictar por voz"} aria-pressed={dictando} onClick={alternarDictado} className={`absolute bottom-3 right-3 flex size-8 cursor-pointer items-center justify-center rounded-full border border-[#B7C8F0] hover:bg-[#E7EDFB] active:bg-[#D3E0F8] ${dictando ? "bg-[#1550E0] text-white" : "bg-white text-[#1550E0]"}`}><LuMic aria-hidden="true" className="size-4" /></button>
                 </div>
                 {dictando && <p role="status" className="text-xs font-semibold text-[#1550E0]">Escuchando… Tocá el micrófono para detener.</p>}

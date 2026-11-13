@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { HiOutlineCheckBadge } from "react-icons/hi2";
 import { useState, useEffect } from "react";
@@ -12,7 +11,7 @@ import {
 } from "react-icons/md";
 import CuadroAsesor from "../../components/CuadroContactarAsesor";
 export default function Tutorial1() {
-  const progresoObjetivo = 25;
+  const progresoObjetivo = 50;
   const [progreso, setProgreso] = useState(0);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,37 +21,34 @@ export default function Tutorial1() {
   }, [progresoObjetivo]);
   return (
     <>
-      <main className="mainBody">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody">
         <VueltaAtras titulo="Ayuda y soporte"/>
         <section className="flex bg-white w-full lg:w-35/100 flex-col shadow-lg rounded-3xl p-5 gap-5 items-center justify-start">
-          <div className="w-full flex justify-between items-center">
+          <div className="w-full flex flex-wrap gap-2 justify-between items-center">
             <p className="rounded-lg bg-[#DBE1FF] p-2">TUTORIAL PARA EMPEZAR</p>
             <p className="bg-[#EBF5FF] rounded-lg flex items-center p-2 text-blue-600 justify-center gap-1">
-              <HiOutlineCheckBadge className="text-2xl" /> 25%
+              <HiOutlineCheckBadge className="text-2xl" /> 50%
             </p>
           </div>
-          <h1 className="text-3xl">
-            Paso 1 de 4: Conocer tu pulsera y pantalla
-          </h1>
+          <h2 className="text-3xl">
+            Paso 1 de 2: Conocer tu pulsera y pantalla
+          </h2>
           <div
             className="h-4 w-full overflow-hidden rounded-full bg-blue-100"
             role="progressbar"
             aria-label="Progreso del tutorial"
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-valuenow={25}
+            aria-valuenow={50}
           >
             <div
               className="h-full rounded-full bg-blue-800"
               style={{ width: `${progreso}%` }}
             ></div>
           </div>
-          <div className="flex w-full text-gray-400 justify-between items-center font-semibold pl-1 pr-1">
-            <p className="text-blue-800">1. Pulsera</p>
+          <div className="flex w-full flex-wrap gap-2 text-gray-600 justify-between items-center font-semibold pl-1 pr-1">
+            <p aria-current="step" className="text-blue-800">1. Pulsera</p>
             <p>2. Botón</p>
-            <p>3. Familia</p>
-            <p>4. Batería</p>
           </div>
         </section>
         <section className="rounded-3xl bg-white w-full flex flex-col items-start justify-start shadow-lg gap-5 p-5">
@@ -78,9 +74,9 @@ export default function Tutorial1() {
               <MdOutlineWatch className="text-xl" />
               Paso inicial imprescindible
             </h2>
-            <h1 className="font-semibold text-2xl">
+            <h2 className="font-semibold text-2xl">
               1. Colocate tu pulsera NONOS en la muñeca
-            </h1>
+            </h2>
           </div>
           <p className="text-gray-600 text-lg ">
             Ajustá la pulsera para que quede cómoda. Cuando la luz verde titila,
@@ -99,10 +95,10 @@ export default function Tutorial1() {
             </div>
           </div>
           <div className="bg-[#EBF5FF] flex flex-col p-4 gap-3 rounded-2xl w-full">
-            <h1 className="flex gap-2 items-start justify-start text-xl font-semibold">
+            <h2 className="flex gap-2 items-start justify-start text-xl font-semibold">
               <MdChecklist className="size-8 text-blue-700" />
               Comprobá antes de avanzar:
-            </h1>
+            </h2>
             <p className="text-lg flex items-start justify-start gap-2 pl-2">
               <MdCheckCircleOutline className="text-green-800 size-9" />
               Que pase un dedo entre la correa y tu piel para evitar marcas.

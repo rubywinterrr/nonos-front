@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import HeaderPublico from "../../components/HeaderPublico";
 import { fichaEmergenciaService, type FichaEmergencia } from "../../services/fichaEmergenciaService";
@@ -8,7 +8,6 @@ import PantallaVerificado from "./PantallaVerificado";
 import FichaEmergenciaPantalla from "./FichaEmergencia";
 
 const TREINTA_MINUTOS = 30 * 60 * 1000;
-const DIGITOS_VACIOS = ["", "", "", "", "", ""];
 
 // un número de 0 a 9 con un cero adelante ("7" → "07")
 function dosDigitos(numero: number) {
@@ -21,32 +20,34 @@ function dosDigitos(numero: number) {
 export default function Emergencia() {
   const { qrId } = useParams();
   const [pantalla, setPantalla] = useState("ingreso");
-  const [digitos, setDigitos] = useState(DIGITOS_VACIOS);
+  const [codigo, setCodigo] = useState("");
+  const [codigoIncorrecto, setCodigoIncorrecto] = useState(false);
+  const contenido = useRef<HTMLElement>(null);
+  const pantallaAnterior = useRef("ingreso");
   const [validando, setValidando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // la ficha solo vive en memoria: si recargan la página hay que pedir un código nuevo
   const [ficha, setFicha] = useState<FichaEmergencia | null>(null);
   const [vence, setVence] = useState(0);
   const [segundosRestantes, setSegundosRestantes] = useState(0);
-  const [segundosRedireccion, setSegundosRedireccion] = useState(3);
 
   // manda el código al back y elige qué pantalla mostrar según la respuesta
   const validar = async () => {
-    if (!qrId) return;
-    const codigo = digitos.join("");
+    if (!qrId || validando || codigo.length !== 6) return;
     setError(null);
     setValidando(true);
     try {
       const respuesta = await fichaEmergenciaService.accederFicha(qrId, codigo);
       if (respuesta.ficha) {
         setFicha(respuesta.ficha);
+        setSegundosRestantes(TREINTA_MINUTOS / 1000);
         setVence(Date.now() + TREINTA_MINUTOS);
-        setSegundosRedireccion(3);
         setPantalla("verificado");
       } else if (respuesta.estado === 409) {
         // el back avisa que ese código ya se usó en los últimos 5 minutos
         setPantalla("usado");
       } else if (respuesta.estado === 401) {
+        setCodigoIncorrecto(true);
         setPantalla("incorrecto");
       } else if (respuesta.estado === 410) {
         setPantalla("vencido");
@@ -67,7 +68,8 @@ export default function Emergencia() {
 
   // vuelve a la pantalla para escribir un código, con las cajas vacías
   const ingresarOtro = () => {
-    setDigitos(DIGITOS_VACIOS);
+    setCodigo("");
+    setCodigoIncorrecto(false);
     setError(null);
     setPantalla("ingreso");
   };
@@ -98,58 +100,62 @@ export default function Emergencia() {
     return () => clearInterval(intervalo);
   }, [vence]);
 
-  useEffect(() => {
-    if (pantalla !== "verificado") return;
-
-    // cuenta 3, 2, 1 y pasa sola a la ficha
-    let quedan = 3;
-    const intervalo = setInterval(() => {
-      quedan = quedan - 1;
-      setSegundosRedireccion(quedan);
-      if (quedan <= 0) setPantalla("ficha");
-    }, 1000);
-    return () => clearInterval(intervalo);
-  }, [pantalla]);
+  useLayoutEffect(() => {
+    if (pantallaAnterior.current === pantalla && !(pantalla === "incorrecto" && codigoIncorrecto)) return;
+    pantallaAnterior.current = pantalla;
+    const titulo = contenido.current?.querySelector<HTMLElement>("h1");
+    if (titulo) {
+      document.title = `${titulo.textContent?.trim()} | NONOS`;
+      titulo.tabIndex = -1;
+      window.scrollTo(0, 0);
+      titulo.focus({ preventScroll: true });
+    }
+  }, [pantalla, codigoIncorrecto]);
 
   const minutos = Math.floor(segundosRestantes / 60);
   const segundos = segundosRestantes % 60;
 
   return (
-    <main className="mainBody pt-24 pb-10">
+    <>
       <HeaderPublico />
+      <main ref={contenido} id="contenido-principal" tabIndex={-1} className="mainBody pt-24 pb-10">
+        <p role="status" className="sr-only">
+          {ficha && segundosRestantes > 0 && segundosRestantes <= 120 ? "Quedan dos minutos o menos para que se cierre el acceso a la ficha." : ""}
+        </p>
 
-      {(pantalla === "ingreso" || pantalla === "incorrecto") && (
-        <PantallaIngreso
-          digitos={digitos}
-          onCambiarDigitos={setDigitos}
-          onValidar={validar}
-          incorrecto={pantalla === "incorrecto"}
-          validando={validando}
-          error={error}
-        />
-      )}
+        {(pantalla === "ingreso" || pantalla === "incorrecto") && (
+          <PantallaIngreso
+            codigo={codigo}
+            onCambiarCodigo={(valor) => { setCodigo(valor); setCodigoIncorrecto(false); setError(null); }}
+            onValidar={validar}
+            incorrecto={pantalla === "incorrecto"}
+            codigoInvalido={codigoIncorrecto}
+            validando={validando}
+            error={error}
+          />
+        )}
 
-      {pantalla === "vencido" && <PantallaCodigoInvalido motivo="vencido" onIngresarOtro={ingresarOtro} />}
-      {pantalla === "usado" && <PantallaCodigoInvalido motivo="usado" onIngresarOtro={ingresarOtro} />}
+        {pantalla === "vencido" && <PantallaCodigoInvalido motivo="vencido" onIngresarOtro={ingresarOtro} />}
+        {pantalla === "usado" && <PantallaCodigoInvalido motivo="usado" onIngresarOtro={ingresarOtro} />}
 
-      {pantalla === "verificado" && ficha && (
-        <PantallaVerificado
-          nombre={ficha.nombreCompleto}
-          edad={ficha.edad}
-          idDispositivo={ficha.idDispositivo}
-          tiempoRestante={`${minutos} min ${segundos} seg`}
-          segundosRedireccion={segundosRedireccion}
-          onVerFicha={() => setPantalla("ficha")}
-        />
-      )}
+        {pantalla === "verificado" && ficha && (
+          <PantallaVerificado
+            nombre={ficha.nombreCompleto}
+            edad={ficha.edad}
+            idDispositivo={ficha.idDispositivo}
+            tiempoRestante={`${minutos} min ${segundos} seg`}
+            onVerFicha={() => setPantalla("ficha")}
+          />
+        )}
 
-      {pantalla === "ficha" && ficha && (
-        <FichaEmergenciaPantalla
-          ficha={ficha}
-          tiempoRestante={`${minutos} min ${dosDigitos(segundos)}s`}
-          onFinalizar={finalizar}
-        />
-      )}
-    </main>
+        {pantalla === "ficha" && ficha && (
+          <FichaEmergenciaPantalla
+            ficha={ficha}
+            tiempoRestante={`${minutos} min ${dosDigitos(segundos)}s`}
+            onFinalizar={finalizar}
+          />
+        )}
+      </main>
+    </>
   );
 }

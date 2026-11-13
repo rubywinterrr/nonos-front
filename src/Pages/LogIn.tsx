@@ -1,45 +1,53 @@
 import LogInForm from "../components/LogInForm";
 import RegisterForm from "../components/RegisterForm";
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLayoutEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { FondoBlanco } from "../utils/funcionFondoBlanco";
+import { useAuth } from "../hooks/useAuth";
+import rutaSegunRol from "../utils/rutaSegunRol";
 
 function IngresoContent() {
   const [hasAccount, setHasAccount] = useState(true);
+  const [errorGoogle, setErrorGoogle] = useState("");
   const [searchParams] = useSearchParams();
-
-  function toggleForm() {
-    setHasAccount(!hasAccount);
-  }
+  const titulo = useRef<HTMLHeadingElement>(null);
+  const cambioFormulario = useRef(false);
+  const { loginConGoogle } = useAuth();
+  const navigate = useNavigate();
 
   FondoBlanco();
 
+  useLayoutEffect(() => {
+    document.title = hasAccount ? "Ingresar | NONOS" : "Crear una cuenta | NONOS";
+    if (cambioFormulario.current) titulo.current?.focus();
+  }, [hasAccount]);
+
   return (
-    <main className="w-screen min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">
+    <main id="contenido-principal" tabIndex={-1} className="w-full min-h-screen bg-main flex flex-col justify-center gap-5 items-center pt-10 pb-10">
       <div className="flex flex-col gap-3 items-center text-[#002B2F]">
         {/* logo oficial (isotipo del Figma) */}
         <img src="/logo/isotipo-cuadrado.png" alt="" className="h-20 aspect-square" />
         <div className="flex flex-col items-center gap-0">
-          <h1 className="text-3xl font-semibold">NONOS</h1>
-          <span className="text-md text-gray-500 p-0 m-0">
+          <p className="text-3xl font-semibold">NONOS</p>
+          <span className="text-md text-gray-700 p-0 m-0">
             Acompañamiento Mayor
           </span>
         </div>
-        <h2 className="text-2xl font-bold">
-          {hasAccount ? "Ingrese a NONOS" : "Registrese a NONOS"}
-        </h2>
+        <h1 ref={titulo} tabIndex={-1} className="text-2xl font-bold">
+          {hasAccount ? "Ingrese a NONOS" : "Regístrese en NONOS"}
+        </h1>
       </div>
 
       {searchParams.get("password") === "cambiada" && (
-        <p role="status" className="w-80 rounded-xl bg-emerald-50 p-3 text-center text-sm font-semibold text-emerald-700">
+        <p role="status" className="w-[min(20rem,90%)] rounded-xl bg-emerald-50 p-3 text-center text-sm font-semibold text-emerald-800">
           Tu contraseña se cambió. Volvé a ingresar con la nueva.
         </p>
       )}
 
-      <div className="group relative w-80 h-10">
+      <div className="boton-google group relative h-10 w-[min(20rem,90%)] rounded-lg">
         {/* Lo que se ve: tu diseño */}
-        <div className="absolute inset-0 pointer-events-none bg-white border rounded-lg group-hover:bg-gray-200 flex items-center justify-center gap-3 font-medium text-gray-700 transition-all">
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none bg-white border rounded-lg group-hover:bg-gray-200 flex items-center justify-center gap-3 font-medium text-gray-700 transition-all">
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
@@ -64,27 +72,48 @@ function IngresoContent() {
         {/* Lo que recibe el click: el botón real de Google, invisible */}
         <div className="absolute inset-0 opacity-0 overflow-hidden cursor-pointer">
           <GoogleLogin
-            onSuccess={(res) => console.log("idToken:", res.credential)}
-            onError={() => console.error("Falló el login con Google")}
+            onSuccess={async ({ credential }) => {
+              if (!credential) {
+                setErrorGoogle("No se pudo confirmar tu cuenta de Google. Probá de nuevo.");
+                return;
+              }
+              setErrorGoogle("");
+              try {
+                const usuario = await loginConGoogle(credential);
+                navigate(rutaSegunRol(usuario.rol));
+              } catch {
+                setErrorGoogle("No se pudo ingresar con Google. Probá de nuevo o ingresá con tu correo.");
+              }
+            }}
+            onError={() => setErrorGoogle("No se pudo ingresar con Google. Probá de nuevo o ingresá con tu correo.")}
+            text="continue_with"
             width="320"
             size="large"
           />
         </div>
       </div>
+      {errorGoogle && <p role="alert" className="w-[min(20rem,90%)] text-sm text-red-800">{errorGoogle}</p>}
 
       <div className="flex items-center w-[80%] lg:w-[40%]">
         <div className="border-t grow border-gray-400"></div>
-        <span className="px-4 text-md text-gray-500 font-semibold">O BIEN</span>
+        <span className="px-4 text-md text-gray-700 font-semibold">O BIEN</span>
         <div className="border-t grow border-gray-400"></div>
       </div>
 
       {hasAccount ? <LogInForm /> : <RegisterForm />}
 
-      <span className="active:underline cursor-pointer" onClick={toggleForm}>
+      <button
+        type="button"
+        className="min-h-6 max-w-[90%] cursor-pointer active:underline focus-visible:underline"
+        onClick={() => {
+          cambioFormulario.current = true;
+          setHasAccount((actual) => !actual);
+        }}
+      >
         {hasAccount
           ? "¿No tiene cuenta? Regístrese"
           : "¿Ya tiene cuenta? Inicie sesión"}
-      </span>
+      </button>
     </main>
   );
 }
@@ -92,7 +121,7 @@ function IngresoContent() {
 // Exportación envuelta en el Provider
 export default function Ingreso() {
   return (
-    <GoogleOAuthProvider clientId="329138846196-q5d13gj5v3ojlgge0f484jql8lo53fj5.apps.googleusercontent.com">
+    <GoogleOAuthProvider locale="es" clientId="329138846196-q5d13gj5v3ojlgge0f484jql8lo53fj5.apps.googleusercontent.com">
       <IngresoContent />
     </GoogleOAuthProvider>
   );

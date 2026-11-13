@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import MedicamentoHabitual from "../../components/MedicamentoHabitual";
 import RegistroMedicacion from "../../components/RegistroMedicacion";
@@ -354,8 +353,7 @@ export default function MedFam() {
 
   return (
     <>
-      <main className="mainBody gap-4">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
         <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
           <VueltaAtras titulo="Medicación actual" compacto />
 
@@ -370,7 +368,7 @@ export default function MedFam() {
             </p>
           </div>
 
-          {cargando && <p className="text-center text-[#435059]">Cargando medicación…</p>}
+          {cargando && <p role="status" className="text-center text-[#435059]">Cargando medicación…</p>}
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
           {avisoGuardado && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{avisoGuardado}</p>}
           {!cargando && !adulto && !error && (
@@ -476,16 +474,11 @@ export default function MedFam() {
         className={`fixed top-auto bottom-0 left-1/2 z-70 m-0 h-90/100 max-h-dvh w-93/100 max-w-lg -translate-x-1/2 overflow-hidden rounded-t-3xl border-0 bg-white p-0 text-[#16222C] shadow-2xl backdrop:bg-[#B7C8F0]/70 ${cerrandoDialogo ? "animate-[popup-bajar_250ms_ease-in_forwards]" : "animate-[popup-subir_300ms_ease-out]"}`}
       >
         <section
-          role="document"
+
           className="flex h-full flex-col overflow-hidden rounded-t-3xl"
         >
           <div className="shrink-0 px-4 pt-3">
-            <button
-              type="button"
-              aria-label="Cerrar diálogo"
-              onClick={cerrarDialogo}
-              className="mx-auto mb-3 block h-1.5 w-12 cursor-pointer rounded-full bg-[#D7DFE6] hover:bg-[#B7C8F0] active:bg-[#8EA9D4]"
-            />
+            <div aria-hidden="true" className="mx-auto mb-3 block h-1.5 w-12 rounded-full bg-[#D7DFE6]" />
             <div className="flex min-h-14 items-center justify-between gap-3 border-b border-[#D7DFE6] pb-3">
               <h2
                 id="titulo-cambio-medicacion"

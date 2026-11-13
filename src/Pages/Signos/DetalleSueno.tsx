@@ -8,6 +8,7 @@ import { DIA_MS, diaCorto, diasDelPeriodo, hora, horasYMinutos } from "../../uti
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
 import GloboGrafico from "../../components/GloboGrafico";
+import DatosDelGrafico from "../../components/DatosDelGrafico";
 
 // a partir de cuántos minutos dormidos se considera "sueño reparador"
 const SUENO_REPARADOR = 7 * 60;
@@ -190,15 +191,27 @@ export default function DetalleSueno() {
             {tieneEtapas ? (
               <>
                 <div className="relative mt-14">
-                  <div role="group" aria-label="Reparto de la noche por etapas" className="flex h-8 w-full overflow-hidden rounded-lg">
-                    {listaEtapas.map((etapa) => (
-                      <button
-                        type="button"
+                  <div
+                    aria-hidden="true"
+                    className="flex h-8 w-full cursor-pointer overflow-hidden rounded-lg"
+                    onClick={(evento) => {
+                      const { left, width } = evento.currentTarget.getBoundingClientRect();
+                      const posicion = (evento.clientX - left) * 100 / width;
+                      let borde = 0;
+                      for (const etapa of listaEtapas) {
+                        borde += porcentaje(etapa.minutos, total);
+                        if (posicion < borde) {
+                          setEtapaElegida(etapa.nombre);
+                          break;
+                        }
+                      }
+                    }}
+                  >
+                    {listaEtapas.filter((etapa) => etapa.minutos > 0).map((etapa) => (
+                      <span
                         key={etapa.nombre}
-                        aria-label={`${etapa.nombre}: ${horasYMinutos(etapa.minutos)}`}
-                        onClick={() => setEtapaElegida(etapa.nombre)}
-                        onPointerEnter={() => setEtapaElegida(etapa.nombre)}
-                        className={`cursor-pointer ${etapa.color} ${etapa.nombre === etapaElegida ? "ring-2 ring-inset ring-[#16222C]" : ""}`}
+                        onPointerEnter={(evento) => { if (evento.pointerType === "mouse") setEtapaElegida(etapa.nombre); }}
+                        className={`${etapa.color} ${etapa.nombre === etapaElegida ? "ring-2 ring-inset ring-[#16222C]" : ""}`}
                         style={{ width: `${porcentaje(etapa.minutos, total)}%` }}
                       />
                     ))}
@@ -213,6 +226,7 @@ export default function DetalleSueno() {
                   )}
                 </div>
                 <p className="text-xs text-[#424656]">Tocá una parte de la barra para ver cuánto duró.</p>
+                <DatosDelGrafico periodo="Etapa" medida="Duración" filas={listaEtapas.map((etapa) => ({ etiqueta: etapa.nombre, valor: horasYMinutos(etapa.minutos) }))} />
                 <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
                   <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#0B2E8A]" />Profundo</li>
                   <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />REM</li>
@@ -233,16 +247,20 @@ export default function DetalleSueno() {
               <span className="text-base font-semibold text-[#424656]">por noche</span>
             </p>
             <div className="relative mt-12">
-              <div role="group" aria-label={`Horas de sueño de cada noche de los últimos ${dias} días`} className="flex h-40 items-end gap-1 border-b border-[#D4E4F3]">
+              <div
+                aria-hidden="true"
+                className="flex h-40 cursor-pointer items-end gap-1 border-b border-[#D4E4F3]"
+                onClick={(evento) => {
+                  const { left, width } = evento.currentTarget.getBoundingClientRect();
+                  const indice = Math.min(noches.length - 1, Math.max(0, Math.floor((evento.clientX - left) * noches.length / width)));
+                  if (noches[indice]) setNocheElegida(noches[indice].id);
+                }}
+              >
                 {noches.map((noche, i) => (
-                  <button
-                    type="button"
+                  <span
                     key={noche.id}
-                    aria-label={`${diaCorto(noche.timestamp)}: ${horasYMinutos(noche.valor)}`}
-                    aria-pressed={i === indiceNoche}
-                    onClick={() => setNocheElegida(noche.id)}
-                    onPointerEnter={() => setNocheElegida(noche.id)}
-                    className={`min-w-0 flex-1 cursor-pointer rounded-t ${noche.valor >= SUENO_REPARADOR ? "bg-[#1550E0]" : "bg-[#B9D2FF]"} ${i === indiceNoche ? "ring-2 ring-[#16222C]" : ""}`}
+                    onPointerEnter={(evento) => { if (evento.pointerType === "mouse") setNocheElegida(noche.id); }}
+                    className={`min-w-0 flex-1 rounded-t ${noche.valor >= SUENO_REPARADOR ? "bg-[#1550E0]" : "bg-[#B9D2FF]"} ${i === indiceNoche ? "ring-2 ring-[#16222C]" : ""}`}
                     style={{ height: `${maximo > 0 ? Math.max(2, (noche.valor / maximo) * 100) : 2}%` }}
                   />
                 ))}
@@ -257,6 +275,7 @@ export default function DetalleSueno() {
               )}
             </div>
             <p className="text-xs text-[#424656]">Tocá una barra para ver esa noche.</p>
+            <DatosDelGrafico periodo="Noche" medida="Duración" filas={noches.map((noche) => ({ etiqueta: diaCorto(noche.timestamp), valor: horasYMinutos(noche.valor) }))} />
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />7 h o más</li>
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#B9D2FF]" />Menos de 7 h</li>

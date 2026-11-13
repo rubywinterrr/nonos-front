@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { LuCheck, LuMessageSquareText, LuSiren, LuTriangleAlert } from "react-icons/lu";
 import { useAuth } from "../../hooks/useAuth";
@@ -116,8 +115,7 @@ export default function AlertasRed() {
   const pendientes = alertas.filter((a) => a.estado === "PENDIENTE").length;
 
   return (
-    <main className="mainBody gap-4 text-[#0E1D28]">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4 text-[#0E1D28]">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Alertas" compacto />
 
@@ -146,7 +144,7 @@ export default function AlertasRed() {
           </button>
         </div>
 
-        {cargando && <p className="text-center text-[#424656]">Cargando alertas…</p>}
+        {cargando && <p role="status" className="text-center text-[#424656]">Cargando alertas…</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
         {mensaje && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">{mensaje}</p>}
         {!cargando && !adulto && !error && (

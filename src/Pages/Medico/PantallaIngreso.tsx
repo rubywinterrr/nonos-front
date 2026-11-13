@@ -10,19 +10,20 @@ import {
 } from "react-icons/lu";
 
 interface Props {
-  digitos: string[];
-  onCambiarDigitos: (digitos: string[]) => void;
+  codigo: string;
+  onCambiarCodigo: (codigo: string) => void;
   onValidar: () => void;
   // true después de un código equivocado: muestra el contacto, el cartel rojo y las cajas en rojo
   incorrecto: boolean;
+  codigoInvalido: boolean;
   validando: boolean;
   // mensaje para otros problemas (QR apagado, demasiados intentos, sin conexión)
   error: string | null;
 }
 
 // pantalla donde el médico escribe el código de 6 dígitos (y su versión "Código no válido")
-export default function PantallaIngreso({ digitos, onCambiarDigitos, onValidar, incorrecto, validando, error }: Props) {
-  const completo = digitos.every((d) => d !== "");
+export default function PantallaIngreso({ codigo, onCambiarCodigo, onValidar, incorrecto, codigoInvalido, validando, error }: Props) {
+  const completo = codigo.length === 6;
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6 text-[#16222C]">
@@ -66,11 +67,11 @@ export default function PantallaIngreso({ digitos, onCambiarDigitos, onValidar, 
           {/* PENDIENTE BACK: sin el código correcto el back no devuelve ningún contacto;
               el diseño mostraba la tarjeta de "Sofía Gómez · Familiar · +54 11 4455-6677" con Llamar y Mensaje */}
 
-          <section role="alert" className="rounded-xl border-2 border-[#C92A2A] bg-[#FBE9E9] p-4">
-            <h2 className="flex items-center gap-2 text-lg font-bold">
+          <section id="error-codigo-medico" role="alert" className="rounded-xl border-2 border-[#C92A2A] bg-[#FBE9E9] p-4">
+            <h1 tabIndex={-1} className="flex items-center gap-2 text-lg font-bold">
               <LuCircleAlert aria-hidden="true" className="size-7 shrink-0 rounded-full bg-[#C92A2A] p-1 text-white" />
               Código no válido
-            </h2>
+            </h1>
             <p className="mt-3 text-sm leading-6">
               El código ingresado no coincide con el código registrado para este paciente. Verificá los 6 dígitos en la
               pantalla del dispositivo y reingresalo.
@@ -82,15 +83,15 @@ export default function PantallaIngreso({ digitos, onCambiarDigitos, onValidar, 
       <form
         onSubmit={(evento) => {
           evento.preventDefault();
-          if (completo) onValidar();
+          if (completo && !validando) onValidar();
         }}
         className="flex flex-col gap-6"
       >
-        <fieldset className="flex flex-col gap-4">
-          <legend className="mb-4 w-full text-center text-base font-bold">Código de 6 dígitos</legend>
-          <CajasCodigo digitos={digitos} onChange={onCambiarDigitos} conError={incorrecto} />
-          {!completo && !incorrecto && <p className="text-center text-xs text-[#435059]">Completá los 6 números</p>}
-        </fieldset>
+        <div className="flex flex-col gap-4">
+          <label htmlFor="codigo-medico" className="mb-4 w-full text-center text-base font-bold">Código de 6 dígitos</label>
+          <CajasCodigo codigo={codigo} onChange={onCambiarCodigo} conError={codigoInvalido} descripcion={codigoInvalido ? "error-codigo-medico" : !completo && !incorrecto ? "ayuda-codigo-medico" : undefined} />
+          {!completo && !incorrecto && <p id="ayuda-codigo-medico" className="text-center text-xs text-[#435059]">Completá los 6 números</p>}
+        </div>
 
         <p className="flex items-center gap-3 rounded-xl bg-[#E7EDFB]/80 p-3 text-sm leading-5">
           <LuClock3 aria-hidden="true" className="size-8 shrink-0 rounded-lg bg-white p-1.5 text-[#0B6D3C]" />
@@ -102,10 +103,11 @@ export default function PantallaIngreso({ digitos, onCambiarDigitos, onValidar, 
 
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
 
+        <p role="status" className="sr-only">{validando ? "Validando código…" : ""}</p>
         <button
           type="submit"
           disabled={!completo || validando}
-          className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1550E0] px-4 font-semibold text-white hover:bg-[#1245BF] active:bg-[#0F389D] disabled:cursor-not-allowed disabled:bg-[#E7EDFB] disabled:text-[#435059]"
         >
           <LuCheck aria-hidden="true" className="size-5" />
           {validando ? "Validando…" : "Validar código y ver ficha médica"}

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type Vinculo, type CambiosVinculo } from "../../services/usuariosService";
@@ -136,21 +135,19 @@ export default function AdmVinculo() {
 
   if (!familiarId) {
     return (
-      <main className="mainBody">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody">
         <VueltaAtras titulo="Administrar vínculo" />
-        <p className="text-red-600">No sabemos a qué persona querés administrar. Volvé a Ajustes y elegila de la lista.</p>
+        <p className="text-red-800">No sabemos a qué persona querés administrar. Volvé a Ajustes y elegila de la lista.</p>
       </main>
     );
   }
 
   if (!vinculo) {
     return (
-      <main className="mainBody">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody">
         <VueltaAtras titulo="Administrar vínculo" />
         {cargando && <p>Cargando persona vinculada...</p>}
-        {error && <p className="text-red-600">{error}</p>}
+        {error && <p role="alert" className="text-red-800">{error}</p>}
       </main>
     );
   }
@@ -160,8 +157,7 @@ export default function AdmVinculo() {
   const desde = new Date(vinculo.createdAt).toLocaleDateString("es-AR", { month: "long", year: "numeric" });
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <form onSubmit={handleGuardar} className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Administrar vínculo" />
 
@@ -315,7 +311,7 @@ export default function AdmVinculo() {
             <MdCheck aria-hidden="true" className="size-5 shrink-0" />
             <span>{guardando ? "Guardando..." : `Guardar permisos de ${primerNombre}`}</span>
           </button>
-          {error && <p role="alert" className="text-red-600">{error}</p>}
+          {error && <p role="alert" className="text-red-800">{error}</p>}
           {mensaje && <p role="status" className="text-green-700">{mensaje}</p>}
         </div>
       </form>

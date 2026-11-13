@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
 import { medicionesService, type Medicion } from "../../services/medicionesService";
@@ -137,8 +136,7 @@ export default function SignosVitales() {
     : null;
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <VueltaAtras titulo="Mis signos vitales" compacto seccion="Mi salud" />
 
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32">
@@ -176,7 +174,6 @@ export default function SignosVitales() {
 
             <Link
               to="pulso"
-              aria-label={`Corazón: ${ultimoPulso ? `${Math.round(ultimoPulso.valor)} lpm` : "sin datos recientes"}. Ver detalle`}
               className="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-3xl bg-white p-5 shadow-md transition-colors hover:bg-[#FBFDFC] active:bg-[#EEF8F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
             >
               <span className="flex min-w-0 items-center gap-3">
@@ -184,7 +181,7 @@ export default function SignosVitales() {
                 <span className="min-w-0 flex-1 text-xl font-bold text-[#16222C]">Corazón</span>
                 <LuChevronRight aria-hidden="true" className="size-6 shrink-0 text-[#144BD3]" />
               </span>
-              <span className="flex min-w-0 items-end gap-2 whitespace-nowrap">
+              <span className="flex min-w-0 flex-wrap items-end gap-2">
                 <span className="text-5xl font-bold leading-none text-[#16222C]">{ultimoPulso ? Math.round(ultimoPulso.valor) : "—"}</span>
                 <span className="pb-1 text-base text-[#435059]">lpm</span>
               </span>
@@ -196,7 +193,6 @@ export default function SignosVitales() {
 
             <Link
               to="oxigeno"
-              aria-label={`Oxígeno en sangre: ${ultimoOxigeno ? `${Math.round(ultimoOxigeno.valor)} por ciento` : "sin datos recientes"}. Ver detalle`}
               className="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-3xl bg-white p-5 shadow-md transition-colors hover:bg-[#FBFDFC] active:bg-[#EEF8F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
             >
               <span className="flex min-w-0 items-center gap-3">
@@ -204,7 +200,7 @@ export default function SignosVitales() {
                 <span className="min-w-0 flex-1 text-xl font-bold text-[#16222C]">Oxígeno</span>
                 <LuChevronRight aria-hidden="true" className="size-6 shrink-0 text-[#144BD3]" />
               </span>
-              <span className="flex min-w-0 items-end gap-2 whitespace-nowrap">
+              <span className="flex min-w-0 flex-wrap items-end gap-2">
                 <span className="text-5xl font-bold leading-none text-[#16222C]">{ultimoOxigeno ? Math.round(ultimoOxigeno.valor) : "—"}</span>
                 <span className="pb-1 text-base text-[#435059]">%</span>
               </span>
@@ -216,7 +212,6 @@ export default function SignosVitales() {
 
             <Link
               to="pasos"
-              aria-label={`Pasos de hoy: ${Math.round(totalPasos).toLocaleString("es-AR")}. Ver detalle`}
               className="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-3xl bg-white p-5 shadow-md transition-colors hover:bg-[#FBFDFC] active:bg-[#EEF8F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
             >
               <span className="flex min-w-0 items-center gap-3">
@@ -224,8 +219,8 @@ export default function SignosVitales() {
                 <span className="min-w-0 flex-1 text-xl font-bold text-[#16222C]">Pasos de hoy</span>
                 <LuChevronRight aria-hidden="true" className="size-6 shrink-0 text-[#144BD3]" />
               </span>
-              <span className="flex min-w-0 items-end gap-2 whitespace-nowrap">
-                <span className="truncate text-5xl font-bold leading-none text-[#16222C]">{Math.round(totalPasos).toLocaleString("es-AR")}</span>
+              <span className="flex min-w-0 flex-wrap items-end gap-2">
+                <span className="break-all text-5xl font-bold leading-none text-[#16222C]">{Math.round(totalPasos).toLocaleString("es-AR")}</span>
                 <span className="pb-1 text-base text-[#435059]">pasos</span>
               </span>
               <span role="progressbar" aria-label="Progreso hacia la meta de pasos" aria-valuemin={0} aria-valuemax={META_PASOS} aria-valuenow={Math.min(totalPasos, META_PASOS)} className="flex h-3.5 w-full overflow-hidden rounded-full bg-[#E7EDFB]">
@@ -242,7 +237,6 @@ export default function SignosVitales() {
 
             <Link
               to="sueno"
-              aria-label={`Descanso: ${ultimoSueno ? horasYMinutos(ultimoSueno.valor) : "sin datos recientes"}. Ver detalle`}
               className="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-3xl bg-white p-5 shadow-md transition-colors hover:bg-[#FBFDFC] active:bg-[#EEF8F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
             >
               <span className="flex min-w-0 items-center gap-3">
@@ -250,7 +244,7 @@ export default function SignosVitales() {
                 <span className="min-w-0 flex-1 text-xl font-bold text-[#16222C]">Descanso</span>
                 <LuChevronRight aria-hidden="true" className="size-6 shrink-0 text-[#144BD3]" />
               </span>
-              <span className="flex min-w-0 items-end gap-2 whitespace-nowrap">
+              <span className="flex min-w-0 flex-wrap items-end gap-2">
                 <span className="text-5xl font-bold leading-none text-[#16222C]">
                   {duracionSueno !== null
                     ? `${Math.floor(duracionSueno / 60)} h ${String(duracionSueno % 60).padStart(2, "0")}`

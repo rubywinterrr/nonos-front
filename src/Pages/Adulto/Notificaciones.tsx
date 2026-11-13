@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -218,13 +217,12 @@ export default function Notificaciones() {
   const anteriores = avisos.filter((aviso) => aviso.leida);
 
   return (
-    <main className="mainBody gap-4">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32 text-[#16222C]">
         <VueltaAtras titulo="Notificaciones" compacto seccion="Mis avisos" />
 
-        {cargando && <p className="text-[#435059]">Cargando tus avisos...</p>}
-        {error && <p className="text-red-600">{error}</p>}
+        {cargando && <p role="status" className="text-[#435059]">Cargando tus avisos...</p>}
+        {error && <p role="alert" className="text-red-800">{error}</p>}
 
         {!cargando && !error && (
           <section

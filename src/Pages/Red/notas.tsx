@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { LuCheck, LuPencil, LuPlus, LuStickyNote, LuTrash2, LuX } from "react-icons/lu";
 import { useAuth } from "../../hooks/useAuth";
@@ -148,8 +147,7 @@ export default function NotasRed() {
   );
 
   return (
-    <main className="mainBody gap-4 text-[#0E1D28]">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4 text-[#0E1D28]">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Notas de la red" compacto />
 
@@ -159,7 +157,7 @@ export default function NotasRed() {
           </p>
         )}
 
-        {cargando && <p className="text-center text-[#424656]">Cargando notas…</p>}
+        {cargando && <p role="status" className="text-center text-[#424656]">Cargando notas…</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
         {!cargando && !adulto && !error && (
           <p className="rounded-2xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>

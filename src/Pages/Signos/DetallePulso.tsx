@@ -7,6 +7,7 @@ import { DIA_MS, diasDelPeriodo, diaYHora, hora } from "../../utils/formatoSigno
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
 import GloboGrafico from "../../components/GloboGrafico";
+import DatosDelGrafico from "../../components/DatosDelGrafico";
 
 // zona segura del pulso en reposo
 const PULSO_MIN = 60;
@@ -247,6 +248,7 @@ export default function DetallePulso() {
               )}
             </div>
             <p className="text-xs text-[#424656]">Tocá el gráfico para ver el pulso de cada momento.</p>
+            <DatosDelGrafico periodo="Fecha y hora" medida="Pulso" filas={pulsos.map((pulso) => ({ etiqueta: diaYHora(pulso.timestamp), valor: `${Math.round(pulso.valor)} lpm` }))} />
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />Pulso</li>
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-sm bg-[#84F6E6]" />Zona segura (60-100)</li>

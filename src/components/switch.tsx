@@ -2,7 +2,7 @@ interface SwitchProps {
   checked?: boolean;
   onChange?: (checked: boolean) => void;
   mostrarEstado?: boolean;
-  ariaLabel?: string;
+  ariaLabel: string;
 }
 
 export default function Switch({

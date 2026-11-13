@@ -6,7 +6,6 @@ import { LuArrowRight, LuChevronRight, LuClock3 } from "react-icons/lu";
 import { invitacionesService, type Invitacion } from "../../services/invitacionesService";
 import { usuarioService, type PreferenciasNotificacion, type Vinculo } from "../../services/usuariosService";
 import { useAuth } from "../../hooks/useAuth";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import AjustesTexto from "../../components/AjusteTamanios";
 import Desplegable from "../../components/menuDesplegable";
@@ -152,8 +151,7 @@ export default function Config() {
   const cargarEnviadas = () => setRecargarEnviadas((actual) => actual + 1);
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <VueltaAtras titulo="Mis ajustes" compacto seccion="Mi app" />
 
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
@@ -190,7 +188,7 @@ export default function Config() {
         <section aria-labelledby="titulo-acompanantes" className="flex w-full flex-col gap-3 rounded-3xl bg-white px-5 pb-6 pt-5 shadow-sm">
           <h2 id="titulo-acompanantes" className="text-2xl font-bold text-[#16222C]">Usuarios acompañantes</h2>
 
-          {loadingVinculos && <p className="text-[#435059]">Cargando personas vinculadas...</p>}
+          {loadingVinculos && <p role="status" className="text-[#435059]">Cargando personas vinculadas...</p>}
           {errorVinculos && <p role="alert" className="text-red-700">{errorVinculos}</p>}
           {!loadingVinculos && !errorVinculos && vinculos.length === 0 && (
             <p className="text-[#435059]">Todavía no tenés personas vinculadas.</p>

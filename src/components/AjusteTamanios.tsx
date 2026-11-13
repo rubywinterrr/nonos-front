@@ -12,7 +12,7 @@ export default function AjustesTexto() {
     <section aria-labelledby="titulo-tamanio-texto" className="flex w-full flex-col gap-3.5 rounded-3xl bg-white p-5 shadow-sm">
       <h2 id="titulo-tamanio-texto" className="text-2xl font-bold text-[#16222C]">Tamaño de la letra</h2>
 
-      <div className="grid grid-cols-3 gap-2.5 text-center">
+      <div role="group" aria-labelledby="titulo-tamanio-texto" className="grid grid-cols-3 gap-2.5 text-center">
         <button
           type="button"
           aria-pressed={tamaño === "normal"}

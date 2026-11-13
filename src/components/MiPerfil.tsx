@@ -109,15 +109,15 @@ export default function MiPerfil() {
         <form onSubmit={guardar} className="flex flex-col gap-3 rounded-xl bg-[#E7EDFB] p-3">
           <label className="flex flex-col gap-1 text-sm font-semibold">
             Nombre y apellido
-            <input value={nombre} onChange={(evento) => setNombre(evento.target.value)} className={clasesCampo} />
+            <input autoComplete="name" value={nombre} onChange={(evento) => setNombre(evento.target.value)} className={clasesCampo} />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold">
             Teléfono
-            <input type="tel" value={telefono} onChange={(evento) => setTelefono(evento.target.value)} placeholder="Ej: +54 9 11 4490-2211" className={clasesCampo} />
+            <input type="tel" autoComplete="tel" value={telefono} onChange={(evento) => setTelefono(evento.target.value)} placeholder="Ej: +54 9 11 4490-2211" className={clasesCampo} />
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold">
             Fecha de nacimiento
-            <input type="date" value={nacimiento} onChange={(evento) => setNacimiento(evento.target.value)} className={clasesCampo} />
+            <input type="date" autoComplete="bday" value={nacimiento} onChange={(evento) => setNacimiento(evento.target.value)} className={clasesCampo} />
           </label>
           {esAdulto && (
             <>

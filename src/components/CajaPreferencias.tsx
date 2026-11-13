@@ -21,17 +21,20 @@ export default function CajaPreferencias({
       <div className="bg-white border border-gray-200 flex flex-col gap-5 p-5 rounded-2xl w-full">
         <div className="w-full flex gap-3 items-center justify-start">
           <MdOutlinePeopleAlt className="p-2 bg-white border border-gray-200 rounded-xl text-5xl" />
-          <h1 className="text-lg max-w-80/100 font-semibold">
+          <h2 className="text-lg max-w-80/100 font-semibold">
             {titulo}
-          </h1>
+          </h2>
         </div>
         <InputCuidados
+          etiqueta={titulo}
           editable={isEditing}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
         />
         <button
+          type="button"
+          aria-expanded={isEditing}
           onClick={() => setIsEditing((editing) => !editing)}
           className="bg-[#E9EEF6] font-medium cursor-pointer hover:bg-gray-200 active:bg-gray-300 rounded-lg w-full flex items-center justify-center gap-3 p-5 text-xl"
         >

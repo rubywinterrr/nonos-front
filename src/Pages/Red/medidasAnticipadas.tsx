@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService } from "../../services/usuariosService";
@@ -55,8 +54,7 @@ export default function MedidasAnticipadas() {
   }, [usuario?.id]);
 
   return (
-    <main className="mainBody gap-4">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Medidas anticipadas" />
         <section aria-label="Información sobre medidas anticipadas" className="flex w-full items-start gap-4 rounded-xl border border-gray-200 bg-white p-4">

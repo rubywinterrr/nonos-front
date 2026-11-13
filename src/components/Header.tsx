@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LuBell } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { notificacionesService } from "../services/notificacionesService";
+import { useAlturaBarraFija } from "../hooks/useAlturaBarraFija";
 
 // Encabezado global de la aplicación.
 // Muestra el menú, el nombre de la app y acceso a la cuenta en todas las pantallas principales.
 export default function Header() {
+  const cabecera = useRef<HTMLElement>(null);
+  useAlturaBarraFija(cabecera, "--alto-cabecera");
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const usuarioId = usuario?.id;
@@ -57,14 +60,15 @@ export default function Header() {
   return (
     <>
       <header
+        ref={cabecera}
         className={`flex justify-between items-center w-full min-h-[6vh] bg-main-blue fixed top-0 p-3 py-4 left-1/2 border-b-2 border-gray-200 z-50 -translate-x-1/2 ${hasScrolled ? "shadow-md" : "shadow-none"
           }`}
       >
         {/* logo oficial (componente "Logo/Header (isotipo + NONOS)" del Figma) */}
-        <h1 className="flex items-center gap-2.5 text-2xl font-bold text-[#0A2666] lg:text-3xl">
+        <p className="flex items-center gap-2.5 text-2xl font-bold text-[#0A2666] lg:text-3xl">
           <img src="/logo/isotipo-cuadrado.png" alt="" className="size-9 lg:size-11" />
           NONOS
-        </h1>
+        </p>
         <div className="flex items-center gap-3">
           <button
             type="button"

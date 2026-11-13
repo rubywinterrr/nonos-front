@@ -7,7 +7,7 @@ export default function RutaProtegida() {
   const { usuario, loading } = useAuth();
 
   if (loading) {
-    return <p className="p-5 text-lg">Cargando…</p>;
+    return <p role="status" className="p-5 text-lg">Cargando…</p>;
   }
 
   if (!usuario) {

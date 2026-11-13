@@ -13,6 +13,7 @@ export default function CambiarPassword({ onCerrar }: Props) {
   const [actual, setActual] = useState("");
   const [nueva, setNueva] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const [invalida, setInvalida] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // revisa la nueva contraseña y la manda; si sale bien, el service lleva al login
@@ -21,6 +22,8 @@ export default function CambiarPassword({ onCerrar }: Props) {
     setError(null);
 
     if (nueva.length < 8 || !/[A-Z]/.test(nueva) || !/[!@#$%^&*(),.?":{}|<>]/.test(nueva)) {
+      setInvalida(true);
+      document.getElementById("password-nueva")?.focus();
       setError("La nueva contraseña necesita mínimo 8 caracteres, una mayúscula y un carácter especial.");
       return;
     }
@@ -36,15 +39,15 @@ export default function CambiarPassword({ onCerrar }: Props) {
   };
 
   return (
-    <form onSubmit={guardar} className="mt-2 flex w-full flex-col gap-3 rounded-xl bg-[#E7EDFB] p-3">
+    <form id="cambiar-password" onSubmit={guardar} className="mt-2 flex w-full flex-col gap-3 rounded-xl bg-[#E7EDFB] p-3">
       <div className="flex flex-col gap-1 text-sm font-semibold">
-        Contraseña actual
-        <PasswordInput value={actual} onChange={setActual} etiqueta="Contraseña actual" />
+        <label htmlFor="password-actual">Contraseña actual</label>
+        <PasswordInput id="password-actual" value={actual} onChange={setActual} etiqueta="Contraseña actual" autoFocus />
       </div>
       <div className="flex flex-col gap-1 text-sm font-semibold">
-        Contraseña nueva
-        <PasswordInput value={nueva} onChange={setNueva} etiqueta="Contraseña nueva" autoComplete="new-password" />
-        <span className="text-xs font-normal text-[#435059]">Mínimo 8 caracteres, una mayúscula y un carácter especial.</span>
+        <label htmlFor="password-nueva">Contraseña nueva</label>
+        <PasswordInput id="password-nueva" value={nueva} onChange={(valor) => { setNueva(valor); setInvalida(false); }} etiqueta="Contraseña nueva" autoComplete="new-password" descripcion="requisitos-password-nueva" invalida={invalida} />
+        <span id="requisitos-password-nueva" className="text-xs font-normal text-[#435059]">Mínimo 8 caracteres, una mayúscula y un carácter especial.</span>
       </div>
       <p className="text-xs text-[#435059]">Al cambiarla se cierran todas tus sesiones y vas a tener que volver a ingresar.</p>
       {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}

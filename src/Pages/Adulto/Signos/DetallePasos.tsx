@@ -3,7 +3,6 @@ import { LuCircleHelp } from "react-icons/lu";
 import { useAuth } from "../../../hooks/useAuth";
 import { medicionesService, type Medicion } from "../../../services/medicionesService";
 import { idDelAdultoQueSeMira } from "../../../utils/adultoQueSeMira";
-import Header from "../../../components/Header";
 import VueltaAtras from "../../../components/vueltaAtras";
 
 const META_PASOS = 3000;
@@ -54,8 +53,7 @@ export default function DetallePasosAdulto() {
   const restantes = Math.max(0, META_PASOS - pasos);
 
   return (
-    <main className="mainBody text-[#16222C]">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody text-[#16222C]">
       <VueltaAtras titulo="Mis pasos" seccion="Mi salud" compacto />
       <div className="mx-auto flex w-full max-w-xl flex-col gap-4 pb-32">
         {cargando && <p role="status" className="text-center text-[#435059]">Cargando tus pasos…</p>}
@@ -64,11 +62,11 @@ export default function DetallePasosAdulto() {
         {!cargando && !sinAdulto && (
           <>
             <section aria-label="Pasos de hoy" className="flex flex-col gap-3.5 rounded-[28px] bg-white p-5 shadow-md">
-              <div className="flex items-end gap-2.5 whitespace-nowrap">
+              <div className="flex flex-wrap items-end gap-2.5">
                 <p className="truncate text-6xl font-bold leading-none">{Math.round(pasos).toLocaleString("es-AR")}</p>
                 <p className="pb-1 text-xl text-[#435059]">de 3.000 pasos</p>
               </div>
-              <div role="progressbar" aria-label="Progreso de la meta diaria" aria-valuemin={0} aria-valuemax={META_PASOS} aria-valuenow={Math.min(pasos, META_PASOS)} className="h-4 w-full overflow-hidden rounded-full bg-[#E7EDFB]">
+              <div role="progressbar" aria-label="Progreso de la meta diaria" aria-valuemin={0} aria-valuemax={META_PASOS} aria-valuenow={Math.min(pasos, META_PASOS)} aria-valuetext={`${pasos.toLocaleString("es-AR")} de ${META_PASOS.toLocaleString("es-AR")} pasos`} className="h-4 w-full overflow-hidden rounded-full bg-[#E7EDFB]">
                 <div aria-hidden="true" className="h-full rounded-full bg-[#144BD3] transition-[width] duration-500" style={{ width: `${progreso}%` }} />
               </div>
             </section>

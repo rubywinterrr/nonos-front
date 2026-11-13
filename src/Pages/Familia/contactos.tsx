@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import TarjetaContactos from "../../components/TarjetaContacto";
 import GestionContactos from "../../components/GestionContactos";
 import {
@@ -12,7 +11,7 @@ import {
   LuUsersRound,
   LuZap,
 } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
+import { useVolver } from "../../hooks/useVolver";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type AdultoMayorVinculado, type UsuarioById, type Vinculo } from "../../services/usuariosService";
 import { contactosService, type Contacto } from "../../services/contactosService";
@@ -43,7 +42,7 @@ function ordenarRed(vinculos: Vinculo[]) {
 
 // pantalla del familiar/cuidador: a quién llamar por el adulto vinculado que mira
 export default function ContactosFamilia() {
-  const navigate = useNavigate();
+  const volver = useVolver();
   const { usuario } = useAuth();
   const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
   // sanatorio y médico de cabecera del adulto
@@ -86,14 +85,13 @@ export default function ContactosFamilia() {
 
   return (
     <>
-      <main className="mainBody gap-0">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-0">
         <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
           <div className="flex items-center gap-2">
             <button
               type="button"
               aria-label="Volver"
-              onClick={() => navigate(-1)}
+              onClick={volver}
               className="flex size-12 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-[#E9EEF2] hover:bg-[#DAE5EE] active:border-[#1550E0] active:bg-[#CADAE9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1550E0]"
             >
               <LuArrowLeft aria-hidden="true" className="size-6" />
@@ -202,7 +200,7 @@ export default function ContactosFamilia() {
               </span>
             </div>
             <div className="flex w-full flex-col gap-4">
-              {cargando && <p className="text-center text-sm text-[#435059]">Cargando…</p>}
+              {cargando && <p role="status" className="text-center text-sm text-[#435059]">Cargando…</p>}
               {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
               {!cargando && !adulto && !error && (
                 <p className="rounded-xl bg-white p-4 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>

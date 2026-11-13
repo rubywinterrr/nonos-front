@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Header from "./Header";
 import VueltaAtras from "./vueltaAtras";
 import PestanasPeriodo from "./PestanasPeriodo";
 
@@ -28,14 +27,13 @@ export default function PantallaDetalleSigno({
   children,
 }: Props) {
   return (
-    <main className="mainBody text-[#0E1D28]">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody text-[#0E1D28]">
       <VueltaAtras titulo={titulo} seccion="Signos vitales" compacto />
 
       <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
         <PestanasPeriodo periodo={periodo} onCambiar={onCambiarPeriodo} />
 
-        {cargando && <p className="text-center text-[#424656]">Cargando datos de la pulsera…</p>}
+        {cargando && <p role="status" className="text-center text-[#424656]">Cargando datos de la pulsera…</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
         {sinAdulto && (
           <p className="rounded-2xl bg-white p-5 text-base">

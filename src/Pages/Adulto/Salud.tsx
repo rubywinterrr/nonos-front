@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { FaRegAddressCard } from "react-icons/fa";
 import { LuEye, LuStethoscope, LuTriangleAlert } from "react-icons/lu";
@@ -86,43 +85,42 @@ export default function Salud() {
 
   return (
     <>
-      <main className="mainBody ">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody ">
         <VueltaAtras titulo="Mi información médica" />
         <div className="w-full p-5 rounded-2xl flex items-start justify-start bg-gray-100 gap-5">
-          <LuEye className="size-13 bg-gray-200 p-3 rounded-full text-gray-500" />
+          <LuEye className="size-13 bg-gray-200 p-3 rounded-full text-gray-700" />
           <div className="flex flex-col items-start justify-start gap-1 max-w-70/100">
-            <h1 className="font-semibold text-lg">Vista de solo lectura</h1>
-            <p className="text-gray-500">
+            <h2 className="font-semibold text-lg">Vista de solo lectura</h2>
+            <p className="text-gray-700">
               Podés mostrar esta pantalla al médico o farmacéutico.
             </p>
           </div>
         </div>
         <div className="w-full flex flex-col gap-3">
-          <span className="flex justify-between items-center">
-            <h1 className="font-semibold flex items-center justify-start gap-5 text-2xl">
-              <FaRegAddressCard className="text-gray-500" />
+          <div className="flex flex-wrap justify-between items-center gap-2">
+            <h2 className="font-semibold flex items-center justify-start gap-5 text-2xl">
+              <FaRegAddressCard className="text-gray-700" />
               Datos personales
-            </h1>
-            <h2 className="bg-gray-100 text-gray-600 rounded-full p-2 font-semibold pr-3 pl-3">
-              Titular
             </h2>
-          </span>
+            <p className="bg-gray-100 text-gray-600 rounded-full p-2 font-semibold pr-3 pl-3">
+              Titular
+            </p>
+          </div>
           <div className="w-full bg-white rounded-2xl flex flex-col gap-5 p-5">
-            <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-between items-start">
+            <div className="rounded-2xl bg-gray-100 w-full p-5 flex flex-wrap gap-3 justify-between items-start">
               <div className="flex flex-col gap-1 items-start justify-start">
                 <p className="text-gray-600">Nombre completo</p>
-                <h1 className="text-xl font-bold">
+                <p className="text-xl font-bold">
                   {usuario?.nombreCompleto || "Usuario"}
-                </h1>
+                </p>
               </div>
               <div className="flex flex-col gap-1 items-end justify-end">
                 <p className="text-gray-600">Edad</p>
-                <h1 className="text-xl font-bold">
+                <p className="text-xl font-bold">
                   {usuario?.fechaNacimiento
                     ? `${calcularEdad(usuario.fechaNacimiento)} años`
                     : "Sin dato de edad"}
-                </h1>{" "}
+                </p>{" "}
               </div>
             </div>
             <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-start gap-5">
@@ -130,19 +128,19 @@ export default function Salud() {
               <div className="flex flex-col gap-1 items-start justify-start">
                 {" "}
                 <p className="text-gray-600">Grupo y factor</p>
-                <h1 className="text-xl font-bold">
+                <p className="text-xl font-bold">
                   {textoGrupoSanguineo(usuario?.grupoSanguineo ?? null) || "Sin dato de grupo sanguíneo"}
-                </h1>
+                </p>
               </div>
             </div>
             <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-center gap-5">
-              <RiBookMarkedLine className="text-gray-500 p-3 bg-gray-200/50 rounded-lg text-6xl" />
+              <RiBookMarkedLine className="text-gray-700 p-3 bg-gray-200/50 rounded-lg text-6xl" />
               <div className="flex flex-col gap-1 items-start justify-start">
                 {" "}
                 <p className="text-gray-600">Cobertura / Prepaga</p>
-                <h1 className="text-xl font-bold">
+                <p className="text-xl font-bold">
                   {usuario?.obraSocial || "Sin dato de cobertura"}
-                </h1>
+                </p>
                 {usuario?.carnetObraSocial && (
                   <p className="text-gray-600">N° {usuario.carnetObraSocial}</p>
                 )}
@@ -153,21 +151,21 @@ export default function Salud() {
             </div>
             {usuario?.sanatorioHabitual && (
               <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-center gap-5">
-                <MdOutlineLocalHospital className="text-gray-500 p-3 bg-gray-200/50 rounded-lg text-6xl" />
+                <MdOutlineLocalHospital className="text-gray-700 p-3 bg-gray-200/50 rounded-lg text-6xl" />
                 <div className="flex flex-col gap-1 items-start justify-start">
                   {" "}
                   <p className="text-gray-600">Sanatorio habitual</p>
-                  <h1 className="text-xl font-bold">{usuario.sanatorioHabitual}</h1>
+                  <p className="text-xl font-bold">{usuario.sanatorioHabitual}</p>
                 </div>
               </div>
             )}
             {usuario?.nombreMedicoCabecera && (
               <div className="rounded-2xl bg-gray-100 w-full p-5 flex justify-start items-center gap-5">
-                <LuStethoscope className="text-gray-500 p-3 bg-gray-200/50 rounded-lg size-15 shrink-0" />
+                <LuStethoscope className="text-gray-700 p-3 bg-gray-200/50 rounded-lg size-15 shrink-0" />
                 <div className="flex flex-col gap-1 items-start justify-start">
                   {" "}
                   <p className="text-gray-600">Médico de cabecera</p>
-                  <h1 className="text-xl font-bold">{usuario.nombreMedicoCabecera}</h1>
+                  <p className="text-xl font-bold">{usuario.nombreMedicoCabecera}</p>
                   {usuario.telefonoMedicoCabecera && (
                     <p className="text-gray-600">{usuario.telefonoMedicoCabecera}</p>
                   )}
@@ -221,10 +219,10 @@ export default function Salud() {
         </div>
 
         <div className="w-full flex flex-col gap-5 items-start justify-start">
-          <h1 className="font-semibold text-xl flex items-center justify-start gap-1">
+          <h2 className="font-semibold text-xl flex items-center justify-start gap-1">
             <MdOutlineMedication className="text-gray-600 text-3xl" />{" "}
             Medicación habitual actual
-          </h1>
+          </h2>
           <p className="flex items-center justify-start gap-1 text-gray-600">
             <PiCalendarCheck className="text-2xl" />
             {ultimaActualizacion
@@ -233,7 +231,7 @@ export default function Salud() {
             {/* PONER INFO FECHA DE ACTUALIZACION Y NOMBRE DOCTOR */}
             {/* NOMBRE DOCTOR: EL BACK NO TIENE ENDPOINT (no guarda quién hizo el cambio) */}
           </p>
-          {loading && <p className="text-gray-600">Cargando medicación...</p>}
+          {loading && <p role="status" className="text-gray-600">Cargando medicación...</p>}
           {error && <p role="alert" className="text-red-700">{error}</p>}
           {!loading && !error && medicamentos.length === 0 && (
             <p className="text-gray-600">No hay medicación habitual registrada.</p>
@@ -247,17 +245,17 @@ export default function Salud() {
             />
           ))}
         </div>
-        <div className="bg-gray-100 rounded-2xl flex items-start justify-start p-6 w-full gap-3 text-gray-500">
+        <div className="bg-gray-100 rounded-2xl flex items-start justify-start p-6 w-full gap-3 text-gray-700">
           <MdLockClock className="size-8" />
           <p className="max-w-80/100">
             Esta información es solo para consulta, no controla las tomas. Para
             modificarla, consultá con tu cuidador o familiar.
           </p>
         </div>
-        {/*<h1 className="flex p-3 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400">
+        {/*<h2 className="flex p-3 gap-3 bg-gray-200 rounded-2xl w-full items-center justify-center cursor-pointer hover:bg-gray-300 active:bg-gray-400">
           <MdOutlineSupportAgent className="size-8" /> Contactar a mi cuidador
           para cambios
-        </h1>*/}
+        </h2>*/}
       </main>
     </>
   );

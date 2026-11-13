@@ -64,7 +64,7 @@ export default function AdultosVinculados() {
         </span>
       </div>
 
-      {cargando && <p className="text-sm text-[#424656]">Cargando…</p>}
+      {cargando && <p role="status" className="text-sm text-[#424656]">Cargando…</p>}
       {error && <p role="alert" className="text-sm font-semibold text-red-700">{error}</p>}
       {!cargando && !error && adultos.length === 0 && (
         <p className="rounded-xl bg-white p-4 text-sm">
@@ -96,22 +96,16 @@ export default function AdultosVinculados() {
           </div>
 
           <dl className="flex flex-col gap-2 border-t border-[#D4E4F3] pt-3">
-            <div className="flex items-start gap-2">
-              <LuMail aria-hidden="true" className="mt-1 size-4 shrink-0 text-[#1550E0]" />
-              <div className="min-w-0">
-                <dt className="text-xs uppercase tracking-wide text-[#424656]">Correo electrónico</dt>
-                <dd className="break-all font-semibold">{adulto.email}</dd>
-              </div>
+            <div className="relative pl-6">
+              <dt className="text-xs uppercase tracking-wide text-[#424656]"><LuMail aria-hidden="true" className="absolute left-0 top-0 mt-1 size-4 shrink-0 text-[#1550E0]" />Correo electrónico</dt>
+              <dd className="break-all font-semibold">{adulto.email}</dd>
             </div>
             {adulto.telefono && (
-              <div className="flex items-start gap-2">
-                <LuPhone aria-hidden="true" className="mt-1 size-4 shrink-0 text-[#1550E0]" />
-                <div>
-                  <dt className="text-xs uppercase tracking-wide text-[#424656]">Teléfono vinculado</dt>
-                  <dd className="font-semibold">
-                    <a href={`tel:${adulto.telefono}`} className="hover:underline">{adulto.telefono}</a>
-                  </dd>
-                </div>
+              <div className="relative pl-6">
+                <dt className="text-xs uppercase tracking-wide text-[#424656]"><LuPhone aria-hidden="true" className="absolute left-0 top-0 mt-1 size-4 shrink-0 text-[#1550E0]" />Teléfono vinculado</dt>
+                <dd className="font-semibold">
+                  <a href={`tel:${adulto.telefono}`} className="hover:underline">{adulto.telefono}</a>
+                </dd>
               </div>
             )}
           </dl>

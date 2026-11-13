@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { LuAsterisk, LuBriefcaseMedical, LuPhone, LuUsers } from "react-icons/lu";
 import TarjetaContactos from "../../components/TarjetaContacto";
@@ -54,8 +53,7 @@ export default function Contactos() {
 
   return (
     <>
-      <main className="mainBody gap-4">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
         <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32">
           <VueltaAtras titulo="Contactos" compacto seccion="Mis contactos" />
 

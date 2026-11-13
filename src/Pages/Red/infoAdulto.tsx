@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import CondicionMedica from "../../components/CondicionMedica";
 import ContactoVinculado from "../../components/ContactoVinculado";
@@ -86,11 +85,10 @@ export default function InfoAdulto() {
 
   if (!adulto) {
     return (
-      <main className="mainBody gap-4">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
         <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
           <VueltaAtras titulo="Información del adulto" compacto />
-          {cargando && <p className="text-center text-sm text-[#435059]">Cargando…</p>}
+          {cargando && <p role="status" className="text-center text-sm text-[#435059]">Cargando…</p>}
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
           {!cargando && !error && <p className="rounded-2xl bg-white p-5 text-sm">Todavía no estás vinculado a ningún adulto mayor.</p>}
         </div>
@@ -99,8 +97,7 @@ export default function InfoAdulto() {
   }
 
   return (
-    <main className="mainBody gap-4">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-4">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <VueltaAtras titulo="Información del adulto" compacto />
 

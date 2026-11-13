@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { RiCapsuleFill } from "react-icons/ri";
 import {
@@ -67,14 +66,13 @@ export default function MedicacionActual() {
   const momentoProxima = proxima ? momentoDelDia(proxima.horario) : "";
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-8">
         <VueltaAtras titulo="Medicación actual" />
 
         <p className="text-base font-medium leading-relaxed text-[#424656]">{fechaDeHoy()}</p>
 
-        {cargando && <p className="text-[#424656]">Cargando tu medicación…</p>}
+        {cargando && <p role="status" className="text-[#424656]">Cargando tu medicación…</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
         {!cargando && !error && tomas.length === 0 && (
           <p className="rounded-2xl bg-white p-4 text-base">Hoy no tenés medicación cargada.</p>

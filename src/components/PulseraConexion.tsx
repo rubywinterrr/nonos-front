@@ -153,7 +153,7 @@ export default function PulseraConexion() {
         </p>
       )}
       {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
-      {cargando && <p className="text-sm text-slate-500">Cargando…</p>}
+      {cargando && <p role="status" className="text-sm text-slate-500">Cargando…</p>}
 
       {/* sin pulsera, o con el permiso de Google vencido: hay que conectar */}
       {!cargando && (!pulsera || pulsera.requiereReautenticacion) && (

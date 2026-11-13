@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/Header";
 import InvitacionesPendientes from "../../components/InvitacionesPendientes";
 import obtenerFechaActual, { obtenerDiaActual } from "../../utils/obtenerFechaActual";
 import { Link } from "react-router-dom";
@@ -158,8 +157,7 @@ export default function HomeFamilia() {
   if (pulsera?.requiereReautenticacion) textoSincronizado = "Hay que volver a conectarla desde la cuenta del adulto";
 
   return (
-    <main className="mainBody">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-32 pt-6">
         <div className="flex flex-col gap-0.5">
           <h1 className="text-2xl font-bold leading-9 tracking-tight">Hola, {nombre}</h1>
@@ -173,7 +171,7 @@ export default function HomeFamilia() {
         <ActivarAvisos />
 
 
-        {cargando && <p className="text-center text-[#424656]">Cargando…</p>}
+        {cargando && <p role="status" className="text-center text-[#424656]">Cargando…</p>}
         {!cargando && !adulto && (
           <p className="rounded-2xl bg-white p-4 text-base">Todavía no estás vinculado a ningún adulto mayor.</p>
         )}

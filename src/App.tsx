@@ -24,7 +24,8 @@ const SOS = lazy(() => import("./Pages/Adulto/PantallaSOS"));
 const Salud = lazy(() => import("./Pages/Adulto/Salud"));
 const Contactos = lazy(() => import("./Pages/Adulto/Contactos"));
 const Config = lazy(() => import("./Pages/Adulto/Configuration"));
-import { ScrollToTop } from "./components/ScrollToTop";
+import { NavegacionAccesible } from "./components/NavegacionAccesible";
+import Header from "./components/Header";
 import Navbar from "./components/NavBar";
 const Codigo = lazy(() => import("./Pages/Adulto/CodigoDeEmergencia"));
 const Ayuda = lazy(() => import("./Pages/Adulto/Ayuda"));
@@ -60,10 +61,12 @@ import rutaSegunRol from "./utils/rutaSegunRol";
 
 function LayoutConFooter() {
   const location = useLocation();
+  const configurandoCuenta = location.pathname.startsWith("/adulto/configurar-cuenta");
   return (
     <>
+      {!configurandoCuenta && <Header />}
       <Outlet />
-      {!location.pathname.startsWith("/adulto/configurar-cuenta") && <Navbar />}
+      {!configurandoCuenta && <Navbar />}
     </>
   );
 }
@@ -93,7 +96,7 @@ function IrAAvisos() {
 // la raíz ("/") no es una pantalla: con sesión manda al inicio de cada rol, sin sesión al login
 function Inicio() {
   const { usuario, loading } = useAuth();
-  if (loading) return <div className="mainBody" aria-busy="true" />;
+  if (loading) return <p role="status" className="sr-only">Cargando NONOS…</p>;
   if (!usuario) return <Navigate to="/ingresar" replace />;
   return <Navigate to={rutaSegunRol(usuario.rol)} replace />;
 }
@@ -101,12 +104,12 @@ function Inicio() {
 function App() {
   return (
     <BrowserRouter>
-      <ScrollToTop />
       <Suspense
         fallback={
-          <div className="mainBody" aria-live="polite" aria-busy="true" />
+          <p role="status" className="sr-only">Cargando pantalla…</p>
         }
       >
+        <NavegacionAccesible />
         <Routes>
           <Route path="/ingresar" element={<Ingreso />} />
           <Route path="/" element={<Inicio />} />

@@ -7,6 +7,7 @@ import { DIA_MS, claveDelDia, diaCorto, diasDelPeriodo, hora, ultimosDias } from
 import PantallaDetalleSigno from "../../components/PantallaDetalleSigno";
 import DatoSigno from "../../components/DatoSigno";
 import GloboGrafico from "../../components/GloboGrafico";
+import DatosDelGrafico from "../../components/DatosDelGrafico";
 
 // por debajo de este valor el oxígeno se considera bajo
 const MINIMO_SALUDABLE = 95;
@@ -208,6 +209,7 @@ export default function DetalleOxigeno() {
               )}
             </div>
             <p className="text-xs text-[#424656]">Tocá un punto para ver el promedio de ese día.</p>
+            <DatosDelGrafico periodo="Día" medida="Oxígeno promedio" filas={diasDelGrafico.map((dia) => ({ etiqueta: diaCorto(dia.fecha), valor: dia.promedio === null ? "Sin medición" : `${dia.promedio} %` }))} />
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#424656]">
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-2.5 rounded-full bg-[#1550E0]" />Promedio del día</li>
               <li className="flex items-center gap-1.5"><span aria-hidden="true" className="h-0.5 w-4 bg-[#006A61]" />Mínimo saludable (95 %)</li>

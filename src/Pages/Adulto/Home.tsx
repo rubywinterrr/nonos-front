@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Header from "../../components/Header";
 import { useAuth } from "../../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { alertasService, type Alerta } from "../../services/alertasService";
@@ -32,12 +31,11 @@ function SignoCard({ etiqueta, valor, detalle, estado, progreso = 0, destino }: 
   return (
     <Link
       to={destino}
-      aria-label={`${etiqueta}: ${valor} ${detalle}. Ver detalle`}
       className="flex min-w-0 cursor-pointer flex-col gap-2 rounded-3xl bg-white px-4 py-4 shadow-md transition-colors hover:bg-[#F8FBFF] active:bg-[#EEF4FC] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0B5FFF]"
     >
       <span className="text-lg font-bold leading-6 text-[#16222C]">{etiqueta}</span>
-      <span className="flex min-w-0 items-end gap-1 whitespace-nowrap">
-        <span className="truncate text-4xl font-bold leading-10 text-[#16222C]">{valor}</span>
+      <span className="flex min-w-0 flex-wrap items-end gap-1">
+        <span className="break-all text-4xl font-bold leading-10 text-[#16222C]">{valor}</span>
         {detalle && <span className="text-base leading-6 text-[#435059]">{detalle}</span>}
       </span>
       {estado ? (
@@ -214,8 +212,7 @@ export default function Home() {
   };
 
   return (
-    <main className="mainBody gap-6">
-      <Header />
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-6">
       <div className="mx-auto flex w-full max-w-lg flex-col gap-6 pb-32 text-[#0E1D28]">
         <header className="flex flex-col gap-0.5 px-1">
           <h1 className="text-4xl font-bold leading-tight tracking-tight">Hola, {nombre || "Usuario"}</h1>
@@ -275,9 +272,9 @@ export default function Home() {
           {errorSOS && <p id="error-sos" role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{errorSOS}</p>}
         </div>
 
-        <div id="avisos-home" className="w-full scroll-mt-24" aria-label="Avisos pendientes">
+        <section id="avisos-home" className="w-full" aria-label="Avisos pendientes">
           <AvisosSalud alertas={alertas} onRespondida={(id) => setAlertas((actuales) => actuales.filter((a) => a.id !== id))} />
-        </div>
+        </section>
 
         <Link
           to="../medicamentos"

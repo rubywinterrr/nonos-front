@@ -54,7 +54,7 @@ export default function ConfigCuenta1() {
     try {
       await usuarioService.actualizarPerfil(usuario.id, {
         fechaNacimiento,
-        dni: Number(dni),
+        dni: Number(dni.replaceAll(".", "")),
         domicilio: domicilio.trim(),
         grupoSanguineo: grupoSanguineo as GrupoSanguineo,
         obraSocial: obraSocial.trim(),
@@ -72,7 +72,7 @@ export default function ConfigCuenta1() {
   };
 
   return (
-    <main className="mainBody gap-0">
+    <main id="contenido-principal" tabIndex={-1} className="mainBody gap-0">
       <header className="fixed inset-x-0 top-0 z-50 flex h-17 items-center border-b-2 border-gray-200 bg-main-blue px-4">
         <div className="mx-auto flex w-full max-w-lg items-center gap-2">
           <img src="/logo/isotipo-cuadrado.png" alt="" className="size-9" />
@@ -144,7 +144,7 @@ export default function ConfigCuenta1() {
                 className="flex flex-wrap items-baseline gap-x-2 text-base font-bold"
               >
                 Fecha de nacimiento{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>{" "}
                 <span className="text-sm font-normal text-[#435059]">
@@ -158,6 +158,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="fecha-nacimiento"
+                  autoComplete="bday"
                   required
                   type="date"
                   value={fechaNacimiento}
@@ -171,7 +172,7 @@ export default function ConfigCuenta1() {
             <div className="flex flex-col gap-1.5">
               <label htmlFor="dni" className="text-base font-bold">
                 Número de Documento (DNI){" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>
@@ -183,7 +184,9 @@ export default function ConfigCuenta1() {
                 <input
                   id="dni"
                   required
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]+(?:\.[0-9]{3})*"
                   value={dni}
                   onChange={(e) => setDni(e.target.value)}
                   placeholder="Ej: 6.840.120"
@@ -195,7 +198,7 @@ export default function ConfigCuenta1() {
             <div className="flex flex-col gap-1.5">
               <label htmlFor="domicilio" className="text-base font-bold">
                 Domicilio particular{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>
@@ -206,6 +209,7 @@ export default function ConfigCuenta1() {
                 />
                 <input
                   id="domicilio"
+                  autoComplete="street-address"
                   required
                   type="text"
                   maxLength={200}
@@ -239,7 +243,7 @@ export default function ConfigCuenta1() {
                 className="max-w-48 text-base font-bold leading-6"
               >
                 Grupo sanguíneo y factor{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>
@@ -271,7 +275,7 @@ export default function ConfigCuenta1() {
             <div className="flex flex-col gap-1.5 pt-2">
               <label htmlFor="cobertura" className="text-base font-bold">
                 Obra Social o Prepaga{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>
@@ -290,7 +294,7 @@ export default function ConfigCuenta1() {
             <div className="flex flex-col gap-1.5 pt-2">
               <label htmlFor="credencial" className="text-base font-bold">
                 Número de carnet / credencial{" "}
-                <span aria-hidden="true" className="text-red-600">
+                <span aria-hidden="true" className="text-red-800">
                   *
                 </span>
               </label>

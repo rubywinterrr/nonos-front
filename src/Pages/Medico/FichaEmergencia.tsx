@@ -82,10 +82,10 @@ export default function FichaEmergencia({ ficha, tiempoRestante, onFinalizar }: 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6 text-[#16222C]">
       <section className="flex flex-col gap-3 rounded-2xl bg-[#1550E0] p-4 text-white" aria-label="Sesión activa">
-        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
+        <h1 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
           <span aria-hidden="true" className="size-2.5 rounded-full bg-[#FF4D4D]" />
           Ficha médica de emergencia
-        </p>
+        </h1>
         <p className="flex items-center justify-between gap-2 rounded-lg bg-white px-3 py-2 text-sm text-[#16222C]">
           <span className="flex items-center gap-2">
             <LuTimer aria-hidden="true" className="size-5 text-[#1550E0]" />

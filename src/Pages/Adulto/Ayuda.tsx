@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import VueltaAtras from "../../components/vueltaAtras";
 import { Link } from "react-router-dom";
 import { FaHandHoldingHeart } from "react-icons/fa";
@@ -9,8 +8,7 @@ import Stock1 from "../../assets/stock1.png";
 export default function Ayuda() {
   return (
     <>
-      <main className="mainBody">
-        <Header />
+      <main id="contenido-principal" tabIndex={-1} className="mainBody">
         <VueltaAtras titulo="Ayuda y soporte"/>
         <div className="w-full lg:w-40/100 p-4 bg-linear-65 from-indigo-100 to-sky-100 rounded-xl shadow-md inline-flex flex-col justify-start items-start gap-4 overflow-hidden">
           <div className="w-full inline-flex justify-start items-start gap-3">
@@ -18,8 +16,8 @@ export default function Ayuda() {
               <FaHandHoldingHeart className="w-7 h-6 text-blue-600" />
             </div>
             <div className="flex-1 flex flex-col justify-start items-start">
-              <h1 className="text-xl">Estamos para acompañarte</h1>
-              <p className="text-lg text-gray-500">
+              <h2 className="text-xl">Estamos para acompañarte</h2>
+              <p className="text-lg text-gray-700">
                 Aquí vas a encontrar ayuda para cuando lo necesites.
               </p>
             </div>
@@ -36,16 +34,16 @@ export default function Ayuda() {
             <PiBookOpenText className="text-blue-600 text-3xl" />
             Tutoriales guiados
           </h2>
-          <p className="text-gray-500 text-xl">
+          <p className="text-gray-700 text-xl">
             Explicaciones visuales paso a paso con letras grandes y fotos
             reales.
           </p>
         </div>
         <div className="rounded-3xl w-full lg:w-30/100 bg-white shadow-lg relative">
-          <p className="text-blue-600 bg-gray-200 rounded-2xl w-30 flex items-center justify-center absolute top-2 left-2">
+          <p className="text-blue-800 bg-gray-200 rounded-2xl w-30 flex items-center justify-center absolute top-2 left-2">
             Para empezar
           </p>
-          <img src={Stock1} className="w-full min-h-40/100 rounded-t-3xl" />
+          <img alt="" src={Stock1} className="w-full min-h-40/100 rounded-t-3xl" />
           <div className="flex flex-col gap-3 p-5">
             <h2 className="text-2xl w-full">
               Guía rápida para usar NONOS por primera vez
@@ -55,7 +53,7 @@ export default function Ayuda() {
               tranquilidad y la de tus seres queridos.
             </p>
             <Link
-              className="bg-blue-600 items-center justify-center flex gap-3 hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer"
+              className="bg-blue-600 items-center justify-center flex gap-3 hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full min-h-16 px-3 py-2 text-center cursor-pointer"
               to={"tutorial1"}
             >
               Ver guía paso a paso
@@ -74,7 +72,7 @@ export default function Ayuda() {
             </div>
           </div>
           {/* llama al teléfono de asistencia de NONOS (el mismo de la pantalla del SOS) */}
-          <a href="tel:+5491130285858" className="bg-blue-600 shadow-md hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full h-16 cursor-pointer flex items-center justify-center">
+          <a href="tel:+5491130285858" className="bg-blue-600 shadow-md hover:bg-blue-700 active:bg-blue-700 hover:scale-102 active:scale-99 text-white text-lg rounded-2xl w-full min-h-16 px-3 py-2 text-center cursor-pointer flex items-center justify-center">
             Contactate con un asesor humano
           </a>
         </div>
