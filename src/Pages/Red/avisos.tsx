@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
 import { notificacionesService, type Notificacion } from "../../services/notificacionesService";
+import { alertasService } from "../../services/alertasService";
 import type { AdultoMayorVinculado } from "../../services/usuariosService";
 import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import tiempoDesde from "../../utils/tiempoDesde";
@@ -147,7 +148,11 @@ export default function Avisos() {
   const { usuario } = useAuth();
   const usuarioId = usuario?.id;
   const [avisos, setAvisos] = useState<Notificacion[]>([]);
-  const [adulto, setAdulto] = useState<AdultoMayorVinculado | null>(null);
+  const [contextoAdulto, setContextoAdulto] = useState<{
+    adulto: AdultoMayorVinculado | null;
+    alertas: Set<string>;
+  } | null>(null);
+  const [errorContexto, setErrorContexto] = useState(false);
   const [filtro, setFiltro] = useState<FiltroAvisos>("TODAS");
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -178,10 +183,15 @@ export default function Avisos() {
     if (!usuarioId) return;
     let activa = true;
     buscarAdultoSeleccionado(usuarioId)
-      .then((seleccionado) => {
-        if (activa) setAdulto(seleccionado);
+      .then(async (adulto) => {
+        if (!activa) return;
+        const alertas = adulto ? await alertasService.getAlertas(adulto.id) : [];
+        if (activa) setContextoAdulto({ adulto, alertas: new Set(alertas.map((alerta) => alerta.id)) });
       })
-      .catch((err) => console.error("No se pudo cargar el adulto vinculado:", err));
+      .catch((err) => {
+        console.error("No se pudieron identificar los avisos del adulto vinculado:", err);
+        if (activa) setErrorContexto(true);
+      });
     return () => {
       activa = false;
     };
@@ -198,10 +208,13 @@ export default function Avisos() {
     }
   };
 
-  const sinLeer = avisos.filter((aviso) => !aviso.leida).length;
-  const urgentesSinLeer = avisos.filter((aviso) => !aviso.leida && categoriaAviso(aviso) === "URGENTE").length;
-  const medicacionSinLeer = avisos.filter((aviso) => !aviso.leida && categoriaAviso(aviso) === "MEDICACION").length;
-  const avisosFiltrados = avisos.filter((aviso) => {
+  // El servidor identifica al adulto de un aviso únicamente cuando está asociado a una alerta.
+  const avisosVisibles = avisos.filter((aviso) => !aviso.alertaId || contextoAdulto?.alertas.has(aviso.alertaId));
+  const esperandoAlertas = !errorContexto && !contextoAdulto && avisos.some((aviso) => aviso.alertaId);
+  const sinLeer = avisosVisibles.filter((aviso) => !aviso.leida).length;
+  const urgentesSinLeer = avisosVisibles.filter((aviso) => !aviso.leida && categoriaAviso(aviso) === "URGENTE").length;
+  const medicacionSinLeer = avisosVisibles.filter((aviso) => !aviso.leida && categoriaAviso(aviso) === "MEDICACION").length;
+  const avisosFiltrados = avisosVisibles.filter((aviso) => {
     if (filtro === "TODAS") return true;
     if (filtro === "URGENTES") return categoriaAviso(aviso) === "URGENTE";
     if (filtro === "MEDICACION") return categoriaAviso(aviso) === "MEDICACION";
@@ -220,8 +233,8 @@ export default function Avisos() {
     <TarjetaAviso
       key={aviso.id}
       aviso={aviso}
-      telefono={adulto?.telefono}
-      nombreAdulto={adulto?.nombreCompleto}
+      telefono={aviso.alertaId ? contextoAdulto?.adulto?.telefono : null}
+      nombreAdulto={aviso.alertaId ? contextoAdulto?.adulto?.nombreCompleto : undefined}
       rutaAlertas={rutaAlertas}
       onMarcarLeido={marcarLeido}
     />
@@ -249,8 +262,11 @@ export default function Avisos() {
           <button type="button" aria-pressed={filtro === "SALUD"} onClick={() => setFiltro("SALUD")} className={`min-h-9 min-w-0 flex-1 cursor-pointer rounded-xl px-2 text-xs font-semibold transition-colors ${filtro === "SALUD" ? "bg-white text-[#0F389D] shadow-xs" : "text-[#435059] hover:bg-white/60 active:bg-white"}`}>Salud</button>
         </div>
 
-        {cargando && <p role="status" className="py-3 text-center text-sm text-[#435059]">Cargando avisos…</p>}
+        {(cargando || esperandoAlertas) && <p role="status" className="py-3 text-center text-sm text-[#435059]">Cargando avisos…</p>}
         {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">{error}</p>}
+        {errorContexto && avisos.some((aviso) => aviso.alertaId) && (
+          <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-800">No se pudieron cargar los avisos asociados al adulto seleccionado.</p>
+        )}
 
         {!cargando && !error && (
           <>
@@ -284,9 +300,9 @@ export default function Avisos() {
                 <ul className="flex flex-col gap-2.5">{tarjetas(anteriores)}</ul>
               </section>
             )}
-            {avisosFiltrados.length === 0 && (
+            {!esperandoAlertas && !errorContexto && avisosFiltrados.length === 0 && (
               <p className="rounded-2xl bg-white p-4 text-sm text-[#435059]">
-                {avisos.length === 0 ? "Todavía no recibiste ningún aviso." : "No hay avisos en esta categoría."}
+                {avisosVisibles.length === 0 ? "Todavía no hay avisos para esta selección." : "No hay avisos en esta categoría."}
               </p>
             )}
           </>

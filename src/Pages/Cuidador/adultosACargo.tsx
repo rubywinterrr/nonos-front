@@ -4,7 +4,7 @@ import VueltaAtras from "../../components/vueltaAtras";
 import { LuArrowRight, LuPhone } from "react-icons/lu";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService, type AdultoMayorVinculado } from "../../services/usuariosService";
-import { guardarAdultoSeleccionado, leerAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import { guardarAdultoSeleccionado, leerAdultoSeleccionado, resolverAdultoVinculado } from "../../utils/adultoQueSeMira";
 import calcularEdad from "../../utils/calcularEdad";
 
 // iniciales del nombre para cuando no hay foto (ej: "Elena Blanco" → "EB")
@@ -45,13 +45,12 @@ export default function AdultosACargo() {
   }, [usuario]);
 
   // el que se está mirando: el elegido, o el primero si nunca eligió
-  const elegido = leerAdultoSeleccionado();
-  let idMirado = elegido;
-  if (!adultos.some((a) => a.id === elegido) && adultos.length > 0) idMirado = adultos[0].id;
+  const idMirado = resolverAdultoVinculado(adultos, leerAdultoSeleccionado(usuario?.id))?.id;
 
   // elige al adulto y abre su información
   const verAdulto = (id: string) => {
-    guardarAdultoSeleccionado(id);
+    if (!usuario) return;
+    guardarAdultoSeleccionado(usuario.id, id);
     navigate("../info/adulto");
   };
 

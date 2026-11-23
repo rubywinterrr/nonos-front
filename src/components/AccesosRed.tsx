@@ -7,12 +7,13 @@ import { alertasService } from "../services/alertasService";
 import { buscarAdultoSeleccionado } from "../utils/adultoQueSeMira";
 
 // filas del inicio del familiar/cuidador que llevan a "Alertas" (con las pendientes) y a "Notas de la red"
-export default function AccesosRed() {
+export default function AccesosRed({ pendientesAdulto }: { pendientesAdulto?: number }) {
   const { usuario } = useAuth();
-  const [pendientes, setPendientes] = useState(0);
+  const [pendientesCargadas, setPendientes] = useState(0);
+  const pendientes = pendientesAdulto ?? pendientesCargadas;
 
   useEffect(() => {
-    if (!usuario) return;
+    if (!usuario || pendientesAdulto !== undefined) return;
     const miId = usuario.id;
 
     // cuenta las alertas pendientes del adulto que se mira
@@ -27,7 +28,7 @@ export default function AccesosRed() {
       }
     };
     contar();
-  }, [usuario]);
+  }, [usuario, pendientesAdulto]);
 
   const clasesFila =
     "flex w-full items-center justify-between gap-3 rounded-2xl bg-white p-4 shadow-xs hover:bg-[#F5F9FF] active:bg-[#EBF5FF] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B5FFF]";

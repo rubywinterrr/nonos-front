@@ -9,7 +9,7 @@ import { useAlturaBarraFija } from "../hooks/useAlturaBarraFija";
 
 // Barra de navegación inferior reutilizable.
 // Marca la pantalla activa y conserva los destinos de navegación existentes.
-export default function NavBar() {
+export default function NavBar({ soloMovil = false }: { soloMovil?: boolean }) {
   const barra = useRef<HTMLElement>(null);
   useAlturaBarraFija(barra, "--alto-navegacion");
   const { usuario } = useAuth();
@@ -46,7 +46,7 @@ export default function NavBar() {
     <nav
       ref={barra}
       aria-label="Navegación principal"
-      className="fixed bottom-5 left-1/2 z-50 flex min-h-17 w-95/100 max-w-lg -translate-x-1/2 items-center rounded-full border border-white/60 bg-white/60 px-2 py-1.5 shadow-lg shadow-black/15 backdrop-blur-md"
+      className={`fixed bottom-5 left-1/2 z-50 flex min-h-17 w-95/100 max-w-lg -translate-x-1/2 items-center rounded-full border border-white/60 bg-white/60 px-2 py-1.5 shadow-lg shadow-black/15 backdrop-blur-md ${soloMovil ? "lg:hidden" : ""}`}
     >
       <div className="relative isolate flex min-h-14 w-full">
         <span

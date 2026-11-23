@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { LuCheck, LuMail, LuPhone, LuUsers } from "react-icons/lu";
 import { useAuth } from "../hooks/useAuth";
 import { usuarioService, type AdultoMayorVinculado } from "../services/usuariosService";
-import { guardarAdultoSeleccionado, leerAdultoSeleccionado } from "../utils/adultoQueSeMira";
+import { guardarAdultoSeleccionado, leerAdultoSeleccionado, resolverAdultoVinculado } from "../utils/adultoQueSeMira";
 import calcularEdad from "../utils/calcularEdad";
 
 // iniciales del nombre para cuando no hay foto (ej: "Elena Blanco" → "EB")
@@ -20,7 +20,7 @@ function iniciales(nombre: string) {
 export default function AdultosVinculados() {
   const { usuario } = useAuth();
   const [adultos, setAdultos] = useState<AdultoMayorVinculado[]>([]);
-  const [seleccionado, setSeleccionado] = useState<string | null>(leerAdultoSeleccionado());
+  const [seleccionado, setSeleccionado] = useState(() => leerAdultoSeleccionado(usuario?.id));
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,12 +43,12 @@ export default function AdultosVinculados() {
   }, [usuario]);
 
   // si nunca eligió, se está mirando al primero
-  let idMirado = seleccionado;
-  if (!adultos.some((a) => a.id === seleccionado) && adultos.length > 0) idMirado = adultos[0].id;
+  const idMirado = resolverAdultoVinculado(adultos, seleccionado)?.id;
 
   // guarda a qué adulto se va a mirar en el resto de la app
   const elegir = (id: string) => {
-    guardarAdultoSeleccionado(id);
+    if (!usuario) return;
+    guardarAdultoSeleccionado(usuario.id, id);
     setSeleccionado(id);
   };
 

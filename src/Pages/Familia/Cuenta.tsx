@@ -16,7 +16,7 @@ import {
   LuUsersRound,
 } from "react-icons/lu";
 import { usuarioService, type AdultoMayorVinculado } from "../../services/usuariosService";
-import { leerAdultoSeleccionado } from "../../utils/adultoQueSeMira";
+import { guardarAdultoSeleccionado, leerAdultoSeleccionado, resolverAdultoVinculado } from "../../utils/adultoQueSeMira";
 import { etiquetaRol } from "../../utils/etiquetaRol";
 
 // cuenta del familiar: sus datos, los adultos mayores con los que está vinculado y la sesión
@@ -24,6 +24,7 @@ export default function CuentaFamilia() {
   const { usuario, logout } = useAuth();
   const [cambiandoPassword, setCambiandoPassword] = useState(false);
   const [adultos, setAdultos] = useState<AdultoMayorVinculado[]>([]);
+  const [elegido, setElegido] = useState(() => leerAdultoSeleccionado(usuario?.id));
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,11 +46,13 @@ export default function CuentaFamilia() {
     cargar();
   }, [usuario]);
 
-  // "Titular" va en el adulto que se está mirando: el elegido en "Adultos a cargo" o, si no eligió, el primero
-  const elegido = leerAdultoSeleccionado();
-  let idTitular: string | null = null;
-  if (adultos.length > 0) idTitular = adultos[0].id;
-  if (adultos.some((a) => a.id === elegido)) idTitular = elegido;
+  const adultoEnConsulta = resolverAdultoVinculado(adultos, elegido)?.id;
+
+  function elegirAdulto(id: string) {
+    if (!usuario) return;
+    guardarAdultoSeleccionado(usuario.id, id);
+    setElegido(id);
+  }
 
   return (
     <main id="contenido-principal" tabIndex={-1} className="mainBody">
@@ -160,9 +163,9 @@ export default function CuentaFamilia() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-lg font-bold leading-6">{adulto.nombreCompleto}</h3>
-                    {adulto.id === idTitular && (
+                    {adulto.id === adultoEnConsulta && (
                       <span className="rounded-full border border-[#BAEDD3] bg-[#E8FAF1] px-2 py-0.5 text-xs font-bold text-[#0B4C2B]">
-                        Titular
+                        Viendo ahora
                       </span>
                     )}
                   </div>
@@ -201,6 +204,11 @@ export default function CuentaFamilia() {
                   </div>
                 </div>
               </div>
+              {adulto.id !== adultoEnConsulta && (
+                <button type="button" onClick={() => elegirAdulto(adulto.id)} className="mt-3 min-h-11 w-full cursor-pointer rounded-xl bg-[#E7EDFB] px-3 py-2 text-sm font-semibold text-[#0D328B] hover:bg-[#DBE6FB] active:bg-[#C9DAFA]">
+                  Ver a {adulto.nombreCompleto.trim().split(/\s+/)[0]} en la app
+                </button>
+              )}
             </article>
           ))}
         </section>

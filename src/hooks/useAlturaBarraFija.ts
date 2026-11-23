@@ -10,6 +10,10 @@ export function useAlturaBarraFija(
     const raiz = document.documentElement;
     const medir = () => {
       const { top, bottom, height } = barra.getBoundingClientRect();
+      if (!height) {
+        raiz.style.removeProperty(variable);
+        return;
+      }
       // La barra inferior flota sobre el borde: reservar también esa separación.
       const alto = variable === "--alto-cabecera"
         ? bottom

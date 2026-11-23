@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import VueltaAtras from "../../components/vueltaAtras";
 import { useAuth } from "../../hooks/useAuth";
 import { usuarioService } from "../../services/usuariosService";
+import { buscarAdultoSeleccionado } from "../../utils/adultoQueSeMira";
 import { LuInfo, LuUsersRound } from "react-icons/lu";
 
 const TEXTO_EVITAR = "Para evitar en una emergencia:";
@@ -34,8 +35,7 @@ export default function MedidasAnticipadas() {
       setCargando(true);
       setError(null);
       try {
-        const adultos = await usuarioService.getAdultosMayoresVinculados(usuario.id);
-        const adulto = adultos[0];
+        const adulto = await buscarAdultoSeleccionado(usuario.id);
         if (!adulto) {
           if (!cancelado) setError("No se encontró un adulto mayor vinculado a esta cuenta.");
           return;

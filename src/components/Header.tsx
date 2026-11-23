@@ -8,7 +8,7 @@ import { useAlturaBarraFija } from "../hooks/useAlturaBarraFija";
 
 // Encabezado global de la aplicación.
 // Muestra el menú, el nombre de la app y acceso a la cuenta en todas las pantallas principales.
-export default function Header() {
+export default function Header({ inicioRed = false }: { inicioRed?: boolean }) {
   const cabecera = useRef<HTMLElement>(null);
   useAlturaBarraFija(cabecera, "--alto-cabecera");
   const navigate = useNavigate();
@@ -62,14 +62,14 @@ export default function Header() {
       <header
         ref={cabecera}
         className={`flex justify-between items-center w-full min-h-[6vh] bg-main-blue fixed top-0 p-3 py-4 left-1/2 border-b-2 border-gray-200 z-50 -translate-x-1/2 ${hasScrolled ? "shadow-md" : "shadow-none"
-          }`}
+          } ${inicioRed ? "lg:pointer-events-none lg:absolute lg:top-6 lg:right-6 lg:left-auto lg:min-h-0 lg:w-auto lg:translate-x-0 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none xl:top-8 xl:right-8 2xl:top-14 2xl:right-14" : ""}`}
       >
         {/* logo oficial (componente "Logo/Header (isotipo + NONOS)" del Figma) */}
-        <p className="flex items-center gap-2.5 text-2xl font-bold text-[#0A2666] lg:text-3xl">
+        <p className={`flex items-center gap-2.5 text-2xl font-bold text-[#0A2666] lg:text-3xl ${inicioRed ? "lg:hidden" : ""}`}>
           <img src="/logo/isotipo-cuadrado.png" alt="" className="size-9 lg:size-11" />
           NONOS
         </p>
-        <div className="flex items-center gap-3">
+        <div className={`flex items-center gap-3 ${inicioRed ? "lg:pointer-events-auto lg:[&>button]:bg-white lg:[&>button]:shadow-sm lg:[&>button:hover]:bg-[#edf2fd] lg:[&>button:active]:bg-[#dbe6fb]" : ""}`}>
           <button
             type="button"
             onClick={abrirNotificaciones}

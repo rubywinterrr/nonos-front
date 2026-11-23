@@ -1,37 +1,37 @@
 import { usuarioService, type AdultoMayorVinculado } from "../services/usuariosService";
 import type { Usuario } from "../services/authService";
 
-// el familiar o cuidador elige en "Adultos a cargo" a qué adulto mira; se guarda en el navegador
 const CLAVE = "nonos_adulto_seleccionado";
+const seleccionEnSesion = new Map<string, string>();
 
-// guarda el id del adulto elegido
-export function guardarAdultoSeleccionado(id: string) {
+export function guardarAdultoSeleccionado(usuarioId: string, adultoId: string) {
   try {
-    localStorage.setItem(CLAVE, id);
+    localStorage.setItem(`${CLAVE}:${usuarioId}`, adultoId);
+    seleccionEnSesion.delete(usuarioId);
   } catch {
-    // si el navegador no deja guardar, se sigue mostrando el primero
+    // La selección se conserva durante la sesión aunque el navegador no permita guardarla.
+    seleccionEnSesion.set(usuarioId, adultoId);
   }
 }
 
-// lee el id del adulto elegido (null si nunca eligió)
-export function leerAdultoSeleccionado() {
+export function leerAdultoSeleccionado(usuarioId: string | undefined) {
+  if (!usuarioId) return null;
   try {
-    return localStorage.getItem(CLAVE);
+    return seleccionEnSesion.get(usuarioId) ?? localStorage.getItem(`${CLAVE}:${usuarioId}`) ?? localStorage.getItem(CLAVE);
   } catch {
-    return null;
+    return seleccionEnSesion.get(usuarioId) ?? null;
   }
+}
+
+export function resolverAdultoVinculado(adultos: AdultoMayorVinculado[], adultoId: string | null) {
+  return adultos.find((adulto) => adulto.id === adultoId) ?? adultos[0] ?? null;
 }
 
 // devuelve el adulto vinculado que el familiar/cuidador está mirando:
 // el que eligió, o el primero si no eligió ninguno. null si no tiene adultos vinculados
 export async function buscarAdultoSeleccionado(usuarioId: string) {
   const adultos = await usuarioService.getAdultosMayoresVinculados(usuarioId);
-  if (adultos.length === 0) return null;
-
-  const elegido = leerAdultoSeleccionado();
-  const encontrado = adultos.find((adulto) => adulto.id === elegido);
-  if (encontrado) return encontrado;
-  return adultos[0];
+  return resolverAdultoVinculado(adultos, leerAdultoSeleccionado(usuarioId));
 }
 
 // id del adulto cuyos datos hay que mostrar:

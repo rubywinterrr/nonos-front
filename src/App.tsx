@@ -62,11 +62,14 @@ import rutaSegunRol from "./utils/rutaSegunRol";
 function LayoutConFooter() {
   const location = useLocation();
   const configurandoCuenta = location.pathname.startsWith("/adulto/configurar-cuenta");
+  const inicioRed = /^\/(?:familia|cuidador)\/home\/?$/i.test(location.pathname);
   return (
     <>
-      {!configurandoCuenta && <Header />}
-      <Outlet />
-      {!configurandoCuenta && <Navbar />}
+      {!configurandoCuenta && <Header inicioRed={inicioRed} />}
+      <div className={inicioRed ? "contents lg:block lg:[&>main]:min-h-dvh lg:[&>main]:w-full lg:[&>main]:p-0" : "contents"}>
+        <Outlet />
+      </div>
+      {!configurandoCuenta && <Navbar soloMovil={inicioRed} />}
     </>
   );
 }
